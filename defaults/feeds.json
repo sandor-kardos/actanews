@@ -1,0 +1,94 @@
+[
+ {
+  "brand": "asc",
+  "lang": "en",
+  "google": {
+   "q": "Edinburgh kids OR family OR children event",
+   "lang": "en"
+  }
+ },
+ {
+  "brand": "asc",
+  "lang": "en",
+  "google": {
+   "q": "Edinburgh OR Lothian school OR nursery fair OR festive",
+   "lang": "en"
+  }
+ },
+ {
+  "brand": "asc",
+  "lang": "en",
+  "url": "https://feeds.bbci.co.uk/news/scotland/edinburgh_east_and_fife/rss.xml",
+  "source": "BBC News"
+ },
+ {
+  "brand": "mindhaven",
+  "lang": "en",
+  "google": {
+   "q": "UK burnout OR \"workplace stress\" OR \"work-life balance\" survey",
+   "lang": "en"
+  }
+ },
+ {
+  "brand": "mindhaven",
+  "lang": "en",
+  "google": {
+   "q": "UK \"mental health\" workers research",
+   "lang": "en"
+  }
+ },
+ {
+  "brand": "bereljufot",
+  "lang": "hu",
+  "google": {
+   "q": "utánfutó",
+   "lang": "hu"
+  }
+ },
+ {
+  "brand": "bereljufot",
+  "lang": "hu",
+  "google": {
+   "q": "autópálya OR útlezárás OR KRESZ",
+   "lang": "hu"
+  }
+ },
+ {
+  "brand": "bereljufot",
+  "lang": "hu",
+  "google": {
+   "q": "felújítás OR építőipar OR költözés",
+   "lang": "hu"
+  }
+ },
+ {
+  "brand": "sandorkardos",
+  "lang": "en",
+  "google": {
+   "q": "UK \"small business\" OR \"sole trader\" HMRC OR tax",
+   "lang": "en"
+  }
+ },
+ {
+  "brand": "sandorkardos",
+  "lang": "en",
+  "google": {
+   "q": "UK small business AI OR website",
+   "lang": "en"
+  }
+ },
+ {
+  "brand": "sandorkardos",
+  "lang": "en",
+  "google": {
+   "q": "Edinburgh tech OR startup",
+   "lang": "en"
+  }
+ },
+ {
+  "brand": "sandorkardos",
+  "lang": "en",
+  "url": "https://feeds.bbci.co.uk/news/technology/rss.xml",
+  "source": "BBC News"
+ }
+]

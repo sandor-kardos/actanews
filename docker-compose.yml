@@ -1,0 +1,13 @@
+services:
+  actanews:
+    build: .
+    container_name: actanews
+    # localhost only: the app has no login, so don't expose it to the network
+    ports:
+      - "127.0.0.1:8787:8787"
+    env_file: .env
+    volumes:
+      - ./data:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

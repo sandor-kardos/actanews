@@ -1,0 +1,1195 @@
+<!doctype html><html lang="hu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style><script src="/local-shim.js"></script></head><body>
+<title>ActaNews</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a newsroom desk. Sticky tab bar, one working column on phones, input left / output right on wide screens. */
+:root{
+  --bg:#EEF0F3; --panel:#FFFFFF; --ink:#14171F; --muted:#5A6272; --line:#D5DAE2;
+  --accent:#3A3FD8; --accent-ink:#FFFFFF; --soft:#E3E5FB;
+  --ok:#11845B; --warn:#B26A00; --bad:#C23B4B;
+  --b-asc:#EE4D86; --b-mindhaven:#155D49; --b-bereljufot:#0E9F6E; --b-sandorkardos:#0052FF;
+  --f-disp:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1218; --panel:#171B24; --ink:#E8EBF2; --muted:#9AA3B5; --line:#2A3140;
+  --accent:#8F94FF; --accent-ink:#0F1218; --soft:#23264A;
+  --ok:#3DD39B; --warn:#F2B24C; --bad:#FF7A8A;
+  --b-asc:#FF6FA3; --b-mindhaven:#4FC79A; --b-bereljufot:#34D399; --b-sandorkardos:#5C8DFF;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1218; --panel:#171B24; --ink:#E8EBF2; --muted:#9AA3B5; --line:#2A3140;
+  --accent:#8F94FF; --accent-ink:#0F1218; --soft:#23264A;
+  --ok:#3DD39B; --warn:#F2B24C; --bad:#FF7A8A;
+  --b-asc:#FF6FA3; --b-mindhaven:#4FC79A; --b-bereljufot:#34D399; --b-sandorkardos:#5C8DFF;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+header .in{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;gap:10px 12px;align-items:center;flex-wrap:wrap}
+.logo{font:700 22px/1 var(--f-disp);letter-spacing:-.02em;margin-right:auto;display:flex;gap:8px;align-items:center}
+.logo i{display:inline-flex;gap:3px}
+.logo .slogan{font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);align-self:flex-end;padding-bottom:2px}
+.logo i b{width:7px;height:18px;border-radius:2px;display:block}
+nav.tabs{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:999px;max-width:100%;overflow-x:auto}
+nav.tabs button{border:0;background:transparent;color:var(--muted);font:600 14px var(--f-body);padding:7px 13px;border-radius:999px;cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;color:var(--muted);font:600 12px var(--f-mono);padding:6px 10px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+h1,h2,h3{font-family:var(--f-disp);text-wrap:balance;margin:0}
+h2{font-size:22px;font-weight:700}
+h3{font-size:16px;font-weight:700}
+.lede{color:var(--muted);margin:6px 0 0;max-width:62ch}
+section.view{padding-top:20px}
+.grid{display:grid;gap:20px;grid-template-columns:1fr}
+@media (min-width:920px){.grid.split{grid-template-columns:minmax(0,400px) minmax(0,1fr);align-items:start}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+label.f{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:13px}
+label.f span.h{font-weight:400;color:var(--muted)}
+textarea,input[type=text],select{width:100%;font:15px/1.45 var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+textarea{resize:vertical;min-height:92px}
+textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.eyebrow{font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 11px;font:500 13px var(--f-body);cursor:pointer;user-select:none}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip:has(input:checked){background:var(--soft);border-color:var(--accent)}
+.chip .dot{width:9px;height:9px;border-radius:50%}
+.chip.tag{font-family:var(--f-mono);font-size:12.5px;padding:4px 9px}
+.chip.tag.extra:not(:has(input:checked)){color:var(--muted);border-style:dashed}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:9px 14px;font:600 14px var(--f-body);cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.small{padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.55;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.drop{border:1.5px dashed var(--line);border-radius:8px;padding:12px;text-align:center;color:var(--muted);font-size:13px;cursor:pointer}
+.drop.has{border-style:solid;color:var(--ink)}
+.drop img{max-height:120px;border-radius:6px;display:block;margin:8px auto 0}
+.status{font-size:13px;color:var(--muted);min-height:1.4em}
+.status.err{color:var(--bad)}
+.rel{display:flex;flex-direction:column;gap:6px}
+.relrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;font-size:14px}
+.score{font:600 12px var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--bg)}
+.score.s3,.score.s2{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.score.s1,.score.s0{color:var(--muted)}
+.brandblock{display:flex;flex-direction:column;gap:12px}
+.brandhead{display:flex;align-items:center;gap:10px;padding-top:6px}
+.brandhead .sw{width:12px;height:12px;border-radius:3px}
+.post{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);display:flex;flex-direction:column;min-width:0}
+.post .top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.post .body{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.post textarea.cap{min-height:150px;background:var(--panel)}
+.meta{display:grid;grid-template-columns:90px 1fr;gap:6px 10px;font-size:13px}
+.meta dt{color:var(--muted)}
+.meta dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.mono{font-family:var(--f-mono);font-size:12.5px}
+.approval{font:600 11px var(--f-mono);letter-spacing:.06em;color:var(--warn);text-transform:uppercase}
+.posts{display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:700px){.posts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:var(--r);padding:20px}
+.empty b{color:var(--ink)}
+/* news */
+.newsgrid{display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:760px){.newsgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.nitem{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.nitem h3{font-size:16px;line-height:1.25}
+.nitem p{margin:0;font-size:14px}
+.nitem .src{font:500 12px var(--f-mono);color:var(--muted);overflow-wrap:anywhere}
+.nitem .src a{color:inherit}
+.nitem .angle{font-size:13px;color:var(--muted)}
+.nitem .acts{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* star / minus */
+.vote{display:inline-flex;gap:4px}
+.vote button{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:8px;min-width:32px;height:30px;padding:0 8px;font:600 15px/1 var(--f-body);cursor:pointer}
+.vote button[aria-pressed="true"].star{color:var(--warn);border-color:var(--warn);background:color-mix(in srgb,var(--warn) 10%,transparent)}
+.vote button.minus:hover{color:var(--bad);border-color:var(--bad)}
+.gone{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px dashed var(--line);border-radius:var(--r);padding:8px 12px;font-size:13px;color:var(--muted)}
+.gone button{border:0;background:none;color:var(--accent);font:600 13px var(--f-body);cursor:pointer;padding:4px}
+.chip.tag .x{border:0;background:none;color:var(--muted);font:600 13px/1 var(--f-body);padding:0 0 0 2px;cursor:pointer}
+.chip.tag .x:hover{color:var(--bad)}
+.savedlist{display:flex;flex-direction:column;gap:10px}
+.sitem{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.sitem .hd{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px}
+.sitem .txt{white-space:pre-wrap;font-size:14px;overflow-wrap:anywhere}
+/* analysis */
+.ana{display:flex;flex-direction:column;gap:14px;border-top:1px solid var(--line);padding-top:12px}
+.verdict{display:inline-flex;align-items:center;gap:8px;font:600 13px var(--f-body);padding:4px 10px;border-radius:999px;align-self:flex-start}
+.verdict.v-jo{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.verdict.v-javitando{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.verdict.v-gyenge{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.meters{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;font-size:13px}
+.meter{height:6px;border-radius:3px;background:var(--bg);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.meter.risk i{background:var(--warn)}
+.meters .n{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.flag{border-left:3px solid var(--warn);padding:6px 10px;background:color-mix(in srgb,var(--warn) 8%,transparent);border-radius:0 6px 6px 0;font-size:14px}
+.issues{margin:0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.troll{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.troll q{font-style:italic;quotes:none}
+.troll .kind{font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.reply{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:start}
+.reply .tag{font:600 11px var(--f-mono);color:var(--muted);padding-top:2px}
+.qlist{display:flex;flex-direction:column;gap:6px}
+.qitem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;font-size:14px}
+.better{background:var(--bg);border-radius:8px;padding:10px 12px;white-space:pre-wrap;font-size:14px}
+/* image tool */
+.stage{position:relative;max-width:100%;border-radius:8px;overflow:hidden;background:var(--bg);cursor:crosshair}
+.stage canvas{display:block;max-width:100%;height:auto}
+.crops{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.crop{display:flex;flex-direction:column;gap:6px;min-width:0}
+.crop .frame{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px;display:flex;justify-content:center;align-items:center;height:190px}
+.crop canvas{max-width:100%;max-height:176px;border-radius:4px;display:block}
+.crop .lbl{font-size:12.5px;font-weight:600}
+.crop .fn{font:400 11px var(--f-mono);color:var(--muted);overflow-wrap:anywhere}
+.sizes{display:flex;flex-direction:column;gap:10px}
+.sizes .grp{display:flex;flex-direction:column;gap:6px}
+/* brands */
+.brandforms{display:grid;gap:16px;grid-template-columns:1fr}
+@media (min-width:900px){.brandforms{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.bform summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px}
+.bform summary::-webkit-details-marker{display:none}
+.bform summary .sw{width:14px;height:14px;border-radius:4px}
+.bform summary .sub{color:var(--muted);font-size:13px;margin-left:auto}
+.bform[open] summary{margin-bottom:6px}
+.note{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.btn,.chip{transition:background .15s,border-color .15s}}
+</style>
+
+<header class="bar"><div class="in">
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span></div>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
+    <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-post" aria-selected="true" data-view="post" data-i18n="tab_post">Poszt</button>
+    <button role="tab" id="tab-komment" aria-selected="false" data-view="komment" data-i18n="tab_comment">Komment</button>
+    <button role="tab" id="tab-kep" aria-selected="false" data-view="kep" data-i18n="tab_image">Kép</button>
+    <button role="tab" id="tab-mentett" aria-selected="false" data-view="mentett" data-i18n="tab_saved">Mentett</button>
+    <button role="tab" id="tab-markak" aria-selected="false" data-view="markak" data-i18n="tab_brands">Márkák</button>
+  </nav>
+</div></header>
+
+<main class="wrap">
+
+<!-- POST -->
+<section class="view" id="view-post">
+  <div class="panel news" style="margin-bottom:20px">
+    <div class="row" style="justify-content:space-between">
+      <h2 data-i18n="news_h">Mai 3 hír</h2>
+      <span class="note" id="newsDate"></span>
+    </div>
+    <div class="newsgrid" id="newsList"><div class="empty" data-i18n="news_empty">A mai hírek minden reggel 7 előtt érkeznek. Amíg nincs friss, a legutóbbiakat látod itt.</div></div>
+  </div>
+  <div class="grid split">
+    <form class="panel" id="postForm" autocomplete="off">
+      <div>
+        <h2 data-i18n="post_h">Mire reagálsz?</h2>
+        <p class="lede" data-i18n="post_lede">Másold be a hír szövegét vagy tölts fel képernyőképet, írd mellé egy mondatban a véleményed. A linkeket az app nem tudja megnyitni, ezért a szöveg vagy a screenshot kell.</p>
+      </div>
+      <label class="f" for="src"><span data-i18n="src_label">Hír, poszt vagy jegyzet</span>
+        <textarea id="src" rows="5" data-i18n-ph="src_ph"></textarea>
+      </label>
+      <div class="drop" id="shotDrop" tabindex="0" role="button">
+        <span id="shotTxt" data-i18n="shot_txt">Képernyőkép feltöltése vagy beillesztése (Ctrl+V)</span>
+        <input type="file" id="shotFile" accept="image/png,image/jpeg,image/webp" hidden>
+        <img id="shotPrev" alt="" hidden>
+      </div>
+      <label class="f" for="opinion"><span data-i18n="op_label">A véleményed</span> <span class="h" data-i18n="op_hint">Ez lesz a posztok gerince.</span>
+        <input type="text" id="opinion" data-i18n-ph="op_ph">
+      </label>
+      <div class="f"><span class="eyebrow" data-i18n="brands_label">Márkák</span><div class="chips" id="brandChips"></div></div>
+      <div class="f"><span class="eyebrow" data-i18n="plat_label">Platformok</span><div class="chips" id="platChips"></div></div>
+      <div class="row">
+        <button class="btn primary" id="genBtn" type="submit" data-i18n="gen_btn">Posztok generálása</button>
+        <button class="btn" id="clearBtn" type="button" data-i18n="clear_btn">Törlés</button>
+      </div>
+      <div class="status" id="genStatus" role="status"></div>
+    </form>
+
+    <div class="panel" id="outPanel" aria-live="polite">
+      <div class="empty" id="outEmpty"><b data-i18n="out_empty_b">Itt jelennek meg a posztok.</b><br><span data-i18n="out_empty">Először eldönti, melyik márkához illik a hír (0-3 pont), és csak a 2-es vagy jobb pontszámú márkákhoz ír.</span></div>
+      <div id="out" hidden></div>
+    </div>
+  </div>
+</section>
+
+<!-- KOMMENT -->
+<section class="view" id="view-komment" hidden>
+  <div class="grid split">
+    <form class="panel" id="kForm" autocomplete="off">
+      <div>
+        <h2 data-i18n="k_h">Válasz ellenőrzése</h2>
+        <p class="lede" data-i18n="k_lede">Másold be a kommentet és a saját válaszod tervét.</p>
+      </div>
+      <div class="row">
+        <label class="f" for="kBrand" style="flex:1 1 160px"><span data-i18n="brand">Márka</span><select id="kBrand"></select></label>
+        <label class="f" for="kPlat" style="flex:1 1 140px"><span data-i18n="platform">Platform</span><select id="kPlat"></select></label>
+      </div>
+      <label class="f" for="kPost"><span data-i18n="k_post">Az eredeti poszt</span> <span class="h" data-i18n="k_post_h">Nem kötelező, de segít a kontextusban.</span>
+        <textarea id="kPost" rows="3"></textarea>
+      </label>
+      <label class="f" for="kComment"><span data-i18n="k_comment">A komment, amire válaszolsz</span>
+        <textarea id="kComment" rows="3" data-i18n-ph="k_comment_ph"></textarea>
+      </label>
+      <label class="f" for="kReply"><span data-i18n="k_reply">A te válaszod</span>
+        <textarea id="kReply" rows="4"></textarea>
+      </label>
+      <div class="row">
+        <button class="btn primary" id="kBtn" type="submit" data-i18n="k_btn">Válasz elemzése</button>
+      </div>
+      <div class="status" id="kStatus" role="status"></div>
+    </form>
+    <div class="panel" aria-live="polite">
+      <div class="empty" id="kEmpty"><b data-i18n="k_empty_b">Itt jelenik meg az elemzés.</b><br><span data-i18n="k_empty">Pontszámok, félreértés-figyelés, troll kommentek kész válaszokkal, nyitó és záró kérdések, javított változat.</span></div>
+      <div id="kOut" hidden></div>
+    </div>
+  </div>
+</section>
+
+<!-- KÉP -->
+<section class="view" id="view-kep" hidden>
+  <div class="grid split">
+    <div class="panel">
+      <div>
+        <h2 data-i18n="img_h">Kép kivágása platformokra</h2>
+        <p class="lede" data-i18n="img_lede">Az AI megkeresi az arcokat és a fő témát.</p>
+      </div>
+      <div class="drop" id="imgDrop" tabindex="0" role="button">
+        <span id="imgTxt" data-i18n="img_drop">Kép feltöltése vagy beillesztése</span>
+        <input type="file" id="imgFile" accept="image/*" hidden>
+      </div>
+      <label class="f" for="imgBrand"><span data-i18n="brand">Márka</span>
+        <select id="imgBrand"></select>
+      </label>
+      <label class="f" for="imgKw"><span data-i18n="img_kw">Kulcsszó a fájlnévhez</span> <span class="h" data-i18n="img_kw_h">A posztgenerálás kitölti márkánként, átírhatod.</span>
+        <input type="text" id="imgKw" data-i18n-ph="img_kw_ph">
+      </label>
+      <label class="f" for="imgAlt"><span data-i18n="img_alt">Alt szöveg</span> <span class="h" data-i18n="img_alt_h">Feltöltéskor másold be a platform alt mezőjébe.</span>
+        <textarea id="imgAlt" rows="2"></textarea>
+      </label>
+      <div class="f"><span class="eyebrow" data-i18n="sizes">Méretek (mobile first)</span><div class="sizes" id="sizeList"></div></div>
+      <div class="status" id="imgStatus" role="status"></div>
+    </div>
+
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <h3 data-i18n="img_focus_h">Eredeti és fókusz</h3>
+        <div class="row">
+          <button class="btn small" id="aiFocusBtn" type="button" disabled data-i18n="img_refocus">Fókusz újrakeresése</button>
+          <button class="btn small primary" id="zipBtn" type="button" disabled data-i18n="img_zip">Mind letöltése (ZIP)</button>
+        </div>
+      </div>
+      <div class="stage" id="stage" hidden><canvas id="srcCanvas"></canvas></div>
+      <div class="empty" id="imgEmpty"><b data-i18n="img_empty_b">Még nincs kép.</b><br><span data-i18n="img_empty">Tölts fel egy fotót.</span></div>
+      <div class="crops" id="crops"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MENTETT -->
+<section class="view" id="view-mentett" hidden>
+  <div class="panel" style="margin-bottom:16px">
+    <h2 data-i18n="sv_h">Mentett</h2>
+    <p class="lede" data-i18n="sv_lede">A csillagozott posztok és hírek.</p>
+  </div>
+  <div class="grid" id="savedWrap">
+    <div class="panel"><h3 data-i18n="sv_posts">Posztok</h3><div class="savedlist" id="savedPosts"></div></div>
+    <div class="panel"><h3 data-i18n="sv_news">Hírek</h3><div class="savedlist" id="savedNews"></div></div>
+    <div class="panel"><h3 data-i18n="sv_blocked">Kizárt hashtagek</h3><p class="note" style="margin:0" data-i18n="sv_blocked_h">Ezeket a generálás már nem ajánlja. Koppints rá a visszaengedéshez.</p><div class="chips" id="blockedTags"></div></div>
+  </div>
+</section>
+
+<!-- MÁRKÁK -->
+<section class="view" id="view-markak" hidden>
+  <div class="panel" style="margin-bottom:16px">
+    <h2 data-i18n="br_h">Márkastílusok</h2>
+    <p class="lede" data-i18n="br_lede">Ezekből dolgozik a generálás.</p>
+  </div>
+  <div class="brandforms" id="brandForms"><div class="empty" data-i18n="br_loading">Márkaprofilok betöltése…</div></div>
+</section>
+</main>
+
+<script src="/vendor/jszip.min.js"></script>
+<script src="/vendor/smartcrop.js"></script>
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s);
+const el = (t, a = {}, ...kids) => { const n = document.createElement(t); for (const [k, v] of Object.entries(a)) { if (k === "class") n.className = v; else if (k === "text") n.textContent = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v); } kids.flat().forEach(c => c != null && n.append(c)); return n; };
+
+/* ---------- language ---------- */
+const STR = {
+  hu: {
+    tab_post: "Poszt", tab_comment: "Komment", tab_image: "Kép", tab_brands: "Márkák",
+    news_h: "Mai 3 hír", news_empty: "A mai hírek minden reggel 7 előtt érkeznek. Amíg nincs friss, a legutóbbiakat látod itt.",
+    news_updated: "Frissítve: {d}", news_latest: "Legutóbbi: {d} (a mai még nem érkezett meg)", news_react: "Reagálok", news_angle: "Szög: ", news_source: "Forrás",
+    post_h: "Mire reagálsz?", post_lede: "Másold be a hír szövegét vagy tölts fel képernyőképet, írd mellé egy mondatban a véleményed. A linkeket az app nem tudja megnyitni, ezért a szöveg vagy a screenshot kell.",
+    src_label: "Hír, poszt vagy jegyzet", src_ph: "Pl. a cikk bekezdése, egy poszt szövege, vagy a link + pár szó arról, miről szól",
+    shot_txt: "Képernyőkép feltöltése vagy beillesztése (Ctrl+V)", shot_done: "Képernyőkép csatolva. Kattints a cseréhez.",
+    op_label: "A véleményed", op_hint: "Ez lesz a posztok gerince. Bármelyik nyelven írhatod.", op_ph: "Pl. szerintem ez a kisvállalkozásoknak jó hír, mert...",
+    brands_label: "Márkák", plat_label: "Platformok", gen_btn: "Posztok generálása", clear_btn: "Törlés",
+    out_empty_b: "Itt jelennek meg a posztok.", out_empty: "Először eldönti, melyik márkához illik a hír (0-3 pont), és csak a 2-es vagy jobb pontszámú márkákhoz ír. Minden poszt mellé kapsz alap és kiegészítő hashtageket, alt szöveget, képötletet és SEO fájlnevet.",
+    brands_loading: "A márkaprofilok még töltődnek.",
+    e_need_src: "Adj meg szöveget vagy tölts fel képernyőképet.", e_need_brand: "Jelölj be legalább egy márkát.", e_need_plat: "Jelölj be legalább egy platformot.",
+    e_no_ai: "Az AI ebben a nézetben nem érhető el. Nyisd meg az oldalt bejelentkezve a claude.ai-on.", e_no_img: "Ebben a nézetben nem küldhető kép. Másold be a szöveget.",
+    e_not_granted: "Az AI használatához engedélyezd a Claude hozzáférést az oldal engedélyeinél.", e_rate: "Túl sok kérés egymás után. Várj egy percet, aztán próbáld újra.",
+    e_images: "Ebben a nézetben nem küldhető kép a Claude-nak.", e_unknown: "Ismeretlen hiba történt.", e_prefix: "Hiba: ", e_format: "Az AI válasza nem a várt formátumú. Próbáld újra.",
+    gen_busy: "Relevancia pontozása és posztok írása… (kb. 20-40 mp)", done: "Kész.",
+    summary: "Összefoglaló", relevance: "Relevancia", none_fit: "Ehhez a hírhez egyik márka sem illik eléggé. Ez is válasz: ezt most nem érdemes posztolni.",
+    approval: "Erika jóváhagyására", chars: "kar.", tags_hint: "Hashtagek (szaggatott = kiegészítő, koppints a bekapcsoláshoz)",
+    m_alt: "Alt szöveg", m_img: "Kép", m_time: "Időzítés", m_file: "Fájlnév",
+    copy_all: "Szöveg + tagek másolása", copy_alt: "Alt másolása", to_image: "Képhez", analyze: "Elemzés", copied: "Kimásolva", copy_manual: "Jelöld ki kézzel", copy: "Másol",
+    ana_busy: "Elemzés… (kb. 15-25 mp)", e_empty_text: "Nincs mit elemezni: üres a szöveg.",
+    v_jo: "Mehet", v_javitando: "Javítandó", v_gyenge: "Gyenge",
+    s_answers: "Válaszol a lényegre", s_orig: "Eredetiség", s_clarity: "Érthetőség", s_fit: "Márkához illik", s_risk: "Kockázat",
+    misread: "Félreértés gyanú: ", issues: "Problémák", trolls: "Várható troll kommentek és válaszok", calm: "NYUGODT", witty: "LAZA",
+    openers: "Nyitó kérdések", closers: "Záró kérdések", spicy: "Vitaindító változat", use_this: "Ezt használom", improved: "Javított változat", use_improved: "Javított verzió használata",
+    k_h: "Válasz ellenőrzése", k_lede: "Másold be a kommentet, amire válaszolsz, és a saját válaszod tervét. Az AI megnézi, tényleg a kérdésre felelsz-e, nem értetted-e félre, mennyire eredeti, mit mondhatnak rá a trollok, és milyen kérdéssel nyithatsz vagy zárhatsz.",
+    brand: "Márka", platform: "Platform", k_post: "Az eredeti poszt", k_post_h: "Nem kötelező, de segít a kontextusban.", k_comment: "A komment, amire válaszolsz", k_comment_ph: "Pl. 'Ez megint csak reklám, semmi új nincs benne.'",
+    k_reply: "A te válaszod", k_btn: "Válasz elemzése", k_empty_b: "Itt jelenik meg az elemzés.", k_empty: "Pontszámok (válaszol-e a kérdésre, eredetiség, érthetőség, márkához illés, kockázat), félreértés-figyelés, várható troll kommentek kész válaszokkal, nyitó és záró kérdések, és egy javított változat.",
+    k_need: "Kell a komment és a válaszod is.", k_need_brand: "Válassz márkát.",
+    img_h: "Kép kivágása platformokra", img_lede: "Az AI megkeresi az arcokat és a fő témát, és úgy vágja ki a képet minden méretre, hogy ezek bent maradjanak. Ha nem tetszik, koppints a képre és ott lesz a fókusz.",
+    img_drop: "Kép feltöltése vagy beillesztése", img_kw: "Kulcsszó a fájlnévhez", img_kw_h: "A posztgenerálás kitölti márkánként, átírhatod.", img_kw_ph: "pl. halloween sand art edinburgh",
+    img_alt: "Alt szöveg", img_alt_h: "Feltöltéskor másold be a platform alt mezőjébe.", sizes: "Méretek (mobile first)", img_focus_h: "Eredeti és fókusz",
+    img_refocus: "Fókusz újrakeresése", img_zip: "Mind letöltése (ZIP)", img_empty_b: "Még nincs kép.", img_empty: "Tölts fel egy fotót: az előnézetekben látod minden platform vágását, alattuk a letöltés gombbal és a fájlnévvel.",
+    img_pasted: "beillesztett kép", img_bad: "Ezt a fájlt nem sikerült képként megnyitni.", img_manual: "Kézi fókusz beállítva. A vágások ehhez igazodnak.",
+    img_ai_busy: "AI keresi az arcokat és a fő témát…", img_ai_result: "AI fókusz: {f} arc, {o} egyéb téma.", img_ai_none: "Az AI nem talált kiemelt témát, a tartalomelemző vágást használom.",
+    img_fallback: " A tartalomelemző vágást használom.", img_no_ai: "AI kép-elemzés nem érhető el, a tartalomelemző (smartcrop) vágást használom.",
+    img_upscaled: "A forrás kisebb ennél a méretnél, felnagyítva.", download: "Letöltés", saved: "Mentve: ", declined: "A mentést elutasítottad.", no_dl: "A letöltés ebben a nézetben nem érhető el.",
+    no_zip: "A ZIP csomagoló nem töltődött be. Töltsd le egyenként.", need_size: "Jelölj be legalább egy méretet.", zip_busy: "ZIP készítése…", images_n: "kép", plus_alt: " + alt szöveg", preview: "előnézet",
+    square: "négyzet", link_img: "link kép",
+    br_h: "Márkastílusok", br_lede: "Ezekből dolgozik a generálás. A profilok a négy weboldal és blog szövegeiből készültek; amit átírsz, az mentés után minden következő posztnál él.",
+    br_loading: "Márkaprofilok betöltése…", br_none: "Még nincs mentett márkaprofil.", br_no_db: "A márkaprofilok tárolása ebben a nézetben nem érhető el. Nyisd meg bejelentkezve a claude.ai-on.",
+    save: "Mentés", saved_ok: "Mentve.", save_fail: "Nem sikerült menteni.",
+    f_name: "Név", f_url: "Weboldal", f_slug: "Fájlnév rövidítés", f_language: "Nyelv", f_platforms: "Alap platformok (vesszővel)", f_audience: "Közönség", f_voice: "Hangnem és stílus",
+    f_offer: "Ajánlat, árak, tények", f_cta: "CTA", f_rules: "Szabályok, tiltások", f_hashtags: "Alap hashtagek", f_source_note: "Forrás",
+    ai_lang: "Hungarian",
+    tab_saved: "Mentett", sv_h: "Mentett", sv_lede: "A csillagozott posztok és hírek. A csillagozott posztokat a generálás mintaként használja, a mínuszolt dolgokat legközelebb kerüli.",
+    sv_posts: "Posztok", sv_news: "Hírek", sv_blocked: "Kizárt hashtagek", sv_blocked_h: "Ezeket a generálás már nem ajánlja. Koppints rá a visszaengedéshez.",
+    sv_none_posts: "Még nincs csillagozott poszt. A poszt kártyáján a ☆ menti ide.", sv_none_news: "Még nincs csillagozott hír.", sv_none_tags: "Nincs kizárt hashtag.",
+    star: "Mentés csillaggal", unstar: "Csillag levétele", minus: "Nem kell, legközelebb se", hidden_news: "Elrejtve, a hírkereső hasonlót sem hoz.", hidden_post: "Elvetve, a generálás kerüli ezt a stílust.", undo: "Visszavon",
+    block_tag: "Hashtag kizárása", remove: "Eltávolítás", open: "Megnyitás", e_save: "Nem sikerült menteni a jelölést."
+  },
+  en: {
+    tab_post: "Post", tab_comment: "Comment", tab_image: "Image", tab_brands: "Brands",
+    news_h: "Today's 3 stories", news_empty: "Today's stories arrive before 7am every morning. Until then you see the latest ones.",
+    news_updated: "Updated: {d}", news_latest: "Latest: {d} (today's hasn't arrived yet)", news_react: "React", news_angle: "Angle: ", news_source: "Source",
+    post_h: "What are you reacting to?", post_lede: "Paste the story text or upload a screenshot, and add your opinion in one sentence. The app can't open links, so it needs the text or a screenshot.",
+    src_label: "Story, post or note", src_ph: "E.g. a paragraph of the article, a post's text, or the link plus a few words on what it says",
+    shot_txt: "Upload or paste a screenshot (Ctrl+V)", shot_done: "Screenshot attached. Click to replace.",
+    op_label: "Your opinion", op_hint: "This becomes the spine of every post. Write it in any language.", op_ph: "E.g. I think this is good news for small businesses because...",
+    brands_label: "Brands", plat_label: "Platforms", gen_btn: "Generate posts", clear_btn: "Clear",
+    out_empty_b: "Your posts appear here.", out_empty: "It first scores how well the story fits each brand (0-3) and only writes for brands scoring 2 or more. Every post comes with core and extra hashtags, alt text, an image idea and an SEO filename.",
+    brands_loading: "Brand profiles are still loading.",
+    e_need_src: "Add some text or upload a screenshot.", e_need_brand: "Select at least one brand.", e_need_plat: "Select at least one platform.",
+    e_no_ai: "AI isn't available in this view. Open the page signed in on claude.ai.", e_no_img: "Images can't be sent from this view. Paste the text instead.",
+    e_not_granted: "Allow Claude access in the page's permissions to use AI.", e_rate: "Too many requests in a row. Wait a minute and try again.",
+    e_images: "Images can't be sent to Claude from this view.", e_unknown: "Something went wrong.", e_prefix: "Error: ", e_format: "The AI reply wasn't in the expected format. Try again.",
+    gen_busy: "Scoring relevance and writing posts… (about 20-40 s)", done: "Done.",
+    summary: "Summary", relevance: "Relevance", none_fit: "None of the brands fits this story well enough. That's an answer too: skip this one.",
+    approval: "For Erika's approval", chars: "chars", tags_hint: "Hashtags (dashed = extra, tap to switch on)",
+    m_alt: "Alt text", m_img: "Image", m_time: "Timing", m_file: "Filename",
+    copy_all: "Copy text + tags", copy_alt: "Copy alt", to_image: "To image", analyze: "Analyse", copied: "Copied", copy_manual: "Select it manually", copy: "Copy",
+    ana_busy: "Analysing… (about 15-25 s)", e_empty_text: "Nothing to analyse: the text is empty.",
+    v_jo: "Good to go", v_javitando: "Needs work", v_gyenge: "Weak",
+    s_answers: "Answers the point", s_orig: "Originality", s_clarity: "Clarity", s_fit: "Brand fit", s_risk: "Risk",
+    misread: "Possible misreading: ", issues: "Issues", trolls: "Likely troll comments and replies", calm: "CALM", witty: "WITTY",
+    openers: "Opening questions", closers: "Closing questions", spicy: "Debate-starter version", use_this: "Use this", improved: "Improved version", use_improved: "Use improved version",
+    k_h: "Check your reply", k_lede: "Paste the comment you're answering and your draft reply. The AI checks whether you actually answer it, whether you misread it, how original it is, what trolls might say, and which question to open or close with.",
+    brand: "Brand", platform: "Platform", k_post: "The original post", k_post_h: "Optional, but helps with context.", k_comment: "The comment you're answering", k_comment_ph: "E.g. 'This is just another ad, nothing new here.'",
+    k_reply: "Your reply", k_btn: "Analyse reply", k_empty_b: "The analysis appears here.", k_empty: "Scores (answers the point, originality, clarity, brand fit, risk), misreading check, likely troll comments with ready replies, opening and closing questions, and an improved version.",
+    k_need: "Add both the comment and your reply.", k_need_brand: "Choose a brand.",
+    img_h: "Crop for every platform", img_lede: "The AI finds faces and the main subject and crops every size so they stay in. If you don't like it, tap the image to set the focus there.",
+    img_drop: "Upload or paste an image", img_kw: "Keyword for the filename", img_kw_h: "Filled per brand by post generation. You can edit it.", img_kw_ph: "e.g. halloween sand art edinburgh",
+    img_alt: "Alt text", img_alt_h: "Paste it into the platform's alt field when uploading.", sizes: "Sizes (mobile first)", img_focus_h: "Original and focus",
+    img_refocus: "Find focus again", img_zip: "Download all (ZIP)", img_empty_b: "No image yet.", img_empty: "Upload a photo: the previews show each platform's crop, with a download button and the filename underneath.",
+    img_pasted: "pasted image", img_bad: "This file couldn't be opened as an image.", img_manual: "Manual focus set. Crops follow it.",
+    img_ai_busy: "AI is looking for faces and the main subject…", img_ai_result: "AI focus: {f} face(s), {o} other subject(s).", img_ai_none: "The AI found no clear subject; using content-aware cropping.",
+    img_fallback: " Using content-aware cropping.", img_no_ai: "AI image analysis isn't available; using content-aware (smartcrop) cropping.",
+    img_upscaled: "Source is smaller than this size; upscaled.", download: "Download", saved: "Saved: ", declined: "You declined the save.", no_dl: "Downloads aren't available in this view.",
+    no_zip: "The ZIP packer didn't load. Download one by one.", need_size: "Select at least one size.", zip_busy: "Building ZIP…", images_n: "images", plus_alt: " + alt text", preview: "preview",
+    square: "square", link_img: "link image",
+    br_h: "Brand styles", br_lede: "Generation works from these. The profiles were built from the four websites and their blogs; anything you change here applies to every post after you save.",
+    br_loading: "Loading brand profiles…", br_none: "No saved brand profile yet.", br_no_db: "Brand profile storage isn't available in this view. Open the page signed in on claude.ai.",
+    save: "Save", saved_ok: "Saved.", save_fail: "Couldn't save.",
+    f_name: "Name", f_url: "Website", f_slug: "Filename short name", f_language: "Language", f_platforms: "Default platforms (comma separated)", f_audience: "Audience", f_voice: "Voice and style",
+    f_offer: "Offer, prices, facts", f_cta: "CTA", f_rules: "Rules and no-gos", f_hashtags: "Core hashtags", f_source_note: "Source",
+    ai_lang: "English",
+    tab_saved: "Saved", sv_h: "Saved", sv_lede: "Your starred posts and stories. Generation uses starred posts as examples and avoids what you minus.",
+    sv_posts: "Posts", sv_news: "Stories", sv_blocked: "Blocked hashtags", sv_blocked_h: "Generation won't suggest these any more. Tap one to allow it again.",
+    sv_none_posts: "No starred posts yet. Tap ☆ on a post card to save it here.", sv_none_news: "No starred stories yet.", sv_none_tags: "No blocked hashtags.",
+    star: "Star to save", unstar: "Remove star", minus: "Not needed, skip next time", hidden_news: "Hidden. The news finder won't bring similar ones.", hidden_post: "Dismissed. Generation will avoid this style.", undo: "Undo",
+    block_tag: "Block hashtag", remove: "Remove", open: "Open", e_save: "Couldn't save your mark."
+  }
+};
+let lang = "hu";
+try { const s = localStorage.getItem("reax-lang"); if (s === "en" || s === "hu") lang = s; } catch {}
+const t = (k, vars) => { let s = (STR[lang] && STR[lang][k]) ?? STR.hu[k] ?? k; if (vars) for (const [a, b] of Object.entries(vars)) s = s.replace("{" + a + "}", b); return s; };
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(n => n.textContent = t(n.dataset.i18n));
+  document.querySelectorAll("[data-i18n-ph]").forEach(n => n.placeholder = t(n.dataset.i18nPh));
+  document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  $("#shotDrop").setAttribute("aria-label", t("shot_txt")); $("#imgDrop").setAttribute("aria-label", t("img_drop"));
+  if (shotBlob) $("#shotTxt").textContent = t("shot_done");
+  if (srcImg) $("#imgTxt").textContent = imgLabel;
+  renderSizeList(); renderBrandChips(); renderBrandForms(); renderNews(latestNews); renderSaved();
+  if (lastResult) renderResult(lastResult);
+  if (srcImg) renderCrops();
+}
+document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => {
+  lang = b.dataset.lang; try { localStorage.setItem("reax-lang", lang); } catch {}
+  applyLang();
+}));
+
+/* ---------- static config ---------- */
+const BRAND_ORDER = ["asc", "mindhaven", "bereljufot", "sandorkardos"];
+const BRAND_VAR = { asc: "--b-asc", mindhaven: "--b-mindhaven", bereljufot: "--b-bereljufot", sandorkardos: "--b-sandorkardos" };
+const PLATFORMS = [
+  { id: "facebook", name: "Facebook" },
+  { id: "instagram", name: "Instagram" },
+  { id: "linkedin", name: "LinkedIn" },
+  { id: "tiktok", name: "TikTok" }
+];
+// Sizes checked against 2026 platform guides; defaults are the mobile-first formats.
+const SIZES = [
+  { id: "ig-portrait", plat: "instagram", kind: "Feed 4:5", w: 1080, h: 1350, fmt: "feed", def: true },
+  { id: "ig-story", plat: "instagram", kind: "Story/Reel 9:16", w: 1080, h: 1920, fmt: "story", def: true },
+  { id: "ig-square", plat: "instagram", kind: "square 1:1", w: 1080, h: 1080, fmt: "square" },
+  { id: "fb-portrait", plat: "facebook", kind: "Feed 4:5", w: 1080, h: 1350, fmt: "feed", def: true },
+  { id: "fb-story", plat: "facebook", kind: "Story 9:16", w: 1080, h: 1920, fmt: "story" },
+  { id: "fb-link", plat: "facebook", kind: "link 1.91:1", w: 1200, h: 630, fmt: "link" },
+  { id: "li-portrait", plat: "linkedin", kind: "Feed 4:5", w: 1080, h: 1350, fmt: "feed", def: true },
+  { id: "li-square", plat: "linkedin", kind: "square 1:1", w: 1200, h: 1200, fmt: "square" },
+  { id: "li-link", plat: "linkedin", kind: "link 1.91:1", w: 1200, h: 627, fmt: "link" },
+  { id: "tt-photo", plat: "tiktok", kind: "Photo 9:16", w: 1080, h: 1920, fmt: "photo" }
+];
+const sizeKind = s => s.kind.replace("square", t("square")).replace("link", t("link_img"));
+const sizeLabel = s => `${PLATFORMS.find(p => p.id === s.plat).name} ${sizeKind(s)}`;
+const PLATFORM_RULES = `
+- facebook: 40-120 words, conversational, first line must work before "See more". 0-3 core hashtags, extra hashtags optional.
+- instagram: hook in first 125 characters, short lines with line breaks, never paste URLs (say "link in bio" / "link a bióban"). 3-5 core hashtags plus 8-15 extra (mix of broad, niche and local).
+- linkedin: 120-250 words, first-person professional take, one clear lesson or opinion, at most 2 emoji. 3-5 core hashtags, 2-5 extra.
+- tiktok: photo/carousel caption, 1-3 short lines, strong hook. 3-5 core hashtags plus 3-6 extra trending-style tags.`;
+
+const GLOBAL_RULES = `
+- Never use em dashes or en dashes as punctuation.
+- No AI-typical phrasing ("in today's fast-paced world", "game-changer", "let's dive in", "unlock", "elevate", "navigate the landscape").
+- Do not invent facts, statistics, prices, dates, partner names or quotes. If a needed detail is unknown, write [FILL: what is needed].
+- Do not copy sentences from the source. Paraphrase. At most one short quote under 15 words, attributed.
+- If the post reacts to a news item, end the caption with a short source line (outlet name; add the URL only on Facebook/LinkedIn if the user gave one).
+- Each brand must read differently: different angle, never the same text translated.
+- The user's opinion is the spine of every post. If it is empty, choose a neutral angle and say so in "angle_note".
+- Hashtags: core = must-use, specific; extra = related/long-tail/local alternatives the user may tick. No spaces inside tags, no duplicates between core and extra. Hungarian brand: give accent-free versions where people actually use them (e.g. #utanfuto next to #utánfutó).
+- seo_keyword: 2-5 word search phrase in the brand's language, matching what someone would search for this topic (used for image filenames).`;
+
+/* ---------- state ---------- */
+let brands = {};
+let db = null, sample = null, downloads = null, imagesOk = false;
+let lastResult = null;
+let lastInput = { src: "", opinion: "" };
+let shotBlob = null;
+let latestNews = null;
+let srcImg = null, imgLabel = "", focusBoxes = [], manualFocus = null, aiRunId = 0;
+let prefs = {};             // prefs/<brandId> {blocked_tags, liked, disliked}; prefs/news {liked, disliked}
+let saved = [];             // saved collection docs {id, ...}
+
+/* ---------- star / minus memory (db: prefs + saved) ---------- */
+const nowIso = () => new Date().toISOString();
+const hash = s => { let h = 0x811c9dc5; for (const ch of String(s)) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
+const newsKey = n => "n-" + hash((n.url || "") + "|" + (n.title_original || n.title || ""));
+const lastN = (arr, n) => arr.slice(-n);
+async function writePref(docId, next) {
+  prefs[docId] = next;
+  if (!db) throw { message: t("br_no_db") };
+  await db.doc("prefs/" + docId).set(next);
+}
+const brandPref = id => ({ blocked_tags: [], liked: [], disliked: [], ...(prefs[id] || {}) });
+const newsPref = () => ({ liked: [], disliked: [], ...(prefs.news || {}) });
+const isNewsHidden = n => newsPref().disliked.some(x => x.url === n.url && x.title === n.title);
+const isNewsStarred = n => saved.some(s => s.id === newsKey(n));
+function voteButtons({ starred, onStar, onMinus }) {
+  const star = el("button", { type: "button", class: "star", "aria-pressed": String(!!starred), title: starred ? t("unstar") : t("star"), "aria-label": starred ? t("unstar") : t("star"), text: starred ? "★" : "☆" });
+  const minus = el("button", { type: "button", class: "minus", title: t("minus"), "aria-label": t("minus"), text: "−" });
+  const paint = on => { star.setAttribute("aria-pressed", String(on)); star.textContent = on ? "★" : "☆"; star.title = on ? t("unstar") : t("star"); star.setAttribute("aria-label", star.title); };
+  star.addEventListener("click", async () => { star.disabled = true; try { const on = await onStar(); if (typeof on === "boolean") paint(on); } catch (e) { alertStatus(e); } finally { star.disabled = false; } });
+  minus.addEventListener("click", async () => { minus.disabled = true; try { await onMinus(); } catch (e) { alertStatus(e); } finally { minus.disabled = false; } });
+  return el("span", { class: "vote" }, star, minus);
+}
+function alertStatus(e) { setStatus($("#genStatus"), (e && e.message) ? t("e_save") + " " + e.message : t("e_save"), true); }
+
+async function toggleNewsStar(n, doc) {
+  const key = newsKey(n), p = newsPref();
+  if (isNewsStarred(n)) {
+    await db.doc("saved/" + key).delete();
+    await writePref("news", { ...p, liked: p.liked.filter(x => x.url !== n.url) });
+  } else {
+    await db.doc("saved/" + key).set({ type: "news", title: n.title, title_en: n.title_en || "", summary: n.summary || "", summary_en: n.summary_en || "", source: n.source || "", url: n.url || "", date: n.date || doc.date, brands: n.brands || [], savedAt: nowIso() });
+    await writePref("news", { ...p, liked: lastN([...p.liked.filter(x => x.url !== n.url), { url: n.url || "", title: n.title_original || n.title, source: n.source || "", brands: n.brands || [] }], 50) });
+  }
+}
+async function hideNews(n, undo = false) {
+  const p = newsPref();
+  const rest = p.disliked.filter(x => !(x.url === n.url && x.title === n.title));
+  await writePref("news", { ...p, disliked: undo ? rest : lastN([...rest, { url: n.url || "", title: n.title, title_original: n.title_original || "", source: n.source || "", brands: n.brands || [] }], 50) });
+  renderNews(latestNews);
+}
+async function blockTag(brandId, tag, unblock = false) {
+  const p = brandPref(brandId), low = tag.toLowerCase();
+  const rest = p.blocked_tags.filter(x => x.toLowerCase() !== low);
+  await writePref(brandId, { ...p, blocked_tags: unblock ? rest : [...rest, tag] });
+  renderSaved();
+}
+
+/* ---------- utils ---------- */
+const slugify = (s, max = 60) => {
+  const stop = new Set(["a","az","es","egy","the","and","of","for","to","in","on","with","is","are","be"]);
+  const out = String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ").trim().split(/\s+/).filter(w => w && !stop.has(w)).join("-");
+  return out.slice(0, max).replace(/-+$/, "");
+};
+const setStatus = (node, msg, err = false) => { node.textContent = msg || ""; node.classList.toggle("err", !!err); };
+const copyText = async (text, btn) => {
+  const o = btn.textContent;
+  try { await navigator.clipboard.writeText(text); btn.textContent = t("copied"); setTimeout(() => btn.textContent = o, 1400); }
+  catch { const ta = el("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.append(ta); ta.select(); try { document.execCommand("copy"); btn.textContent = t("copied"); } catch { btn.textContent = t("copy_manual"); } ta.remove(); setTimeout(() => btn.textContent = o, 1800); }
+};
+const brandColor = id => `var(${BRAND_VAR[id] || "--accent"})`;
+const errMsg = e => {
+  const c = e && e.code;
+  if (c === "not_granted") return t("e_not_granted");
+  if (c === "rate_limited") return t("e_rate");
+  if (c === "images_unavailable") return t("e_images");
+  return (e && e.message) ? t("e_prefix") + e.message : t("e_unknown");
+};
+
+/* ---------- tabs ---------- */
+const views = ["post", "komment", "kep", "mentett", "markak"];
+function show(v) {
+  if (!views.includes(v)) v = "post";
+  views.forEach(x => { $("#view-" + x).hidden = x !== v; $("#tab-" + x).setAttribute("aria-selected", String(x === v)); });
+}
+document.querySelectorAll("nav.tabs button").forEach(b => b.addEventListener("click", () => { location.hash = b.dataset.view; show(b.dataset.view); }));
+window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+show(location.hash.slice(1));
+
+/* ---------- compose controls ---------- */
+function renderBrandChips() {
+  const box = $("#brandChips");
+  const prev = new Set([...box.querySelectorAll("input")].filter(i => !i.checked).map(i => i.value));
+  box.replaceChildren();
+  BRAND_ORDER.filter(id => brands[id]).forEach(id => {
+    box.append(el("label", { class: "chip" }, el("input", Object.assign({ type: "checkbox", id: "bc-" + id, value: id }, prev.has(id) ? {} : { checked: "" })), el("span", { class: "dot", style: `background:${brandColor(id)}` }), brands[id].name));
+  });
+  if (!box.children.length) box.append(el("span", { class: "note", text: t("brands_loading") }));
+  for (const sid of ["#imgBrand", "#kBrand"]) {
+    const sel = $(sid), cur = sel.value; sel.replaceChildren();
+    BRAND_ORDER.filter(id => brands[id]).forEach(id => sel.append(el("option", { value: id, text: brands[id].name })));
+    if (cur && brands[cur]) sel.value = cur;
+  }
+  updateFilenames();
+}
+PLATFORMS.forEach(p => $("#platChips").append(el("label", { class: "chip" }, el("input", Object.assign({ type: "checkbox", id: "pc-" + p.id, value: p.id }, p.id !== "tiktok" ? { checked: "" } : {})), p.name)));
+PLATFORMS.forEach(p => $("#kPlat").append(el("option", { value: p.id, text: p.name })));
+
+const shotDrop = $("#shotDrop"), shotFile = $("#shotFile");
+shotDrop.addEventListener("click", () => shotFile.click());
+shotDrop.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); shotFile.click(); } });
+shotFile.addEventListener("change", () => shotFile.files[0] && setShot(shotFile.files[0]));
+function setShot(file) {
+  shotBlob = file; $("#shotPrev").src = URL.createObjectURL(file); $("#shotPrev").hidden = false;
+  $("#shotTxt").textContent = t("shot_done"); shotDrop.classList.add("has");
+}
+document.addEventListener("paste", e => {
+  const item = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith("image/"));
+  if (!item) return;
+  const f = item.getAsFile(); if (!f) return;
+  if (!$("#view-kep").hidden) loadImage(f); else if (!$("#view-post").hidden) setShot(f);
+});
+$("#clearBtn").addEventListener("click", () => {
+  $("#src").value = ""; $("#opinion").value = ""; shotBlob = null; $("#shotPrev").hidden = true; $("#shotTxt").textContent = t("shot_txt"); shotDrop.classList.remove("has"); setStatus($("#genStatus"), "");
+});
+
+/* ---------- generation ---------- */
+function buildPrompt(src, opinion, brandIds, platIds) {
+  const profiles = brandIds.map(id => {
+    const pr = brandPref(id);
+    return { id, ...brands[id],
+      blocked_hashtags_never_use: pr.blocked_tags,
+      liked_examples_match_this_feel: pr.liked.slice(-3).map(x => ({ platform: x.platform, text: x.text })),
+      disliked_examples_avoid_this_style: pr.disliked.slice(-3).map(x => ({ platform: x.platform, text: x.text })) };
+  });
+  const L = t("ai_lang");
+  return `You write ready-to-paste social media posts for a small business owner who runs several brands.
+Each brand profile may include the owner's feedback: liked examples (match their tone, length and structure, never copy them), disliked examples (avoid that style) and blocked hashtags (never use them).
+
+TASK
+1) Read the input (text below${shotBlob ? " and the attached screenshot" : ""}). Summarise it in one line in ${L}.
+2) Score each brand 0-3 for how naturally it can react to this item (0 = no real link, 3 = core topic). Never force a connection. Respect each brand's rules (a brand's rules can force 0).
+3) For every brand scoring 2 or 3, write one post per platform in: ${platIds.join(", ")} (only those the brand uses; a brand's "platforms" list is its default set, but include a requested platform if it clearly suits the brand).
+4) Write each post (caption, hashtags, alt text) in the BRAND's language and voice, whatever language the input or opinion is in.
+
+PLATFORM RULES${PLATFORM_RULES}
+
+GLOBAL RULES${GLOBAL_RULES}
+
+BRAND PROFILES (JSON)
+${JSON.stringify(profiles, null, 1)}
+
+INPUT
+"""${src || "(see screenshot)"}"""
+
+USER OPINION
+"""${opinion || ""}"""
+
+Return ONLY JSON in this shape:
+{"summary":"one line in ${L}","angle_note":"in ${L}, or empty","brands":[{"id":"brand id","score":0,"reason":"short reason in ${L}","seo_keyword":"phrase in the brand language","posts":[{"platform":"instagram","caption":"full caption text without hashtags","hashtags_core":["#tag"],"hashtags_extra":["#tag"],"alt_text":"image alt text in the brand language, max 125 chars","image_idea":"what photo or graphic to use, in ${L}","best_time":"suggested posting time, in ${L}"}]}]}
+Include every brand listed in BRAND PROFILES in "brands", with "posts": [] when score < 2.`;
+}
+
+$("#postForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const st = $("#genStatus");
+  const src = $("#src").value.trim(), opinion = $("#opinion").value.trim();
+  const brandIds = BRAND_ORDER.filter(id => $("#bc-" + id)?.checked);
+  const platIds = PLATFORMS.map(p => p.id).filter(id => $("#pc-" + id).checked);
+  if (!src && !shotBlob) return setStatus(st, t("e_need_src"), true);
+  if (!brandIds.length) return setStatus(st, t("e_need_brand"), true);
+  if (!platIds.length) return setStatus(st, t("e_need_plat"), true);
+  if (!sample) return setStatus(st, t("e_no_ai"), true);
+  if (shotBlob && !imagesOk) return setStatus(st, t("e_no_img"), true);
+  const btn = $("#genBtn"); btn.disabled = true;
+  setStatus(st, t("gen_busy"));
+  try {
+    const opts = { modelTier: "default", cache: false };
+    if (shotBlob) opts.images = [shotBlob];
+    const res = await sample.json(buildPrompt(src, opinion, brandIds, platIds), opts);
+    if (!res || !Array.isArray(res.brands)) throw { message: t("e_format") };
+    lastResult = res; lastInput = { src: src || ("(screenshot) " + (res.summary || "")), opinion };
+    renderResult(res); setStatus(st, t("done"));
+    const firstKw = res.brands.find(b => b.score >= 2 && b.seo_keyword);
+    if (firstKw) { $("#imgBrand").value = firstKw.id; syncKwFromResult(); }
+  } catch (err) { setStatus(st, errMsg(err), true); }
+  finally { btn.disabled = false; }
+});
+
+function renderResult(res) {
+  const out = $("#out"); out.replaceChildren(); out.hidden = false; $("#outEmpty").hidden = true;
+  out.append(el("div", { class: "eyebrow", text: t("summary") }), el("p", { style: "margin:4px 0 12px", text: res.summary || "" }));
+  if (res.angle_note) out.append(el("p", { class: "note", style: "margin:-6px 0 12px", text: res.angle_note }));
+  const rel = el("div", { class: "rel" });
+  res.brands.forEach(b => rel.append(el("div", { class: "relrow" },
+    el("span", { class: "chip", style: "cursor:default" }, el("span", { class: "dot", style: `background:${brandColor(b.id)}` }), brands[b.id]?.name || b.id),
+    el("span", { class: "note", text: b.reason || "" }),
+    el("span", { class: "score s" + b.score, text: b.score + "/3" }))));
+  out.append(el("div", { class: "eyebrow", style: "margin-bottom:6px", text: t("relevance") }), rel);
+  const relevant = res.brands.filter(b => b.score >= 2 && b.posts?.length);
+  if (!relevant.length) { out.append(el("div", { class: "empty", style: "margin-top:16px", text: t("none_fit") })); return; }
+  relevant.forEach(b => {
+    const blk = el("div", { class: "brandblock", style: "margin-top:20px" },
+      el("div", { class: "brandhead" }, el("span", { class: "sw", style: `background:${brandColor(b.id)}` }), el("h3", { text: brands[b.id]?.name || b.id }),
+        b.id === "mindhaven" ? el("span", { class: "approval", text: t("approval") }) : null));
+    const grid = el("div", { class: "posts" });
+    b.posts.forEach((p, i) => grid.append(renderPost(b, p, i)));
+    blk.append(grid); out.append(blk);
+  });
+}
+
+function renderPost(b, p, i) {
+  const uid = `${b.id}-${p.platform}-${i}`;
+  const cap = el("textarea", { class: "cap", id: "cap-" + uid, "aria-label": "caption" }); cap.value = p.caption || "";
+  cap.addEventListener("input", () => { p.caption = cap.value; cnt.textContent = cap.value.length + " " + t("chars"); });
+  const tagBox = el("div", { class: "chips" });
+  const blocked = new Set(brandPref(b.id).blocked_tags.map(x => x.toLowerCase()));
+  const addTag = (tg, extra) => {
+    if (blocked.has(String(tg).toLowerCase())) return;
+    const x = el("button", { type: "button", class: "x", title: t("block_tag"), "aria-label": t("block_tag") + " " + tg, text: "×" });
+    const chip = el("label", { class: "chip tag" + (extra ? " extra" : "") }, el("input", Object.assign({ type: "checkbox", value: tg }, extra ? {} : { checked: "" })), tg, x);
+    x.addEventListener("click", async e => { e.preventDefault(); e.stopPropagation(); x.disabled = true; try { await blockTag(b.id, tg); chip.remove(); } catch (err) { alertStatus(err); x.disabled = false; } });
+    tagBox.append(chip);
+  };
+  (p.hashtags_core || []).forEach(tg => addTag(tg, false));
+  (p.hashtags_extra || []).forEach(tg => addTag(tg, true));
+  const fname = `${slugify(b.seo_keyword)}-${slugify(brands[b.id]?.slug || b.id)}-${p.platform}`;
+  const fullText = () => {
+    const tags = [...tagBox.querySelectorAll("input:checked")].map(x => x.value).join(" ");
+    return tags ? `${cap.value.trim()}\n\n${tags}` : cap.value.trim();
+  };
+  const cnt = el("span", { class: "mono", style: "color:var(--muted)", text: cap.value.length + " " + t("chars") });
+  const copyBtn = el("button", { class: "btn small primary", type: "button", text: t("copy_all") });
+  copyBtn.addEventListener("click", () => copyText(fullText(), copyBtn));
+  const altBtn = el("button", { class: "btn small", type: "button", text: t("copy_alt") });
+  altBtn.addEventListener("click", () => copyText(p.alt_text || "", altBtn));
+  const imgBtn = el("button", { class: "btn small", type: "button", text: t("to_image") });
+  imgBtn.addEventListener("click", () => { $("#imgBrand").value = b.id; $("#imgKw").value = b.seo_keyword || ""; $("#imgAlt").value = p.alt_text || ""; updateFilenames(); location.hash = "kep"; show("kep"); });
+  const anaBox = el("div", { hidden: "" });
+  const anaSt = el("div", { class: "status", role: "status" });
+  const anaBtn = el("button", { class: "btn small", type: "button", text: t("analyze") });
+  anaBtn.addEventListener("click", async () => {
+    anaBtn.disabled = true; setStatus(anaSt, t("ana_busy"));
+    try {
+      const r = await analyze({ brandId: b.id, platform: p.platform, kind: "post", source: lastInput.src, opinion: lastInput.opinion, text: cap.value.trim() });
+      anaBox.replaceChildren(renderAnalysis(r, txt => { cap.value = txt; p.caption = txt; cnt.textContent = txt.length + " " + t("chars"); })); anaBox.hidden = false; setStatus(anaSt, "");
+    } catch (err) { setStatus(anaSt, errMsg(err), true); }
+    finally { anaBtn.disabled = false; }
+  });
+  const card = el("article", { class: "post" });
+  const tagsNow = () => [...tagBox.querySelectorAll("input:checked")].map(x => x.value);
+  const votes = voteButtons({
+    starred: !!p._savedId,
+    onStar: async () => {
+      const pr = brandPref(b.id);
+      if (p._savedId) {
+        await db.doc("saved/" + p._savedId).delete();
+        await writePref(b.id, { ...pr, liked: pr.liked.filter(x => x.id !== p._savedId) }); p._savedId = null; return false;
+      } else {
+        const id = "p-" + Date.now();
+        await db.doc("saved/" + id).set({ type: "post", brand: b.id, platform: p.platform, text: cap.value.trim(), tags: tagsNow(), alt: p.alt_text || "", savedAt: nowIso() });
+        await writePref(b.id, { ...pr, liked: lastN([...pr.liked, { id, platform: p.platform, text: cap.value.trim() }], 8) }); p._savedId = id; return true;
+      }
+    },
+    onMinus: async () => {
+      const pr = brandPref(b.id);
+      await writePref(b.id, { ...pr, disliked: lastN([...pr.disliked, { platform: p.platform, text: cap.value.trim() }], 8) });
+      const undo = el("button", { type: "button", text: t("undo") });
+      const gone = el("div", { class: "gone" }, el("span", { text: `${PLATFORMS.find(x => x.id === p.platform)?.name || p.platform}: ${t("hidden_post")}` }), undo);
+      undo.addEventListener("click", async () => { const q = brandPref(b.id); await writePref(b.id, { ...q, disliked: q.disliked.filter(x => x.text !== cap.value.trim()) }); gone.replaceWith(card); });
+      card.replaceWith(gone);
+    }
+  });
+  card.append(
+    el("div", { class: "top" }, el("strong", { text: PLATFORMS.find(x => x.id === p.platform)?.name || p.platform }), el("span", { class: "row", style: "gap:8px" }, cnt, votes)),
+    el("div", { class: "body" }, cap,
+      el("div", {}, el("div", { class: "eyebrow", style: "margin-bottom:6px", text: t("tags_hint") }), tagBox),
+      el("dl", { class: "meta" },
+        el("dt", { text: t("m_alt") }), el("dd", { text: p.alt_text || "–" }),
+        el("dt", { text: t("m_img") }), el("dd", { text: p.image_idea || "–" }),
+        el("dt", { text: t("m_time") }), el("dd", { text: p.best_time || "–" }),
+        el("dt", { text: t("m_file") }), el("dd", { class: "mono", text: fname + "-1080x1350.jpg" })),
+      el("div", { class: "row" }, copyBtn, altBtn, imgBtn, anaBtn), anaSt, anaBox));
+  return card;
+}
+
+/* ---------- analysis (posts and comment replies) ---------- */
+const SPICY_BLOCKED = new Set(["mindhaven", "asc"]); // counselling and kids' brands never bait arguments
+function analyzePrompt({ brandId, platform, kind, source, opinion, text, comment }) {
+  const b = brands[brandId] || {};
+  const spicyAllowed = !SPICY_BLOCKED.has(brandId);
+  const L = t("ai_lang");
+  return `You are a blunt social media editor reviewing ${kind === "reply" ? "the owner's reply to a comment" : "a post"} before it goes live on ${platform}.
+Write all feedback fields (summary, misunderstanding, issues, troll "kind", spicy_note) in ${L}. Write every comment, reply, question, spicy_variant and improved text in the BRAND's language.
+
+BRAND PROFILE (JSON)
+${JSON.stringify({ id: brandId, ...b }, null, 1)}
+
+${kind === "reply" ? `ORIGINAL POST (context, may be empty)\n"""${source || ""}"""\n\nCOMMENT BEING ANSWERED\n"""${comment || ""}"""\n\nOWNER'S REPLY DRAFT\n"""${text}"""` : `SOURCE THE POST REACTS TO\n"""${source || ""}"""\n\nOWNER'S OPINION\n"""${opinion || ""}"""\n\nPOST DRAFT\n"""${text}"""`}
+
+Assess honestly. Do not flatter. Check:
+1) answers_question: does it actually respond to ${kind === "reply" ? "what the commenter said or asked" : "the source item and make a clear point"}? (0-5)
+2) misunderstanding: did the owner misread the ${kind === "reply" ? "comment (tone, sarcasm, the actual question)" : "source"}? Describe it, or "" if none.
+3) originality: is it a fresh take or generic filler anyone could post? (0-5)
+4) clarity (0-5), brand_fit with the profile (0-5), risk of backlash, misreading or brand damage (0-5, 5 = very risky).
+5) issues: up to 5 concrete problems, most important first.
+6) trolls: 3-4 realistic hostile or bad-faith comments this ${kind === "reply" ? "reply" : "post"} could attract on ${platform}. For each give "kind" (short label, e.g. cynic, nitpicking expert, "it's just an ad"), a calm factual reply and a short confident reply with light humour. Replies never insult, never punch down, never reveal private data, and follow the brand rules.
+7) openers: 2 opening questions and closers: 2 closing questions that invite real discussion, not "What do you think?".
+8) ${spicyAllowed ? `spicy_variant: a sharper, debate-starting version that takes a clear stance and invites disagreement, still factual and fair, no insults, no rage-bait about people or groups. spicy_note: one line on the risk.` : `spicy_variant must be "" because this brand (counselling or children's activities) must not bait arguments. spicy_note: explain this in one line.`}
+9) improved: a rewritten version that fixes the issues, keeps the owner's point and voice, no em dashes, no AI-typical phrasing${kind === "reply" ? ", sized for a comment reply" : ""}.
+verdict: "jo" | "javitando" | "gyenge" (good / needs work / weak).
+
+Return ONLY JSON:
+{"verdict":"javitando","summary":"one sentence","scores":{"answers_question":0,"originality":0,"clarity":0,"brand_fit":0,"risk":0},"misunderstanding":"","issues":[""],"trolls":[{"comment":"","kind":"","reply_calm":"","reply_witty":""}],"openers":[""],"closers":[""],"spicy_variant":"","spicy_note":"","improved":""}`;
+}
+async function analyze(args) {
+  if (!sample) throw { message: t("e_no_ai") };
+  if (!args.text) throw { message: t("e_empty_text") };
+  const r = await sample.json(analyzePrompt(args), { modelTier: "default", cache: false });
+  if (!r || !r.scores) throw { message: t("e_format") };
+  return r;
+}
+function renderAnalysis(r, applyText) {
+  const cls = { jo: "v-jo", javitando: "v-javitando", gyenge: "v-gyenge" }[r.verdict] || "v-javitando";
+  const box = el("div", { class: "ana" });
+  box.append(el("span", { class: "verdict " + cls, text: t(cls.replace("-", "_")) }), el("p", { style: "margin:0", text: r.summary || "" }));
+  const m = el("div", { class: "meters" });
+  [["answers_question", "s_answers"], ["originality", "s_orig"], ["clarity", "s_clarity"], ["brand_fit", "s_fit"], ["risk", "s_risk"]].forEach(([k, lbl]) => {
+    const v = Math.max(0, Math.min(5, Number(r.scores?.[k]) || 0));
+    m.append(el("span", { text: t(lbl) }), el("span", { class: "meter" + (k === "risk" ? " risk" : "") }, el("i", { style: `width:${v * 20}%` })), el("span", { class: "n", text: v + "/5" }));
+  });
+  box.append(m);
+  if (r.misunderstanding) box.append(el("div", { class: "flag" }, el("strong", { text: t("misread") }), r.misunderstanding));
+  if (r.issues?.filter(Boolean).length) box.append(el("div", { class: "eyebrow", text: t("issues") }), el("ul", { class: "issues" }, r.issues.filter(Boolean).map(x => el("li", { text: x }))));
+  const copyBtn = x => { const b = el("button", { class: "btn small", type: "button", text: t("copy") }); b.addEventListener("click", () => copyText(x, b)); return b; };
+  if (r.trolls?.length) {
+    box.append(el("div", { class: "eyebrow", text: t("trolls") }));
+    r.trolls.forEach(tr => box.append(el("div", { class: "troll" },
+      el("span", { class: "kind", text: tr.kind || "" }), el("q", { text: tr.comment || "" }),
+      el("div", { class: "reply" }, el("span", { class: "tag", text: t("calm") }), el("span", { text: tr.reply_calm || "" }), copyBtn(tr.reply_calm || "")),
+      el("div", { class: "reply" }, el("span", { class: "tag", text: t("witty") }), el("span", { text: tr.reply_witty || "" }), copyBtn(tr.reply_witty || "")))));
+  }
+  const qs = (title, arr) => { if (!arr?.filter(Boolean).length) return; box.append(el("div", { class: "eyebrow", text: title }), el("div", { class: "qlist" }, arr.filter(Boolean).map(q => el("div", { class: "qitem" }, el("span", { text: q }), copyBtn(q))))); };
+  qs(t("openers"), r.openers); qs(t("closers"), r.closers);
+  box.append(el("div", { class: "eyebrow", text: t("spicy") }));
+  if (r.spicy_variant) {
+    const use = el("button", { class: "btn small", type: "button", text: t("use_this") }); use.addEventListener("click", () => applyText(r.spicy_variant));
+    box.append(el("div", { class: "better", text: r.spicy_variant }), el("div", { class: "row" }, copyBtn(r.spicy_variant), use));
+  }
+  if (r.spicy_note) box.append(el("p", { class: "note", style: "margin:0", text: r.spicy_note }));
+  if (r.improved) {
+    const use = el("button", { class: "btn small primary", type: "button", text: t("use_improved") }); use.addEventListener("click", () => applyText(r.improved));
+    box.append(el("div", { class: "eyebrow", text: t("improved") }), el("div", { class: "better", text: r.improved }), el("div", { class: "row" }, copyBtn(r.improved), use));
+  }
+  return box;
+}
+
+$("#kForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const st = $("#kStatus"), btn = $("#kBtn");
+  const comment = $("#kComment").value.trim(), text = $("#kReply").value.trim();
+  if (!comment || !text) return setStatus(st, t("k_need"), true);
+  if (!$("#kBrand").value) return setStatus(st, t("k_need_brand"), true);
+  btn.disabled = true; setStatus(st, t("ana_busy"));
+  try {
+    const r = await analyze({ brandId: $("#kBrand").value, platform: $("#kPlat").value, kind: "reply", source: $("#kPost").value.trim(), comment, text });
+    const out = $("#kOut"); out.replaceChildren(renderAnalysis(r, x => { $("#kReply").value = x; })); out.hidden = false; $("#kEmpty").hidden = true; setStatus(st, t("done"));
+  } catch (err) { setStatus(st, errMsg(err), true); }
+  finally { btn.disabled = false; }
+});
+
+/* ---------- image tool ---------- */
+const imgDrop = $("#imgDrop"), imgFile = $("#imgFile");
+imgDrop.addEventListener("click", () => imgFile.click());
+imgDrop.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); imgFile.click(); } });
+imgFile.addEventListener("change", () => imgFile.files[0] && loadImage(imgFile.files[0]));
+["dragover", "drop"].forEach(tp => imgDrop.addEventListener(tp, e => { e.preventDefault(); if (tp === "drop" && e.dataTransfer.files[0]) loadImage(e.dataTransfer.files[0]); }));
+
+function renderSizeList() {
+  const box = $("#sizeList");
+  const checked = box.children.length ? new Set(SIZES.filter(s => $("#sz-" + s.id)?.checked).map(s => s.id)) : new Set(SIZES.filter(s => s.def).map(s => s.id));
+  box.replaceChildren();
+  PLATFORMS.forEach(p => {
+    const grp = el("div", { class: "grp" }, el("span", { class: "note", text: p.name }));
+    const chips = el("div", { class: "chips" });
+    SIZES.filter(s => s.plat === p.id).forEach(s => {
+      const inp = el("input", Object.assign({ type: "checkbox", id: "sz-" + s.id, value: s.id }, checked.has(s.id) ? { checked: "" } : {}));
+      inp.addEventListener("change", renderCrops);
+      chips.append(el("label", { class: "chip" }, inp, `${sizeKind(s)} · ${s.w}×${s.h}`));
+    });
+    grp.append(chips); box.append(grp);
+  });
+}
+$("#imgBrand").addEventListener("change", () => { syncKwFromResult(); updateFilenames(); });
+$("#imgKw").addEventListener("input", updateFilenames);
+
+function syncKwFromResult() {
+  const b = lastResult?.brands?.find(x => x.id === $("#imgBrand").value);
+  if (b?.seo_keyword) $("#imgKw").value = b.seo_keyword;
+  const alt = b?.posts?.find(p => p.alt_text)?.alt_text; if (alt) $("#imgAlt").value = alt;
+}
+function fileName(s) {
+  const brand = brands[$("#imgBrand").value];
+  const kw = slugify($("#imgKw").value) || "image";
+  return `${kw}-${slugify(brand?.slug || $("#imgBrand").value || "brand")}-${s.plat}-${s.fmt}-${s.w}x${s.h}.jpg`;
+}
+function updateFilenames() { document.querySelectorAll(".crop[data-size]").forEach(c => { const s = SIZES.find(x => x.id === c.dataset.size); c.querySelector(".fn").textContent = fileName(s); }); }
+
+function loadImage(file) {
+  const img = new Image();
+  img.onload = () => {
+    srcImg = img; focusBoxes = []; manualFocus = null;
+    imgLabel = `${file.name || t("img_pasted")} · ${img.naturalWidth}×${img.naturalHeight}`;
+    $("#imgTxt").textContent = imgLabel; imgDrop.classList.add("has");
+    $("#imgEmpty").hidden = true; $("#stage").hidden = false; $("#zipBtn").disabled = false; $("#aiFocusBtn").disabled = false;
+    drawStage(); renderCrops(); detectFocus();
+  };
+  img.onerror = () => setStatus($("#imgStatus"), t("img_bad"), true);
+  img.src = URL.createObjectURL(file);
+}
+
+function drawStage() {
+  const c = $("#srcCanvas"), W = srcImg.naturalWidth, H = srcImg.naturalHeight;
+  const scale = Math.min(1, 900 / Math.max(W, H));
+  c.width = Math.round(W * scale); c.height = Math.round(H * scale);
+  const g = c.getContext("2d"); g.drawImage(srcImg, 0, 0, c.width, c.height);
+  focusBoxes.forEach(b => {
+    g.lineWidth = Math.max(2, c.width / 300);
+    g.strokeStyle = b.type === "face" ? "#FFD400" : "#00E0FF";
+    g.strokeRect(b.x * c.width, b.y * c.height, b.w * c.width, b.h * c.height);
+  });
+  if (manualFocus) {
+    g.fillStyle = "#FF2D55"; g.beginPath(); g.arc(manualFocus.x * c.width, manualFocus.y * c.height, Math.max(6, c.width / 90), 0, Math.PI * 2); g.fill();
+    g.strokeStyle = "#fff"; g.lineWidth = 2; g.stroke();
+  }
+}
+$("#srcCanvas").addEventListener("click", e => {
+  if (!srcImg) return;
+  const r = e.target.getBoundingClientRect();
+  manualFocus = { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height };
+  drawStage(); renderCrops(); setStatus($("#imgStatus"), t("img_manual"));
+});
+$("#aiFocusBtn").addEventListener("click", () => { manualFocus = null; detectFocus(); });
+
+function downscaleBlob(img, max = 1024) {
+  return new Promise(res => {
+    const s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement("canvas"); c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); c.toBlob(res, "image/jpeg", 0.85);
+  });
+}
+
+async function detectFocus() {
+  const st = $("#imgStatus"), run = ++aiRunId;
+  if (sample && imagesOk) {
+    setStatus(st, t("img_ai_busy"));
+    try {
+      const blob = await downscaleBlob(srcImg);
+      const r = await sample.json(`The attached image is a photo the user wants to crop for social media. Find what must stay inside every crop.
+Return ONLY JSON: {"subjects":[{"type":"face|person|product|text|object","x":0,"y":0,"w":0,"h":0,"weight":1}],"note":"one short sentence in ${t("ai_lang")} about the main subject"}
+Coordinates are fractions of image width/height (0-1), x,y = top-left. List every clearly visible human face as type "face" with a tight box (weight 1). Add the main subject (person body, product, artwork, key text) with weight 0.6-0.9. Ignore background. At most 8 items.`, { images: [blob], modelTier: "quick", cache: true });
+      if (run !== aiRunId) return;
+      focusBoxes = (r?.subjects || []).filter(b => [b.x, b.y, b.w, b.h].every(v => typeof v === "number" && v >= 0 && v <= 1.01) && b.w > 0 && b.h > 0);
+      const faces = focusBoxes.filter(b => b.type === "face").length;
+      setStatus(st, focusBoxes.length ? `${t("img_ai_result", { f: faces, o: focusBoxes.length - faces })} ${r?.note || ""}` : t("img_ai_none"));
+      if (!focusBoxes.length) await smartFallback();
+    } catch (err) {
+      if (run !== aiRunId) return;
+      setStatus(st, errMsg(err) + t("img_fallback"), true);
+      await smartFallback();
+    }
+  } else {
+    setStatus(st, t("img_no_ai"));
+    await smartFallback();
+  }
+  drawStage(); renderCrops();
+}
+
+// Fallback: smartcrop.js (edges, skin tone, saturation) gives a best region, used as a weighted focus box.
+async function smartFallback() {
+  if (!window.smartcrop) { focusBoxes = []; return; }
+  try {
+    const W = srcImg.naturalWidth, H = srcImg.naturalHeight, side = Math.min(W, H) * 0.6;
+    const r = await window.smartcrop.crop(srcImg, { width: side, height: side, minScale: 0.6 });
+    const c = r.topCrop; focusBoxes = [{ type: "object", x: c.x / W, y: c.y / H, w: c.width / W, h: c.height / H, weight: 0.8 }];
+  } catch { focusBoxes = []; }
+}
+
+// Largest crop of the target ratio that keeps faces, then weighted subjects, inside; faces sit near the upper third.
+function computeCrop(W, H, tw, th) {
+  const ar = tw / th; let cw, ch;
+  if (W / H > ar) { ch = H; cw = H * ar; } else { cw = W; ch = W / ar; }
+  const px = b => ({ x: b.x * W, y: b.y * H, w: b.w * W, h: b.h * H, type: b.type, weight: b.weight ?? 1 });
+  let cx = W / 2, cy = H / 2, keep = null;
+  if (manualFocus) { cx = manualFocus.x * W; cy = manualFocus.y * H; }
+  else if (focusBoxes.length) {
+    const boxes = focusBoxes.map(px);
+    const faces = boxes.filter(b => b.type === "face");
+    const strong = boxes.filter(b => b.weight >= 0.6);
+    const primary = faces.length ? faces : strong.length ? strong : boxes;
+    const u = primary.reduce((a, b) => ({ x1: Math.min(a.x1, b.x), y1: Math.min(a.y1, b.y), x2: Math.max(a.x2, b.x + b.w), y2: Math.max(a.y2, b.y + b.h) }), { x1: Infinity, y1: Infinity, x2: -Infinity, y2: -Infinity });
+    keep = u; cx = (u.x1 + u.x2) / 2; cy = (u.y1 + u.y2) / 2;
+    if (faces.length && ch < H) cy = u.y1 + (u.y2 - u.y1) / 2 + ch * 0.12;
+  }
+  let x = Math.max(0, Math.min(W - cw, cx - cw / 2));
+  let y = Math.max(0, Math.min(H - ch, cy - ch / 2));
+  if (keep) {
+    if (keep.x2 - keep.x1 <= cw) x = Math.max(0, Math.min(W - cw, Math.min(Math.max(x, keep.x2 - cw), keep.x1)));
+    if (keep.y2 - keep.y1 <= ch) y = Math.max(0, Math.min(H - ch, Math.min(Math.max(y, keep.y2 - ch), keep.y1)));
+  }
+  return { x, y, w: cw, h: ch };
+}
+
+function renderCrop(s, canvas, full) {
+  const W = srcImg.naturalWidth, H = srcImg.naturalHeight, c = computeCrop(W, H, s.w, s.h);
+  const scale = full ? 1 : Math.min(1, 360 / Math.max(s.w, s.h));
+  canvas.width = Math.round(s.w * scale); canvas.height = Math.round(s.h * scale);
+  const g = canvas.getContext("2d"); g.imageSmoothingQuality = "high";
+  g.drawImage(srcImg, c.x, c.y, c.w, c.h, 0, 0, canvas.width, canvas.height);
+  return c;
+}
+function selectedSizes() { return SIZES.filter(s => $("#sz-" + s.id)?.checked); }
+function renderCrops() {
+  const box = $("#crops"); box.replaceChildren();
+  if (!srcImg) return;
+  selectedSizes().forEach(s => {
+    const cv = el("canvas", { role: "img", "aria-label": sizeLabel(s) + " " + t("preview") });
+    const c = renderCrop(s, cv, false);
+    const dl = el("button", { class: "btn small", type: "button", text: t("download") });
+    dl.addEventListener("click", () => saveOne(s, dl));
+    box.append(el("div", { class: "crop", "data-size": s.id },
+      el("div", { class: "frame" }, cv),
+      el("div", { class: "lbl", text: `${sizeLabel(s)} · ${s.w}×${s.h}` }),
+      c.w < s.w * 0.98 ? el("div", { class: "note", style: "color:var(--warn)", text: t("img_upscaled") }) : null,
+      el("div", { class: "fn", text: fileName(s) }), dl));
+  });
+}
+function exportBlob(s) { return new Promise(res => { const cv = document.createElement("canvas"); renderCrop(s, cv, true); cv.toBlob(res, "image/jpeg", 0.9); }); }
+async function saveOne(s, btn) {
+  const st = $("#imgStatus");
+  if (!downloads) return setStatus(st, t("no_dl"), true);
+  btn.disabled = true;
+  try { await downloads.save({ filename: fileName(s), data: await exportBlob(s) }); setStatus(st, t("saved") + fileName(s)); }
+  catch (e) { setStatus(st, e?.code === "declined" ? t("declined") : errMsg(e), e?.code !== "declined"); }
+  finally { btn.disabled = false; }
+}
+$("#zipBtn").addEventListener("click", async () => {
+  const st = $("#imgStatus"), btn = $("#zipBtn");
+  if (!downloads) return setStatus(st, t("no_dl"), true);
+  if (!window.JSZip) return setStatus(st, t("no_zip"), true);
+  const sizes = selectedSizes(); if (!sizes.length) return setStatus(st, t("need_size"), true);
+  btn.disabled = true; setStatus(st, t("zip_busy"));
+  try {
+    const zip = new JSZip();
+    for (const s of sizes) zip.file(fileName(s), await exportBlob(s));
+    const alt = $("#imgAlt").value.trim(); if (alt) zip.file("alt-text.txt", alt + "\n");
+    const kw = slugify($("#imgKw").value) || "images";
+    const name = `${kw}-${slugify(brands[$("#imgBrand").value]?.slug || "brand")}-social.zip`;
+    await downloads.save({ filename: name, data: await zip.generateAsync({ type: "blob" }) });
+    setStatus(st, `${t("saved")}${name} (${sizes.length} ${t("images_n")}${alt ? t("plus_alt") : ""})`);
+  } catch (e) { setStatus(st, e?.code === "declined" ? t("declined") : errMsg(e), e?.code !== "declined"); }
+  finally { btn.disabled = false; }
+});
+
+/* ---------- brand profiles (db) ---------- */
+const FIELDS = [["name", "text"], ["url", "text"], ["slug", "text"], ["language", "text"], ["platforms", "text"], ["audience", "area"], ["voice", "area"], ["offer", "area"], ["cta", "area"], ["rules", "area"], ["hashtags", "area"], ["source_note", "area"]];
+function renderBrandForms() {
+  const box = $("#brandForms");
+  const openIds = new Set([...box.querySelectorAll("details[open]")].map(d => d.dataset.id));
+  box.replaceChildren();
+  const ids = BRAND_ORDER.filter(id => brands[id]);
+  if (!ids.length) { box.append(el("div", { class: "empty", text: db ? t("br_none") : t("br_no_db") })); return; }
+  ids.forEach(id => {
+    const b = brands[id];
+    const form = el("form", { class: "panel" });
+    FIELDS.forEach(([k, kind]) => {
+      const val = Array.isArray(b[k]) ? b[k].join(", ") : (b[k] || "");
+      const inp = kind === "area" ? el("textarea", { id: `bf-${id}-${k}`, rows: k === "voice" || k === "rules" ? 5 : 3 }) : el("input", { type: "text", id: `bf-${id}-${k}` });
+      inp.value = val; form.append(el("label", { class: "f", for: `bf-${id}-${k}` }, t("f_" + k), inp));
+    });
+    const st = el("div", { class: "status", role: "status" });
+    form.append(el("div", { class: "row" }, el("button", { class: "btn primary", type: "submit", text: t("save") }), st));
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      const next = {}; FIELDS.forEach(([k]) => { const v = $(`#bf-${id}-${k}`).value.trim(); next[k] = k === "platforms" ? v.split(",").map(x => x.trim().toLowerCase()).filter(Boolean) : v; });
+      try { await db.doc("brands/" + id).set(next); setStatus(st, t("saved_ok")); }
+      catch (err) { setStatus(st, err?.message ? t("save_fail") + " " + err.message : t("save_fail"), true); }
+    });
+    const det = el("details", Object.assign({ class: "bform", "data-id": id }, openIds.has(id) ? { open: "" } : {}),
+      el("summary", {}, el("span", { class: "sw", style: `background:${brandColor(id)}` }), el("h3", { text: b.name }), el("span", { class: "sub", text: (b.language || "") + " · " + (b.platforms || []).join(", ") })), form);
+    box.append(det);
+  });
+}
+
+/* ---------- daily news (written each morning by a scheduled task) ---------- */
+function renderNews(doc) {
+  const box = $("#newsList");
+  if (!doc || !Array.isArray(doc.items) || !doc.items.length) return;
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/London" });
+  $("#newsDate").textContent = doc.date === today ? t("news_updated", { d: doc.date }) : t("news_latest", { d: doc.date });
+  box.replaceChildren();
+  doc.items.slice(0, 3).forEach(n => {
+    if (isNewsHidden(n)) {
+      const undo = el("button", { type: "button", text: t("undo") });
+      undo.addEventListener("click", () => hideNews(n, true).catch(alertStatus));
+      box.append(el("div", { class: "gone" }, el("span", { text: t("hidden_news") }), undo));
+      return;
+    }
+    const votes = voteButtons({
+      starred: isNewsStarred(n),
+      onStar: async () => { const was = isNewsStarred(n); await toggleNewsStar(n, doc); return !was; },
+      onMinus: () => hideNews(n)
+    });
+    const en = lang === "en";
+    const title = en ? (n.title_en || n.title_original || n.title) : n.title;
+    const summary = en ? (n.summary_en || n.summary) : n.summary;
+    const angle = en ? (n.angle_en || n.angle) : n.angle;
+    const btn = el("button", { class: "btn small primary", type: "button", text: t("news_react") });
+    btn.addEventListener("click", () => {
+      $("#src").value = `${n.title_original || n.title}\n${n.summary_en || n.summary}\n${t("news_source")}: ${n.source}${n.url ? " " + n.url : ""} (${n.date || doc.date})`;
+      BRAND_ORDER.forEach(id => { const c = $("#bc-" + id); if (c) c.checked = !n.brands?.length || n.brands.includes(id); });
+      $("#opinion").focus();
+      $("#postForm").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    });
+    box.append(el("article", { class: "nitem" },
+      el("div", { class: "chips" }, (n.brands || []).map(id => el("span", { class: "chip", style: "cursor:default;padding:2px 8px;font-size:12px" }, el("span", { class: "dot", style: `background:${brandColor(id)}` }), brands[id]?.name || id))),
+      el("h3", { text: title }),
+      el("p", { text: summary }),
+      angle ? el("div", { class: "angle", text: t("news_angle") + angle }) : null,
+      el("div", { class: "src" }, n.url ? el("a", { href: n.url, target: "_blank", rel: "noopener", text: n.source }) : n.source, ` · ${n.date || doc.date}`),
+      el("div", { class: "acts" }, btn, votes)));
+  });
+}
+
+/* ---------- saved tab ---------- */
+function renderSaved() {
+  const posts = saved.filter(s => s.type === "post").sort((a, b) => String(b.savedAt).localeCompare(String(a.savedAt)));
+  const news = saved.filter(s => s.type === "news").sort((a, b) => String(b.savedAt).localeCompare(String(a.savedAt)));
+  const copyBtn = x => { const b = el("button", { class: "btn small", type: "button", text: t("copy") }); b.addEventListener("click", () => copyText(x, b)); return b; };
+  const rmBtn = (s, after) => { const b = el("button", { class: "btn small", type: "button", text: t("remove") }); b.addEventListener("click", async () => { b.disabled = true; try { await db.doc("saved/" + s.id).delete(); if (after) await after(); } catch (e) { b.disabled = false; } }); return b; };
+  const pBox = $("#savedPosts"); pBox.replaceChildren();
+  if (!posts.length) pBox.append(el("p", { class: "note", style: "margin:0", text: t("sv_none_posts") }));
+  posts.forEach(s => {
+    const full = s.tags?.length ? `${s.text}\n\n${s.tags.join(" ")}` : s.text;
+    pBox.append(el("div", { class: "sitem" },
+      el("div", { class: "hd" }, el("span", { class: "chip", style: "cursor:default;padding:2px 8px;font-size:12px" }, el("span", { class: "dot", style: `background:${brandColor(s.brand)}` }), `${brands[s.brand]?.name || s.brand} · ${PLATFORMS.find(x => x.id === s.platform)?.name || s.platform}`), el("span", { class: "mono", style: "color:var(--muted)", text: String(s.savedAt || "").slice(0, 10) })),
+      el("div", { class: "txt", text: full }),
+      el("div", { class: "row" }, copyBtn(full), rmBtn(s, async () => { const pr = brandPref(s.brand); await writePref(s.brand, { ...pr, liked: pr.liked.filter(x => x.id !== s.id) }); }))));
+  });
+  const nBox = $("#savedNews"); nBox.replaceChildren();
+  if (!news.length) nBox.append(el("p", { class: "note", style: "margin:0", text: t("sv_none_news") }));
+  news.forEach(s => {
+    const en = lang === "en";
+    nBox.append(el("div", { class: "sitem" },
+      el("div", { class: "hd" }, el("strong", { text: en ? (s.title_en || s.title) : s.title }), el("span", { class: "mono", style: "color:var(--muted)", text: s.date || "" })),
+      el("div", { class: "txt", text: en ? (s.summary_en || s.summary) : s.summary }),
+      el("div", { class: "row" }, s.url ? el("a", { class: "btn small", href: s.url, target: "_blank", rel: "noopener", text: t("open") }) : null,
+        rmBtn(s, async () => { const p = newsPref(); await writePref("news", { ...p, liked: p.liked.filter(x => x.url !== s.url) }); }))));
+  });
+  const tBox = $("#blockedTags"); tBox.replaceChildren();
+  let any = false;
+  BRAND_ORDER.forEach(id => brandPref(id).blocked_tags.forEach(tag => {
+    any = true;
+    const b = el("button", { type: "button", class: "chip tag", title: t("undo") }, el("span", { class: "dot", style: `background:${brandColor(id)}` }), tag, " ×");
+    b.addEventListener("click", () => blockTag(id, tag, true).catch(alertStatus));
+    tBox.append(b);
+  }));
+  if (!any) tBox.append(el("span", { class: "note", text: t("sv_none_tags") }));
+}
+
+/* ---------- boot ---------- */
+applyLang();
+(async () => {
+  const c = window.claude;
+  if (!c || typeof c.use !== "function") { renderBrandForms(); return; }
+  c.use("sample").then(async s => { sample = s; if (s) { const lim = await s.limits().catch(() => null); imagesOk = !!lim?.images; } });
+  c.use("downloads").then(d => { downloads = d; });
+  db = await c.use("db");
+  if (!db) { renderBrandForms(); return; }
+  db.collection("brands").onSnapshot(snap => {
+    const next = {}; snap.docs.forEach(d => { if (d.exists) next[d.id] = d.data(); });
+    brands = next; renderBrandChips(); renderBrandForms(); renderNews(latestNews);
+  }, () => { renderBrandForms(); });
+  db.collection("news").onSnapshot(snap => {
+    const docs = snap.docs.filter(d => d.exists).map(d => d.data()).filter(d => d.date);
+    docs.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    latestNews = docs[0] || null; renderNews(latestNews);
+  }, () => {});
+  db.collection("prefs").onSnapshot(snap => {
+    const next = {}; snap.docs.forEach(d => { if (d.exists) next[d.id] = d.data(); });
+    prefs = next; renderNews(latestNews); renderSaved();
+  }, () => {});
+  db.collection("saved").onSnapshot(snap => {
+    saved = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
+    renderNews(latestNews); renderSaved();
+  }, () => {});
+})();
+})();
+</script>
+
+</body></html>

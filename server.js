@@ -1,0 +1,307 @@
+// ActaNews local server: serves the app, proxies AI calls, stores data in a JSON file
+// and builds the daily "3 stories" list from RSS feeds. Zero dependencies (Node 20+).
+"use strict";
+const http = require("node:http");
+const fs = require("node:fs");
+const path = require("node:path");
+
+const env = (k, d = "") => (process.env[k] ?? d).trim();
+const PORT = Number(env("PORT", "8787"));
+const DATA_DIR = env("DATA_DIR", path.join(__dirname, "data"));
+const TZ = env("TZ", "Europe/London");
+const NEWS_TIME = env("NEWS_TIME", "06:39");
+const PUBLIC_DIR = path.join(__dirname, "public");
+const DEFAULTS_DIR = path.join(__dirname, "defaults");
+
+/* ---------------- AI providers ----------------
+ * primary  = free local model (Ollama), used first
+ * fallback = free gateway (OmniRoute), used only if primary fails
+ * paid     = only when the user picks it in the UI, never automatic
+ */
+function provider(prefix) {
+  const url = env(prefix + "_URL");
+  if (!url) return null;
+  return {
+    name: prefix.replace("LLM_", "").toLowerCase(),
+    kind: env(prefix + "_KIND", "openai"), // openai (any OpenAI-compatible API) | anthropic
+    url: url.replace(/\/+$/, ""),
+    model: env(prefix + "_MODEL"),
+    key: env(prefix + "_KEY"),
+    vision: env(prefix + "_VISION", "false") === "true",
+    jsonMode: env(prefix + "_JSON_MODE", "true") === "true"
+  };
+}
+const PRIMARY = provider("LLM_PRIMARY");
+const FALLBACK = provider("LLM_FALLBACK");
+const PAID = provider("LLM_PAID");
+const TIMEOUT_MS = Number(env("LLM_TIMEOUT_MS", "240000"));
+
+function dataUrlParts(u) {
+  const m = /^data:([^;]+);base64,(.+)$/s.exec(u || "");
+  return m ? { mediaType: m[1], data: m[2] } : null;
+}
+
+async function callProvider(p, prompt, images, wantJson) {
+  const signal = AbortSignal.timeout(TIMEOUT_MS);
+  const imgs = p.vision ? images : [];
+  if (p.kind === "anthropic") {
+    const content = [
+      ...imgs.map(dataUrlParts).filter(Boolean).map(i => ({ type: "image", source: { type: "base64", media_type: i.mediaType, data: i.data } })),
+      { type: "text", text: prompt }
+    ];
+    const r = await fetch(p.url + "/v1/messages", {
+      method: "POST", signal,
+      headers: { "content-type": "application/json", "x-api-key": p.key, "anthropic-version": "2023-06-01" },
+      body: JSON.stringify({ model: p.model, max_tokens: 6000, messages: [{ role: "user", content }] })
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(j?.error?.message || "HTTP " + r.status), { status: r.status });
+    return (j.content || []).filter(c => c.type === "text").map(c => c.text).join("");
+  }
+  const content = imgs.length
+    ? [{ type: "text", text: prompt }, ...imgs.map(u => ({ type: "image_url", image_url: { url: u } }))]
+    : prompt;
+  const body = { model: p.model, messages: [{ role: "user", content }], temperature: 0.6, max_tokens: 6000 };
+  const send = async withJson => {
+    const r = await fetch(p.url + "/chat/completions", {
+      method: "POST", signal,
+      headers: Object.assign({ "content-type": "application/json" }, p.key ? { authorization: "Bearer " + p.key } : {}),
+      body: JSON.stringify(withJson ? { ...body, response_format: { type: "json_object" } } : body)
+    });
+    const j = await r.json().catch(() => ({}));
+    return { r, j };
+  };
+  let { r, j } = await send(wantJson && p.jsonMode);
+  if (!r.ok && wantJson && p.jsonMode && r.status === 400) ({ r, j } = await send(false)); // provider without JSON mode
+  if (!r.ok) throw Object.assign(new Error(j?.error?.message || j?.error || "HTTP " + r.status), { status: r.status });
+  return j?.choices?.[0]?.message?.content || "";
+}
+
+function extractJson(text) {
+  const s = String(text || "").replace(/```(?:json)?/gi, "").trim();
+  try { return JSON.parse(s); } catch {}
+  const start = s.search(/[{[]/);
+  if (start < 0) return undefined;
+  for (let end = s.length; end > start; end--) {
+    const ch = s[end - 1];
+    if (ch !== "}" && ch !== "]") continue;
+    try { return JSON.parse(s.slice(start, end)); } catch {}
+  }
+  return undefined;
+}
+
+async function runLlm({ prompt, images = [], json = false, paid = false }) {
+  const chain = paid ? [PAID] : [PRIMARY, FALLBACK];
+  const list = chain.filter(Boolean);
+  if (!list.length) throw Object.assign(new Error(paid ? "No paid model is configured (LLM_PAID_URL)." : "No model is configured (LLM_PRIMARY_URL)."), { code: "unavailable" });
+  let lastErr;
+  for (const p of list) {
+    try {
+      let text = await callProvider(p, prompt, images, json);
+      if (!json) return { text, provider: p.name, model: p.model };
+      let parsed = extractJson(text);
+      if (parsed === undefined) {
+        text = await callProvider(p, prompt + "\n\nYour previous answer was not valid JSON. Reply with ONLY the JSON object, nothing else.", images, true);
+        parsed = extractJson(text);
+      }
+      if (parsed !== undefined) return { text, json: parsed, provider: p.name, model: p.model };
+      lastErr = new Error(`${p.name} (${p.model}) did not return valid JSON.`);
+    } catch (e) {
+      lastErr = e;
+      console.warn(`[llm] ${p.name} failed: ${e.message}`);
+    }
+  }
+  throw lastErr;
+}
+
+/* ---------------- JSON file database ---------------- */
+const DB_FILE = path.join(DATA_DIR, "db.json");
+const NAME_RE = /^[A-Za-z0-9_\-.~:@+]{1,200}$/;
+let db = { rev: 0, collections: {} };
+
+function loadDb() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (fs.existsSync(DB_FILE)) { db = JSON.parse(fs.readFileSync(DB_FILE, "utf8")); return; }
+  const seedFile = path.join(DEFAULTS_DIR, "seed.json");
+  if (fs.existsSync(seedFile)) db = { rev: 1, collections: JSON.parse(fs.readFileSync(seedFile, "utf8")) };
+  saveDb();
+  console.log("[db] created " + DB_FILE + " from seed");
+}
+function saveDb() {
+  const tmp = DB_FILE + ".tmp";
+  fs.writeFileSync(tmp, JSON.stringify(db, null, 1));
+  fs.renameSync(tmp, DB_FILE);
+}
+const col = name => (db.collections[name] ||= {});
+function setDoc(c, id, data) { col(c)[id] = data; db.rev++; saveDb(); }
+function delDoc(c, id) { delete col(c)[id]; db.rev++; saveDb(); }
+
+/* ---------------- News from RSS ---------------- */
+const FEEDS_FILE = path.join(DATA_DIR, "feeds.json");
+function loadFeeds() {
+  if (!fs.existsSync(FEEDS_FILE)) fs.copyFileSync(path.join(DEFAULTS_DIR, "feeds.json"), FEEDS_FILE);
+  return JSON.parse(fs.readFileSync(FEEDS_FILE, "utf8"));
+}
+function feedUrl(f) {
+  if (f.url) return f.url;
+  const g = f.google || {};
+  const hu = g.lang === "hu";
+  const q = encodeURIComponent(g.q + (g.when ? ` when:${g.when}` : " when:2d"));
+  return hu
+    ? `https://news.google.com/rss/search?q=${q}&hl=hu&gl=HU&ceid=HU:hu`
+    : `https://news.google.com/rss/search?q=${q}&hl=en-GB&gl=GB&ceid=GB:en`;
+}
+const decode = s => String(s || "")
+  .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+  .replace(/<[^>]+>/g, " ")
+  .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
+  .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replace(/&amp;/g, "&")
+  .replace(/\s+/g, " ").trim();
+const tag = (block, name) => { const m = new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)</${name}>`, "i").exec(block); return m ? m[1] : ""; };
+function parseFeed(xml, feed) {
+  const blocks = xml.match(/<item[\s>][\s\S]*?<\/item>/gi) || xml.match(/<entry[\s>][\s\S]*?<\/entry>/gi) || [];
+  return blocks.map(b => {
+    const atomLink = /<link[^>]*href="([^"]+)"/i.exec(b);
+    const link = decode(tag(b, "link")) || (atomLink ? atomLink[1] : "");
+    const when = new Date(decode(tag(b, "pubDate") || tag(b, "published") || tag(b, "updated") || tag(b, "dc:date")));
+    let title = decode(tag(b, "title"));
+    const source = decode(tag(b, "source")) || feed.source || "";
+    if (source && title.endsWith(" - " + source)) title = title.slice(0, -(source.length + 3)); // Google News suffix
+    return { title, url: link, source, date: isNaN(when) ? null : when, snippet: decode(tag(b, "description") || tag(b, "summary")).slice(0, 300), brand: feed.brand, lang: feed.lang || "en" };
+  }).filter(i => i.title && i.url);
+}
+const ymd = (d, tz = TZ) => new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+const hm = (d, tz = TZ) => new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: false }).format(d);
+
+let newsRunning = false, lastNewsStatus = { state: "idle" };
+async function runNews(reason = "manual") {
+  if (newsRunning) return lastNewsStatus;
+  newsRunning = true; lastNewsStatus = { state: "running", reason, startedAt: new Date().toISOString() };
+  try {
+    const feeds = loadFeeds();
+    const prefs = col("prefs").news || { liked: [], disliked: [] };
+    const seen = new Set(Object.values(col("news")).flatMap(d => (d.items || []).map(i => i.url)));
+    const disliked = new Set((prefs.disliked || []).map(x => x.url).filter(Boolean));
+    const dislikedTitles = (prefs.disliked || []).map(x => (x.title_original || x.title || "").toLowerCase()).filter(Boolean);
+    const cutoff = Date.now() - Number(env("NEWS_MAX_AGE_HOURS", "72")) * 3600e3;
+    const results = await Promise.allSettled(feeds.map(async f => {
+      const r = await fetch(feedUrl(f), { signal: AbortSignal.timeout(20000), headers: { "user-agent": "Mozilla/5.0 ActaNews/1.0" } });
+      if (!r.ok) throw new Error(`${feedUrl(f)} HTTP ${r.status}`);
+      return parseFeed(await r.text(), f).slice(0, 12);
+    }));
+    results.filter(r => r.status === "rejected").forEach(r => console.warn("[news] feed failed:", r.reason.message));
+    const byUrl = new Map();
+    results.filter(r => r.status === "fulfilled").flatMap(r => r.value)
+      .filter(i => (!i.date || i.date.getTime() >= cutoff) && !seen.has(i.url) && !disliked.has(i.url) && !dislikedTitles.includes(i.title.toLowerCase()))
+      .forEach(i => { if (!byUrl.has(i.url)) byUrl.set(i.url, i); });
+    const candidates = [...byUrl.values()].sort((a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0)).slice(0, 60);
+    if (!candidates.length) throw new Error("No fresh candidates from the feeds. Check data/feeds.json and the container's internet access.");
+    const brands = col("brands");
+    const brandInfo = Object.fromEntries(Object.entries(brands).map(([id, b]) => [id, { name: b.name, audience: b.audience, language: b.language, rules: b.rules }]));
+    const prompt = `You pick today's 3 news stories for a small business owner to react to on social media, one brand each where possible.
+
+BRANDS (JSON)
+${JSON.stringify(brandInfo, null, 1)}
+
+OWNER FEEDBACK
+Starred (prefer similar topics/sources): ${JSON.stringify((prefs.liked || []).slice(-10).map(x => x.title))}
+Not needed (avoid these topics and angles): ${JSON.stringify((prefs.disliked || []).slice(-15).map(x => x.title_original || x.title))}
+
+CANDIDATES (index, suggested brand, language, date, source, title, snippet)
+${candidates.map((c, i) => `${i} | ${c.brand} | ${c.lang} | ${c.date ? ymd(c.date) : "?"} | ${c.source} | ${c.title} | ${c.snippet}`).join("\n")}
+
+Rules: pick exactly 3 different candidates, ideally for 3 different brands. Never pick tragedies, crime, violence, suicide, disasters or politically divisive items for mindhaven or asc. bereljufot items must concern Hungary. Base summaries ONLY on the title and snippet given; do not add facts, numbers or quotes that are not there. No em dashes.
+Return ONLY JSON: {"items":[{"index":0,"brand":"brand id","title":"short Hungarian headline","title_en":"short English headline","summary":"1-2 sentence Hungarian summary","summary_en":"the same in English","angle":"one-line Hungarian posting angle for that brand","angle_en":"the same in English"}]}`;
+    const out = await runLlm({ prompt, json: true });
+    const picks = (out.json?.items || []).filter(p => Number.isInteger(p.index) && candidates[p.index]).slice(0, 3);
+    if (!picks.length) throw new Error("The model returned no usable picks.");
+    const date = ymd(new Date());
+    const items = picks.map(p => {
+      const c = candidates[p.index];
+      return {
+        title: p.title || c.title, title_en: p.title_en || "", title_original: c.title,
+        summary: p.summary || c.snippet, summary_en: p.summary_en || "",
+        angle: p.angle || "", angle_en: p.angle_en || "",
+        source: c.source, url: c.url, date: c.date ? ymd(c.date) : date,
+        brands: [brands[p.brand] ? p.brand : c.brand]
+      };
+    });
+    setDoc("news", date, { date, items, note: `RSS + ${out.provider} (${out.model}), ${reason}` });
+    lastNewsStatus = { state: "done", date, count: items.length, provider: out.provider, finishedAt: new Date().toISOString() };
+    console.log(`[news] ${date}: ${items.map(i => i.title).join(" | ")}`);
+  } catch (e) {
+    lastNewsStatus = { state: "error", message: e.message, finishedAt: new Date().toISOString() };
+    console.warn("[news] " + e.message);
+  } finally { newsRunning = false; }
+  return lastNewsStatus;
+}
+let lastScheduledDay = "";
+setInterval(() => {
+  const now = new Date();
+  if (hm(now) === NEWS_TIME && lastScheduledDay !== ymd(now)) { lastScheduledDay = ymd(now); runNews("scheduled"); }
+}, 30000);
+
+/* ---------------- HTTP ---------------- */
+const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".ico": "image/x-icon" };
+const send = (res, code, obj) => { res.writeHead(code, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }); res.end(JSON.stringify(obj)); };
+async function readBody(req, limit = 40e6) {
+  let size = 0; const chunks = [];
+  for await (const c of req) { size += c.length; if (size > limit) throw Object.assign(new Error("Request too large"), { status: 413 }); chunks.push(c); }
+  const raw = Buffer.concat(chunks).toString("utf8");
+  return raw ? JSON.parse(raw) : {};
+}
+
+const server = http.createServer(async (req, res) => {
+  const u = new URL(req.url, "http://local");
+  const p = u.pathname;
+  try {
+    if (p === "/api/config" && req.method === "GET") {
+      return send(res, 200, {
+        vision: !!(PRIMARY?.vision || FALLBACK?.vision), paidAvailable: !!PAID,
+        primary: PRIMARY && { model: PRIMARY.model }, fallback: FALLBACK && { model: FALLBACK.model }, paid: PAID && { model: PAID.model },
+        newsTime: NEWS_TIME, tz: TZ
+      });
+    }
+    if (p === "/api/sample" && req.method === "POST") {
+      const b = await readBody(req);
+      const prompt = typeof b.input === "string" ? b.input : (b.input || []).map(m => `${m.role.toUpperCase()}: ${m.content}`).join("\n\n");
+      try { return send(res, 200, await runLlm({ prompt, images: b.images || [], json: !!b.json, paid: !!b.paid })); }
+      catch (e) { return send(res, e.status === 429 ? 429 : 502, { code: e.code || (e.status === 429 ? "rate_limited" : "provider_error"), message: e.message }); }
+    }
+    if (p === "/api/db/rev" && req.method === "GET") return send(res, 200, { rev: db.rev });
+    let m = /^\/api\/db\/([^/]+)$/.exec(p);
+    if (m && req.method === "GET") {
+      if (!NAME_RE.test(m[1])) return send(res, 400, { message: "bad collection" });
+      return send(res, 200, { rev: db.rev, docs: Object.entries(col(m[1])).map(([id, data]) => ({ id, data })) });
+    }
+    m = /^\/api\/db\/([^/]+)\/([^/]+)$/.exec(p);
+    if (m) {
+      const [, c, id] = m;
+      if (!NAME_RE.test(c) || !NAME_RE.test(id)) return send(res, 400, { message: "bad path" });
+      if (req.method === "GET") return col(c)[id] ? send(res, 200, { id, data: col(c)[id] }) : send(res, 404, { message: "not found" });
+      if (req.method === "PUT") { const data = await readBody(req, 2e6); setDoc(c, id, data); return send(res, 200, { ok: true, rev: db.rev }); }
+      if (req.method === "PATCH") { const data = await readBody(req, 2e6); setDoc(c, id, { ...(col(c)[id] || {}), ...data }); return send(res, 200, { ok: true, rev: db.rev }); }
+      if (req.method === "DELETE") { delDoc(c, id); return send(res, 200, { ok: true, rev: db.rev }); }
+    }
+    if (p === "/api/news/refresh" && req.method === "POST") { runNews("manual"); return send(res, 202, { state: "running" }); }
+    if (p === "/api/news/status" && req.method === "GET") return send(res, 200, lastNewsStatus);
+
+    // static files
+    const file = path.normalize(path.join(PUBLIC_DIR, p === "/" ? "index.html" : p));
+    if (!file.startsWith(PUBLIC_DIR) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404); return res.end("Not found"); }
+    res.writeHead(200, { "content-type": MIME[path.extname(file)] || "application/octet-stream", "cache-control": "no-cache" });
+    fs.createReadStream(file).pipe(res);
+  } catch (e) {
+    send(res, e.status || 500, { message: e.message });
+  }
+});
+
+loadDb();
+loadFeeds();
+server.listen(PORT, () => {
+  console.log(`ActaNews on http://localhost:${PORT}`);
+  console.log(`  primary : ${PRIMARY ? PRIMARY.model + " @ " + PRIMARY.url : "not set"}`);
+  console.log(`  fallback: ${FALLBACK ? FALLBACK.model + " @ " + FALLBACK.url : "not set"}`);
+  console.log(`  paid    : ${PAID ? PAID.model + " (manual only)" : "not set"}`);
+  console.log(`  news    : daily at ${NEWS_TIME} ${TZ}, feeds in ${FEEDS_FILE}`);
+});

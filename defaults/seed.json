@@ -1,0 +1,128 @@
+{
+ "brands": {
+  "mindhaven": {
+   "audience": "Ambitious professionals and millennials across the UK looking for private-pay online counselling; secondary: people in Edinburgh and Dalkeith wanting in-person sessions.",
+   "cta": "Message me, I reply the same day. mindhaven.uk",
+   "hashtags": "#Counselling #OnlineCounselling #Burnout #MentalHealthUK #EdinburghCounselling #Dalkeith",
+   "language": "English (UK spelling)",
+   "name": "Mindhaven",
+   "offer": "Erika Martin Counselling, accredited counsellor, works mainly online, office in Dalkeith. £60 per session; book 6 sessions, the 7th is free. Contact by message (email, Messenger or WhatsApp) with same-day reply; no online booking calendar.",
+   "platforms": [
+    "facebook",
+    "instagram"
+   ],
+   "rules": "ERIKA APPROVES EVERY POST BEFORE PUBLISHING. No testimonials, client stories or anything that could identify a client. Do not present her as a specialist in somatic or nervous-system work. No diagnosis, cure or outcome promises. Score 0 for tragedies, suicides, violence, disasters or crisis news; never use distress as a hook. If a topic touches self-harm or crisis, add 'If you are struggling right now, Samaritans are free on 116 123' instead of a sales CTA.",
+   "slug": "mindhaven",
+   "source_note": "Built from the mindhaven repo (articles on burnout, high-functioning burnout, imposter syndrome) and Erika's latest feedback (Oct 2026: £60, 6+1 free, Message Me, plainer look). Brand colours: pine #155D49, evergreen #0D2E24, emerald #34D399, lime cream #F6FFA2; font Plus Jakarta Sans.",
+   "url": "mindhaven.uk",
+   "voice": "Calm, warm, plain and non-clinical. Speaks to 'you'. Short paragraphs that explain the difference between two things people mix up (stress vs burnout, tired vs depleted). Gentle, never alarmist, no hype, not 'premium' or boutique. Closes with a soft line about counselling as a calm, reflective space."
+  },
+  "asc": {
+   "audience": "Parents in Edinburgh and the Lothians booking kids' parties; school PTAs and parent councils, nurseries, event organisers, markets and shopping centres; adult groups and care homes.",
+   "cta": "WhatsApp or call 07719 956135, or book at artsandcastle.co.uk. Instagram: @artsandcastle.edinburgh",
+   "hashtags": "#ArtSandCastle #SandArt #EdinburghKids #EdinburghParties #KidsPartyIdeas #Lothians",
+   "language": "English (UK spelling)",
+   "name": "Art Sand Castle",
+   "offer": "Mobile sand art: children pick a picture, peel the paper one shape at a time, sprinkle coloured sand, take the picture home. Ages 3+. Low-mess: no paint, no glue, no water; we bring everything and tidy up; needs a 2x2 m space (indoors or tent). Kids' party from £130 (1 to 1.5 hours, up to 10 children, A5 picture each); extra child £8; extra picture A6 £5, A5 £6. Drop-off pack from £98 for 10 pictures. Events, schools, care homes: price on request. Children's sessions run by a PVG-checked team member. Ride-on toy horse rides coming soon.",
+   "platforms": [
+    "facebook",
+    "instagram"
+   ],
+   "rules": "Not childcare: parents or organisers stay responsible and stay with the children; never imply otherwise. Never promise a specific design. Never invent prices, dates or venues beyond the offer field. No photos of identifiable children unless the user says consent exists. Score 0 for news unrelated to families, kids' activities, events, schools or Edinburgh community life.",
+   "slug": "art-sand-castle",
+   "source_note": "Built from artsandcastle.co.uk (llms.txt, homepage) and blog posts 'Halloween sand art for kids in Edinburgh' and 'Add a sand art stall to your school Christmas fair'. Brand colours: navy #10324A, green #7BC043, pink #EE4D86, yellow #FFC21A, orange #FF7A2F; display font Bagel Fat One.",
+   "url": "artsandcastle.co.uk",
+   "voice": "Calm, friendly and practical. Short plain sentences, concrete facts over adjectives. Reassuring and honest about limits (e.g. designs change with stock, we can't guarantee a theme). Seasonal hooks (Halloween, Christmas fairs, school holidays). Warm but never gushing, light playfulness at most."
+  },
+  "bereljufot": {
+   "audience": "Magyarországi közönség: 70% szakemberek és dolgozók (építőipar, felújítás, tüzép, lomtalanítás), 30% magánszemélyek (költözés, kerti munka, csónak). Nem Gen Z.",
+   "cta": "Keress utánfutót a bereljufot.hu-n",
+   "hashtags": "#utánfutó #utánfutóbérlés #bereljufot #költözés #felújítás #utanfuto",
+   "language": "Hungarian (tegezés)",
+   "name": "BereljUFOt",
+   "offer": "Utánfutó-kölcsönző kereső: helyi kölcsönzők utánfutói egy helyen (nyitott, ponyvás, autószállító, csónakszállító stb.), országszerte partnerekkel. B2C: bereljufot.hu, B2B: trailerguru.hu.",
+   "platforms": [
+    "facebook",
+    "instagram"
+   ],
+   "rules": "Csak magyar piac. Ne találj ki árat, partnernevet vagy készletet; a jogszabályi részleteknél (KRESZ, jogosítvány, matrica) csak biztos, általános tényt írj, egyébként [FILL]. A featured partner kedvezményeket soha ne említsd. Score 0 for news outside Hungary unless it clearly affects Hungarian drivers or trades.",
+   "slug": "bereljufot",
+   "source_note": "Built from the trailerguru repo blog (költözés, tüzép/lomtalanítás, B96 vs BE, adapter, defekt, biztosítás, matrica, árak 2026, OBI vs helyi kölcsönzők). Brand colours: emerald #10B981, neon #00FF9D, dark #0F172A.",
+   "url": "bereljufot.hu",
+   "voice": "Tegező, gyakorlatias, segítőkész. Konkrét tippek, számok és figyelmeztetések (kaució, B96/BE jogosítvány, 7/13 pólusú adapter, O.1/O.2 vontatható tömeg, matrica). Rövid bekezdések, néha lista. Könnyed humor, legfeljebb egy UFO/utánfutó szójáték posztonként."
+  },
+  "sandorkardos": {
+   "audience": "Small local businesses in Edinburgh (shops, takeaways, traders), Edinburgh landlords and agencies looking for a design and build subcontractor; also employers hiring junior or mid-level product designers and developers.",
+   "cta": "First hour free. Book a chat at sandorkardos.com",
+   "hashtags": "#Edinburgh #ProductDesign #UXDesign #WebDesign #AI #SmallBusiness",
+   "language": "English (UK spelling)",
+   "name": "Sándor Kardos",
+   "offer": "Product design, UX and AI-assisted web builds: websites, small tools, SEO/GEO, VPS hosting. First hour free as a consultation.",
+   "platforms": [
+    "linkedin",
+    "facebook",
+    "instagram"
+   ],
+   "rules": "No family mentions. Don't overclaim results or clients; no invented case studies. LinkedIn is the main platform for this brand.",
+   "slug": "sandor-kardos",
+   "source_note": "Built from sandorkardos.com blog (AI and developers essay, Antigravity fix guide, AI in user research, OpenClaw on a VPS, UX meetups, impostor syndrome). Brand colours: blue #0052FF, ink #0A0B0D, light #F7F8FA.",
+   "url": "sandorkardos.com",
+   "voice": "First person, direct and opinionated, plain English. A builder who shows how things actually work: practical fixes, honest about AI's flaws but pragmatic and pro-AI. Uses history and analogies to make a point (e.g. Xerox PARC and the mouse). Ends with a clear takeaway or a question, never hype."
+  }
+ },
+ "news": {
+  "2026-10-28": {
+   "date": "2026-10-28",
+   "items": [
+    {
+     "angle": "Nincs jégpálya? Nyugodt, beltéri karácsonyi program gyerekeknek: homokkép-stand iskolai vásárra vagy szülinapra",
+     "angle_en": "No ice rink this year? A calm indoor festive activity for kids: a sand art stall for school fairs or parties",
+     "brands": [
+      "asc"
+     ],
+     "date": "2026-10-26",
+     "source": "BBC News (via Yahoo News)",
+     "summary": "Közel 30 év után idén elmarad az edinburgh-i karácsonyi jégpálya. A szervezők a Princes Street részleges lezárása (a volt Debenhams-tűz után) okozta bizonytalanságra és a magas költségekre hivatkoznak. A karácsonyi vásár, a szabadtéri programok és a vidámparki játékok november 14-től megmaradnak.",
+     "summary_en": "After almost 30 years, Edinburgh's Christmas ice rink will not run this year. Organisers point to uncertainty from the partial Princes Street closure after the former Debenhams fire, plus high costs. The Christmas markets, outdoor events and fairground rides still go ahead from 14 November.",
+     "title": "Idén nem lesz karácsonyi korcsolyapálya Edinburgh belvárosában",
+     "title_en": "No Christmas ice rink in Edinburgh city centre this year",
+     "title_original": "Edinburgh's Christmas ice rink axed after almost 30 years",
+     "url": "https://www.yahoo.com/news/world/articles/edinburghs-christmas-ice-rink-axed-172901368.html"
+    },
+    {
+     "angle": "Jön a felújítási szezon: sitt, anyag, bútor szállításához bérelj utánfutót a közeledben, ne vegyél",
+     "angle_en": "Renovation season is coming: rent a trailer nearby for rubble, materials and furniture instead of buying one",
+     "brands": [
+      "bereljufot"
+     ],
+     "date": "2026-10-27",
+     "source": "Pénzcentrum (MTI)",
+     "summary": "Az ÉVOSZ becslése szerint az új lakásfelújítási és lakásépítési intézkedések a következő négy évben nagyjából 1200 milliárd forint építőipari megrendelést hozhatnak. A szövetség szerint az ágazatnak van elég anyaga és kapacitása, és 2028-tól egyértelmű növekedést vár. A Wekerle+ vásárlási és építési hitel október 28-tól igényelhető.",
+     "summary_en": "Hungary's construction contractors' association ÉVOSZ estimates the new renovation and housebuilding measures could bring about HUF 1,200 billion of construction orders over four years. It says the sector has the materials and capacity, and expects clear growth from 2028. The Wekerle+ purchase and building loan opens on 28 October.",
+     "title": "1200 milliárdos megrendelést hozhat az építőiparnak a felújítási hullám",
+     "title_en": "Renovation wave could bring HUF 1,200bn of building work",
+     "title_original": "Kikerülhet a mélypontról a magyar építőipar: elképesztő összeget hozhat az új otthonteremtési hullám",
+     "url": "https://www.penzcentrum.hu/otthon/20261027/kikerulhet-a-melypontrol-a-magyar-epitoipar-elkepeszto-osszeget-hozhat-az-uj-otthonteremtesi-hullam-1207999"
+    },
+    {
+     "angle": "Sole traderként mit érdemes ma figyelni a költségvetésben, és miért éri meg egy egyszerű digitális nyilvántartás a mérföldekhez és kiadásokhoz",
+     "angle_en": "What sole traders should watch in today's Budget, and why a simple digital log for mileage and costs pays off",
+     "brands": [
+      "sandorkardos"
+     ],
+     "date": "2026-10-27",
+     "source": "Which?",
+     "summary": "A Which? összefoglalója szerint a saját autós üzleti utak adómentes térítése véglegesen 55 penny mérföldenként az első 10 000 mérföldig, utána 35 penny (korábban 25). Ez az önfoglalkoztatók adókedvezményét is érinti. Sajtóhírek szerint az üzleti adó (business rates) mentességi küszöbe 12 000 fontról 18 000-re emelkedhet, ez nagyjából 75 000 ingatlant mentesítene, de ez még nem megerősített.",
+     "summary_en": "Which? reports that the tax-free rate for business journeys in your own car is now permanently 55p a mile for the first 10,000 miles, then 35p (up from 25p). This also changes what sole traders can claim. Press reports say the business rates threshold could rise from £12,000 to £18,000, taking about 75,000 properties out, but that is unconfirmed.",
+     "title": "Költségvetés előtt: végleges a 55 pennys mérföldtérítés",
+     "title_en": "Budget eve: 55p mileage rate made permanent",
+     "title_original": "Autumn Budget 2026: when is it and what will it contain?",
+     "url": "https://www.which.co.uk/news/article/autumn-budget-2026-when-is-it-and-what-will-it-contain-aQqC47O24jnl"
+    }
+   ],
+   "note": "generated by scheduled task"
+  }
+ },
+ "prefs": {},
+ "saved": {}
+}
