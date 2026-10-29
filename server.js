@@ -4,6 +4,7 @@
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
+const vm = require("node:vm");
 
 const env = (k, d = "") => (process.env[k] ?? d).trim();
 const PORT = Number(env("PORT", "8787"));
@@ -34,6 +35,7 @@ function provider(prefix) {
 const PRIMARY = provider("LLM_PRIMARY");
 const FALLBACK = provider("LLM_FALLBACK");
 const PAID = provider("LLM_PAID");
+const QUICK = provider("LLM_QUICK"); // cheap model for picking/scoring and other "quick" calls
 const TIMEOUT_MS = Number(env("LLM_TIMEOUT_MS", "240000"));
 
 function dataUrlParts(u) {
@@ -90,8 +92,8 @@ function extractJson(text) {
   return undefined;
 }
 
-async function runLlm({ prompt, images = [], json = false, paid = false }) {
-  const chain = paid ? [PAID] : [PRIMARY, FALLBACK];
+async function runLlm({ prompt, images = [], json = false, paid = false, tier = "default" }) {
+  const chain = paid ? [PAID] : tier === "quick" ? [QUICK, PRIMARY, FALLBACK] : [PRIMARY, FALLBACK];
   const list = chain.filter(Boolean);
   if (!list.length) throw Object.assign(new Error(paid ? "No paid model is configured (LLM_PAID_URL)." : "No model is configured (LLM_PRIMARY_URL)."), { code: "unavailable" });
   let lastErr;
@@ -226,7 +228,7 @@ ${candidates.map((c, i) => `${i} | ${c.brand} | ${c.lang} | ${c.date ? ymd(c.dat
 
 Rules: pick exactly 3 different candidates, ideally for 3 different brands. Never pick tragedies, crime, violence, suicide, disasters or politically divisive items for mindhaven or asc. bereljufot items must concern Hungary. Base summaries ONLY on the title and snippet given; do not add facts, numbers or quotes that are not there. No em dashes.
 Return ONLY JSON: {"items":[{"index":0,"brand":"brand id","title":"short Hungarian headline","title_en":"short English headline","summary":"1-2 sentence Hungarian summary","summary_en":"the same in English","angle":"one-line Hungarian posting angle for that brand","angle_en":"the same in English"}]}`;
-    const out = await runLlm({ prompt, json: true });
+    const out = await runLlm({ prompt, json: true, tier: "quick" });
     const picks = (out.json?.items || []).filter(p => Number.isInteger(p.index) && candidates[p.index]).slice(0, 3);
     if (!picks.length) throw new Error("The model returned no usable picks.");
     const date = ymd(new Date());
@@ -242,6 +244,7 @@ Return ONLY JSON: {"items":[{"index":0,"brand":"brand id","title":"short Hungari
     });
     setDoc("news", date, { date, items, note: `RSS + ${out.provider} (${out.model}), ${reason}` });
     lastNewsStatus = { state: "done", date, count: items.length, provider: out.provider, finishedAt: new Date().toISOString() };
+    pregenDrafts(date).catch(e => console.warn("[drafts] " + e.message));
     console.log(`[news] ${date}: ${items.map(i => i.title).join(" | ")}`);
   } catch (e) {
     lastNewsStatus = { state: "error", message: e.message, finishedAt: new Date().toISOString() };
@@ -282,6 +285,43 @@ async function fetchArticle(raw) {
   return { title, description, site, published: pub ? pub.slice(0, 10) : "", url: r.url, text };
 }
 
+/* ---------------- Morning drafts ----------------
+ * After the stories are picked, write the posts for each one in the background, using the exact
+ * prompt the page uses (read from the prompts block marked in index.html), so Jack it! opens instantly.
+ */
+function loadPromptCore() {
+  const html = fs.readFileSync(path.join(PUBLIC_DIR, "index.html"), "utf8");
+  const m = /\/\*<prompts>\*\/([\s\S]*?)\/\*<\/prompts>\*\//.exec(html);
+  if (!m) throw new Error("prompt block missing in index.html");
+  const ctx = vm.createContext({});
+  vm.runInContext(m[1] + "\nthis.buildPromptCore = buildPromptCore;", ctx);
+  return ctx.buildPromptCore;
+}
+async function pregenDrafts(date) {
+  if (env("PREGEN_DRAFTS", "true") !== "true") return;
+  const build = loadPromptCore();
+  const plats = env("PREGEN_PLATFORMS", "facebook,instagram,linkedin").split(",").map(s => s.trim()).filter(Boolean);
+  const lang = env("PREGEN_LANG", "Hungarian");
+  const count = (col("news")[date]?.items || []).length;
+  for (let i = 0; i < count; i++) {
+    const n = col("news")[date]?.items?.[i];
+    if (!n || n.draft) continue;
+    let src = `${n.title_original || n.title}\n${n.summary_en || n.summary}\nSource: ${n.source}${n.url ? " " + n.url : ""} (${n.date || date})`;
+    if (n.url) { try { const a = await fetchArticle(n.url); if (a.text && a.text.length > 200) src += `\n\n${a.title}\n${a.text}`; } catch {} }
+    const brands = col("brands");
+    const brandIds = (n.brands?.length ? n.brands : Object.keys(brands)).filter(id => brands[id]);
+    try {
+      const out = await runLlm({ prompt: build({ src, opinion: "", brandIds, platIds: plats, brands, prefs: col("prefs"), aiLang: lang, hasShot: false }), json: true });
+      if (!Array.isArray(out.json?.brands)) throw new Error("unexpected format");
+      const cur = col("news")[date];
+      if (!cur?.items?.[i]) return;
+      cur.items[i] = { ...cur.items[i], draft: { res: out.json, src, brandIds, platIds: plats, at: new Date().toISOString(), model: out.model } };
+      db.rev++; saveDb();
+      console.log(`[drafts] ${date} #${i + 1} ready (${out.model})`);
+    } catch (e) { console.warn(`[drafts] ${date} #${i + 1}: ${e.message}`); }
+  }
+}
+
 /* ---------------- HTTP ---------------- */
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".ico": "image/x-icon" };
 const send = (res, code, obj) => { res.writeHead(code, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }); res.end(JSON.stringify(obj)); };
@@ -299,14 +339,14 @@ const server = http.createServer(async (req, res) => {
     if (p === "/api/config" && req.method === "GET") {
       return send(res, 200, {
         vision: !!(PRIMARY?.vision || FALLBACK?.vision), paidAvailable: !!PAID,
-        primary: PRIMARY && { model: PRIMARY.model }, fallback: FALLBACK && { model: FALLBACK.model }, paid: PAID && { model: PAID.model },
+        primary: PRIMARY && { model: PRIMARY.model }, quick: QUICK && { model: QUICK.model }, fallback: FALLBACK && { model: FALLBACK.model }, paid: PAID && { model: PAID.model },
         newsTime: NEWS_TIME, tz: TZ
       });
     }
     if (p === "/api/sample" && req.method === "POST") {
       const b = await readBody(req);
       const prompt = typeof b.input === "string" ? b.input : (b.input || []).map(m => `${m.role.toUpperCase()}: ${m.content}`).join("\n\n");
-      try { return send(res, 200, await runLlm({ prompt, images: b.images || [], json: !!b.json, paid: !!b.paid })); }
+      try { return send(res, 200, await runLlm({ prompt, images: b.images || [], json: !!b.json, paid: !!b.paid, tier: b.tier === "quick" ? "quick" : "default" })); }
       catch (e) { return send(res, e.status === 429 ? 429 : 502, { code: e.code || (e.status === 429 ? "rate_limited" : "provider_error"), message: e.message }); }
     }
     if (p === "/api/db/rev" && req.method === "GET") return send(res, 200, { rev: db.rev });
@@ -348,6 +388,7 @@ server.listen(PORT, () => {
   console.log(`ActaNews on http://localhost:${PORT}`);
   console.log(`  primary : ${PRIMARY ? PRIMARY.model + " @ " + PRIMARY.url : "not set"}`);
   console.log(`  fallback: ${FALLBACK ? FALLBACK.model + " @ " + FALLBACK.url : "not set"}`);
+  console.log(`  quick   : ${QUICK ? QUICK.model + " (story picking, scoring)" : "not set, using primary"}`);
   console.log(`  paid    : ${PAID ? PAID.model + " (manual only)" : "not set"}`);
   console.log(`  news    : daily at ${NEWS_TIME} ${TZ}, feeds in ${FEEDS_FILE}`);
 });

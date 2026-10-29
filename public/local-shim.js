@@ -11,7 +11,7 @@
   async function callAi(input, opts = {}, json) {
     const imgs = opts.images ? [].concat(opts.images instanceof FileList ? [...opts.images] : opts.images) : [];
     const images = await Promise.all(imgs.map(blobToDataUrl));
-    const r = await fetch("/api/sample", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ input, images, json, paid }), signal: opts.signal });
+    const r = await fetch("/api/sample", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ input, images, json, paid, tier: opts.modelTier || "default" }), signal: opts.signal });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw { code: j.code || (r.status === 429 ? "rate_limited" : "unavailable"), message: j.message || "HTTP " + r.status };
     return j;

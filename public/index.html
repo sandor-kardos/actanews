@@ -207,6 +207,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 .post.has-fill{border-color:var(--warn);box-shadow:0 0 0 1px var(--warn)}
 .fillwarn{display:flex;gap:8px;align-items:center;font:600 13px var(--f-body);color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent);border-radius:8px;padding:6px 10px}
 .btn.jack{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.badge.ready{border-style:solid;border-color:var(--ok);color:var(--ok)}
 .better{background:var(--bg);border-radius:8px;padding:10px 12px;white-space:pre-wrap;font-size:14px}
 /* image tool */
 .stage{position:relative;max-width:100%;border-radius:8px;overflow:hidden;background:var(--bg);cursor:crosshair}
@@ -232,7 +233,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.4.0">v1.4.0</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.5.0">v1.5.0</span></div>
   <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
@@ -410,7 +411,7 @@ const STR = {
     tab_post: "Poszt", tab_comment: "Komment", tab_image: "Kép", tab_brands: "Márkák",
     news_h: "Mai 3 hír", news_empty: "A mai hírek minden reggel 7 előtt érkeznek. Amíg nincs friss, a legutóbbiakat látod itt.",
     news_updated: "Frissítve: {d}", news_latest: "Legutóbbi: {d} (a mai még nem érkezett meg)", news_react: "Reagálok", news_angle: "Szög: ", news_source: "Forrás",
-    post_lede_local: "Illessz be egy linket (a cikket magától letölti), másold be a szöveget, vagy tölts fel képernyőképet, és írd mellé egy mondatban a véleményed.", jack: "Jack it!", jack_tip: "Cikk + posztok + kép egy kattintással", fill_warn: "[FILL] maradt a szövegben: töltsd ki másolás előtt.", news_refreshing: "Hírek keresése… (1-3 perc)", news_err: "Hiba: ", post_h: "Mire reagálsz?", post_lede: "Másold be a hír szövegét vagy tölts fel képernyőképet, írd mellé egy mondatban a véleményed. A linkeket az app nem tudja megnyitni, ezért a szöveg vagy a screenshot kell.",
+    post_lede_local: "Illessz be egy linket (a cikket magától letölti), másold be a szöveget, vagy tölts fel képernyőképet, és írd mellé egy mondatban a véleményed.", jack: "Jack it!", jack_tip: "Cikk + posztok + kép egy kattintással", draft_ready: "kész piszkozat", draft_loaded: "Reggeli piszkozat betöltve. Ha saját véleményt írsz hozzá, a Posztok generálása gomb újraírja.", fill_warn: "[FILL] maradt a szövegben: töltsd ki másolás előtt.", news_refreshing: "Hírek keresése… (1-3 perc)", news_err: "Hiba: ", post_h: "Mire reagálsz?", post_lede: "Másold be a hír szövegét vagy tölts fel képernyőképet, írd mellé egy mondatban a véleményed. A linkeket az app nem tudja megnyitni, ezért a szöveg vagy a screenshot kell.",
     src_label: "Hír, poszt vagy jegyzet", src_ph: "Pl. a cikk bekezdése, egy poszt szövege, vagy a link + pár szó arról, miről szól",
     shot_txt: "Képernyőkép feltöltése vagy beillesztése (Ctrl+V)", shot_done: "Képernyőkép csatolva. Kattints a cseréhez.",
     op_label: "A véleményed", op_hint: "Ez lesz a posztok gerince. Bármelyik nyelven írhatod.", op_ph: "Pl. szerintem ez a kisvállalkozásoknak jó hír, mert...",
@@ -462,7 +463,7 @@ const STR = {
     tab_post: "Post", tab_comment: "Comment", tab_image: "Image", tab_brands: "Brands",
     news_h: "Today's 3 stories", news_empty: "Today's stories arrive before 7am every morning. Until then you see the latest ones.",
     news_updated: "Updated: {d}", news_latest: "Latest: {d} (today's hasn't arrived yet)", news_react: "React", news_angle: "Angle: ", news_source: "Source",
-    post_lede_local: "Paste a link (the article is fetched for you), paste the text, or upload a screenshot, and add your opinion in one sentence.", jack: "Jack it!", jack_tip: "Article + posts + image in one click", fill_warn: "[FILL] left in the text: fill it in before copying.", news_refreshing: "Searching stories… (1-3 min)", news_err: "Error: ", post_h: "What are you reacting to?", post_lede: "Paste the story text or upload a screenshot, and add your opinion in one sentence. The app can't open links, so it needs the text or a screenshot.",
+    post_lede_local: "Paste a link (the article is fetched for you), paste the text, or upload a screenshot, and add your opinion in one sentence.", jack: "Jack it!", jack_tip: "Article + posts + image in one click", draft_ready: "draft ready", draft_loaded: "Morning draft loaded. Add your opinion and press Generate posts to rewrite it.", fill_warn: "[FILL] left in the text: fill it in before copying.", news_refreshing: "Searching stories… (1-3 min)", news_err: "Error: ", post_h: "What are you reacting to?", post_lede: "Paste the story text or upload a screenshot, and add your opinion in one sentence. The app can't open links, so it needs the text or a screenshot.",
     src_label: "Story, post or note", src_ph: "E.g. a paragraph of the article, a post's text, or the link plus a few words on what it says",
     shot_txt: "Upload or paste a screenshot (Ctrl+V)", shot_done: "Screenshot attached. Click to replace.",
     op_label: "Your opinion", op_hint: "This becomes the spine of every post. Write it in any language.", op_ph: "E.g. I think this is good news for small businesses because...",
@@ -586,6 +587,7 @@ const SIZES = [
 ];
 const sizeKind = s => s.kind.replace("square", t("square")).replace("link", t("link_img"));
 const sizeLabel = s => `${PLATFORMS.find(p => p.id === s.plat).name} ${sizeKind(s)}`;
+/*<prompts>*/
 const PLATFORM_RULES = `
 - facebook: 40-120 words, conversational, first line must work before "See more". 0-3 core hashtags, extra hashtags optional.
 - instagram: hook in first 125 characters, short lines with line breaks, never paste URLs (say "link in bio" / "link a bióban"). 3-5 core hashtags plus 8-15 extra (mix of broad, niche and local).
@@ -602,6 +604,43 @@ const GLOBAL_RULES = `
 - The user's opinion is the spine of every post. If it is empty, choose a neutral angle and say so in "angle_note".
 - Hashtags: core = must-use, specific; extra = related/long-tail/local alternatives the user may tick. No spaces inside tags, no duplicates between core and extra. Hungarian brand: give accent-free versions where people actually use them (e.g. #utanfuto next to #utánfutó).
 - seo_keyword: 2-5 word search phrase in the brand's language, matching what someone would search for this topic (used for image filenames).`;
+function buildPromptCore({ src, opinion, brandIds, platIds, brands, prefs, aiLang, hasShot }) {
+  const pref = id => ({ blocked_tags: [], liked: [], disliked: [], ...((prefs || {})[id] || {}) });
+  const profiles = brandIds.map(id => {
+    const pr = pref(id);
+    return { id, ...brands[id],
+      blocked_hashtags_never_use: pr.blocked_tags,
+      liked_examples_match_this_feel: pr.liked.slice(-3).map(x => ({ platform: x.platform, text: x.text })),
+      disliked_examples_avoid_this_style: pr.disliked.slice(-3).map(x => ({ platform: x.platform, text: x.text })) };
+  });
+  const L = aiLang;
+  return `You write ready-to-paste social media posts for a small business owner who runs several brands.
+Each brand profile may include the owner's feedback: liked examples (match their tone, length and structure, never copy them), disliked examples (avoid that style) and blocked hashtags (never use them).
+
+TASK
+1) Read the input (text below${hasShot ? " and the attached screenshot" : ""}). Summarise it in one line in ${L}.
+2) Score each brand 0-3 for how naturally it can react to this item (0 = no real link, 3 = core topic). Never force a connection. Respect each brand's rules (a brand's rules can force 0).
+3) For every brand scoring 2 or 3, write one post per platform in: ${platIds.join(", ")} (only those the brand uses; a brand's "platforms" list is its default set, but include a requested platform if it clearly suits the brand).
+4) Write each post (caption, hashtags, alt text) in the BRAND's language and voice, whatever language the input or opinion is in.
+
+PLATFORM RULES${PLATFORM_RULES}
+
+GLOBAL RULES${GLOBAL_RULES}
+
+BRAND PROFILES (JSON)
+${JSON.stringify(profiles, null, 1)}
+
+INPUT
+"""${src || "(see screenshot)"}"""
+
+USER OPINION
+"""${opinion || ""}"""
+
+Return ONLY JSON in this shape:
+{"summary":"one line in ${L}","angle_note":"in ${L}, or empty","brands":[{"id":"brand id","score":0,"reason":"short reason in ${L}","seo_keyword":"phrase in the brand language","card":{"headline":"text for the post image, brand language, max 6 words, no hashtags or emoji","subheading":"one short sentence in the brand language","source_name":"outlet name if reacting to news, else empty","image_prompt":"English prompt for a background image: describe subject, setting, light and style; no text, letters or logos; for asc and mindhaven only abstract or illustrative scenes, never identifiable children, clients or realistic people"},"posts":[{"platform":"instagram","caption":"full caption text without hashtags","hashtags_core":["#tag"],"hashtags_extra":["#tag"],"alt_text":"image alt text in the brand language, max 125 chars","image_idea":"what photo or graphic to use, in ${L}","best_time":"suggested posting time, in ${L}"}]}]}
+Include every brand listed in BRAND PROFILES in "brands", with "posts": [] when score < 2.`;
+}
+/*</prompts>*/
 
 /* ---------- state ---------- */
 let brands = {};
@@ -778,39 +817,7 @@ $("#clearBtn").addEventListener("click", () => {
 
 /* ---------- generation ---------- */
 function buildPrompt(src, opinion, brandIds, platIds) {
-  const profiles = brandIds.map(id => {
-    const pr = brandPref(id);
-    return { id, ...brands[id],
-      blocked_hashtags_never_use: pr.blocked_tags,
-      liked_examples_match_this_feel: pr.liked.slice(-3).map(x => ({ platform: x.platform, text: x.text })),
-      disliked_examples_avoid_this_style: pr.disliked.slice(-3).map(x => ({ platform: x.platform, text: x.text })) };
-  });
-  const L = t("ai_lang");
-  return `You write ready-to-paste social media posts for a small business owner who runs several brands.
-Each brand profile may include the owner's feedback: liked examples (match their tone, length and structure, never copy them), disliked examples (avoid that style) and blocked hashtags (never use them).
-
-TASK
-1) Read the input (text below${shotBlob ? " and the attached screenshot" : ""}). Summarise it in one line in ${L}.
-2) Score each brand 0-3 for how naturally it can react to this item (0 = no real link, 3 = core topic). Never force a connection. Respect each brand's rules (a brand's rules can force 0).
-3) For every brand scoring 2 or 3, write one post per platform in: ${platIds.join(", ")} (only those the brand uses; a brand's "platforms" list is its default set, but include a requested platform if it clearly suits the brand).
-4) Write each post (caption, hashtags, alt text) in the BRAND's language and voice, whatever language the input or opinion is in.
-
-PLATFORM RULES${PLATFORM_RULES}
-
-GLOBAL RULES${GLOBAL_RULES}
-
-BRAND PROFILES (JSON)
-${JSON.stringify(profiles, null, 1)}
-
-INPUT
-"""${src || "(see screenshot)"}"""
-
-USER OPINION
-"""${opinion || ""}"""
-
-Return ONLY JSON in this shape:
-{"summary":"one line in ${L}","angle_note":"in ${L}, or empty","brands":[{"id":"brand id","score":0,"reason":"short reason in ${L}","seo_keyword":"phrase in the brand language","card":{"headline":"text for the post image, brand language, max 6 words, no hashtags or emoji","subheading":"one short sentence in the brand language","source_name":"outlet name if reacting to news, else empty","image_prompt":"English prompt for a background image: describe subject, setting, light and style; no text, letters or logos; for asc and mindhaven only abstract or illustrative scenes, never identifiable children, clients or realistic people"},"posts":[{"platform":"instagram","caption":"full caption text without hashtags","hashtags_core":["#tag"],"hashtags_extra":["#tag"],"alt_text":"image alt text in the brand language, max 125 chars","image_idea":"what photo or graphic to use, in ${L}","best_time":"suggested posting time, in ${L}"}]}]}
-Include every brand listed in BRAND PROFILES in "brands", with "posts": [] when score < 2.`;
+  return buildPromptCore({ src, opinion, brandIds, platIds, brands, prefs, aiLang: t("ai_lang"), hasShot: !!shotBlob });
 }
 
 $("#postForm").addEventListener("submit", async e => {
@@ -1391,6 +1398,7 @@ function renderBrandForms() {
 /* ---------- daily news (written each morning by a scheduled task) ---------- */
 // Fill the form from a story; with auto=true it also generates right away (Jack it!).
 async function startReact(n, doc, auto) {
+  if (auto && n.draft?.res?.brands) return loadDraft(n);
   $("#src").value = `${n.title_original || n.title}\n${n.summary_en || n.summary}\n${t("news_source")}: ${n.source}${n.url ? " " + n.url : ""} (${n.date || doc.date})`;
   BRAND_ORDER.forEach(id => { const c = $("#bc-" + id); if (c) c.checked = !n.brands?.length || n.brands.includes(id); });
   if ($("#drawer").classList.contains("open")) setDrawer(false);
@@ -1399,6 +1407,22 @@ async function startReact(n, doc, auto) {
   if (!auto) { $("#opinion").focus(); $("#postForm").scrollIntoView({ behavior: smooth, block: "start" }); }
   if (n.url && window.ACTA_LOCAL) await fetchArticleInto(n.url, $("#src").value);
   if (auto) { setNewsCollapsed(true); $("#postForm").scrollIntoView({ behavior: smooth, block: "start" }); $("#postForm").requestSubmit(); }
+}
+// A draft written by the server at news time: show it instantly, Generate posts rewrites it.
+function loadDraft(n) {
+  const d = n.draft;
+  $("#src").value = d.src || "";
+  $("#opinion").value = "";
+  BRAND_ORDER.forEach(id => { const c = $("#bc-" + id); if (c) c.checked = (d.brandIds || []).includes(id); });
+  PLATFORMS.forEach(p => { const c = $("#pc-" + p.id); if (c) c.checked = (d.platIds || []).includes(p.id); });
+  if ($("#drawer").classList.contains("open")) setDrawer(false);
+  if ($("#view-post").hidden) { location.hash = "post"; show("post"); }
+  lastResult = d.res; lastInput = { src: d.src || "", opinion: "" };
+  renderResult(lastResult); setNewsCollapsed(true);
+  const firstKw = lastResult.brands.find(b => b.score >= 2 && b.seo_keyword);
+  if (firstKw) { $("#imgBrand").value = firstKw.id; syncKwFromResult(); }
+  setStatus($("#genStatus"), t("draft_loaded"));
+  $("#outPanel").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
 }
 function reactBtn(n, doc) {
   const btn = el("button", { class: "btn small primary rx", type: "button", "data-tip": t("news_react"), "aria-label": t("news_react") }, icon("react"), el("span", { class: "lbl", text: t("news_react") }));
@@ -1501,7 +1525,7 @@ function renderNews(doc) {
       el("p", { text: summary }),
       angle ? el("div", { class: "angle", text: t("news_angle") + angle }) : null,
       el("div", { class: "src" }, n.url ? el("a", { href: n.url, target: "_blank", rel: "noopener", text: n.source }) : n.source, ` · ${n.date || doc.date}`),
-      el("div", { class: "acts" }, jackBtn(n, doc), btn, votes)));
+      el("div", { class: "acts" }, jackBtn(n, doc), btn, votes, n.draft?.res ? el("span", { class: "badge ready", text: t("draft_ready") }) : null)));
   });
 }
 

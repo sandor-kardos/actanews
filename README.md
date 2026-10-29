@@ -20,6 +20,8 @@ Without Docker (Node 20+): `node server.js` with the same variables set.
 
 - **Primary** (`LLM_PRIMARY_*`): Anthropic API by default. Any OpenAI-compatible API also works with `LLM_PRIMARY_KIND=openai`.
 - **Fallback** (`LLM_FALLBACK_*`, optional): used only if the primary call fails, e.g. OmniRoute or a local Ollama.
+- **Quick model** (`LLM_QUICK_*`, optional): a cheap model (e.g. Claude Haiku) for picking the daily stories and image focus. Empty = primary does everything.
+- **Morning drafts** (`PREGEN_DRAFTS=true`): after the stories are picked, the primary model writes the posts for each one in the background, so ⚡ Jack it! opens a ready draft instantly. Write your opinion and press Generate posts to rewrite it.
 - **Second model** (`LLM_PAID_*`, optional): never automatic; a dropdown appears in the header to switch to it.
 
 Keys stay on the server; the browser never sees them.
