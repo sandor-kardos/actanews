@@ -300,8 +300,8 @@ const server = http.createServer(async (req, res) => {
     if (p === "/api/news/refresh" && req.method === "POST") { runNews("manual"); return send(res, 202, { state: "running" }); }
     if (p === "/api/news/status" && req.method === "GET") return send(res, 200, lastNewsStatus);
 
-    // static files
-    const file = path.normalize(path.join(PUBLIC_DIR, p === "/" ? "index.html" : p));
+    // static files (browsers ask for /favicon.ico by default; serve the SVG icon)
+    const file = path.normalize(path.join(PUBLIC_DIR, p === "/" ? "index.html" : p === "/favicon.ico" ? "favicon.svg" : p));
     if (!file.startsWith(PUBLIC_DIR) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404); return res.end("Not found"); }
     res.writeHead(200, { "content-type": MIME[path.extname(file)] || "application/octet-stream", "cache-control": "no-cache" });
     fs.createReadStream(file).pipe(res);
