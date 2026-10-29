@@ -35,6 +35,12 @@ header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 header .in{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;gap:10px 12px;align-items:center;flex-wrap:wrap}
 .logo{font:700 22px/1 var(--f-disp);letter-spacing:-.02em;margin-right:auto;display:flex;gap:8px;align-items:center}
 .logo i{display:inline-flex;gap:3px}
+.logo .ver{font:400 11px var(--f-mono);color:var(--muted);opacity:.55;align-self:flex-end;padding-bottom:2px;font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:8px;align-items:center}
+.archive-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 12px;font:600 13px var(--f-body);cursor:pointer;white-space:nowrap}
+.archive-btn span[aria-hidden]{color:var(--warn)}
+.archive-btn[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.archive-btn .badge{font:600 11px var(--f-mono);background:var(--soft);color:var(--ink);border-radius:999px;padding:1px 6px;min-width:18px;text-align:center}
 .logo .slogan{font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);align-self:flex-end;padding-bottom:2px}
 .logo i b{width:7px;height:18px;border-radius:2px;display:block}
 nav.tabs{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:999px;max-width:100%;overflow-x:auto}
@@ -163,16 +169,18 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.1.0">v1.1.0</span></div>
+  <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
     <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+  <button type="button" class="archive-btn" id="archiveBtn" data-view="mentett" aria-pressed="false"><span aria-hidden="true">★</span><span data-i18n="tab_saved">Archívum</span><span class="badge" id="archiveCount" hidden></span></button>
   </div>
   <nav class="tabs" role="tablist">
     <button role="tab" id="tab-post" aria-selected="true" data-view="post" data-i18n="tab_post">Poszt</button>
     <button role="tab" id="tab-komment" aria-selected="false" data-view="komment" data-i18n="tab_comment">Komment</button>
     <button role="tab" id="tab-kep" aria-selected="false" data-view="kep" data-i18n="tab_image">Kép</button>
-    <button role="tab" id="tab-mentett" aria-selected="false" data-view="mentett" data-i18n="tab_saved">Mentett</button>
     <button role="tab" id="tab-markak" aria-selected="false" data-view="markak" data-i18n="tab_brands">Márkák</button>
   </nav>
 </div></header>
@@ -372,7 +380,7 @@ const STR = {
     f_name: "Név", f_url: "Weboldal", f_slug: "Fájlnév rövidítés", f_language: "Nyelv", f_platforms: "Alap platformok (vesszővel)", f_audience: "Közönség", f_voice: "Hangnem és stílus",
     f_offer: "Ajánlat, árak, tények", f_cta: "CTA", f_rules: "Szabályok, tiltások", f_hashtags: "Alap hashtagek", f_source_note: "Forrás",
     ai_lang: "Hungarian",
-    tab_saved: "Mentett", sv_h: "Mentett", sv_lede: "A csillagozott posztok és hírek. A csillagozott posztokat a generálás mintaként használja, a mínuszolt dolgokat legközelebb kerüli.",
+    tab_saved: "Archívum", sv_h: "Archívum", sv_lede: "A csillagozott posztok és hírek. A csillagozott posztokat a generálás mintaként használja, a mínuszolt dolgokat legközelebb kerüli.",
     sv_posts: "Posztok", sv_news: "Hírek", sv_blocked: "Kizárt hashtagek", sv_blocked_h: "Ezeket a generálás már nem ajánlja. Koppints rá a visszaengedéshez.",
     sv_none_posts: "Még nincs csillagozott poszt. A poszt kártyáján a ☆ menti ide.", sv_none_news: "Még nincs csillagozott hír.", sv_none_tags: "Nincs kizárt hashtag.",
     star: "Mentés csillaggal", unstar: "Csillag levétele", minus: "Nem kell, legközelebb se", hidden_news: "Elrejtve, a hírkereső hasonlót sem hoz.", hidden_post: "Elvetve, a generálás kerüli ezt a stílust.", undo: "Visszavon",
@@ -423,7 +431,7 @@ const STR = {
     f_name: "Name", f_url: "Website", f_slug: "Filename short name", f_language: "Language", f_platforms: "Default platforms (comma separated)", f_audience: "Audience", f_voice: "Voice and style",
     f_offer: "Offer, prices, facts", f_cta: "CTA", f_rules: "Rules and no-gos", f_hashtags: "Core hashtags", f_source_note: "Source",
     ai_lang: "English",
-    tab_saved: "Saved", sv_h: "Saved", sv_lede: "Your starred posts and stories. Generation uses starred posts as examples and avoids what you minus.",
+    tab_saved: "Archive", sv_h: "Archive", sv_lede: "Your starred posts and stories. Generation uses starred posts as examples and avoids what you minus.",
     sv_posts: "Posts", sv_news: "Stories", sv_blocked: "Blocked hashtags", sv_blocked_h: "Generation won't suggest these any more. Tap one to allow it again.",
     sv_none_posts: "No starred posts yet. Tap ☆ on a post card to save it here.", sv_none_news: "No starred stories yet.", sv_none_tags: "No blocked hashtags.",
     star: "Star to save", unstar: "Remove star", minus: "Not needed, skip next time", hidden_news: "Hidden. The news finder won't bring similar ones.", hidden_post: "Dismissed. Generation will avoid this style.", undo: "Undo",
@@ -575,9 +583,10 @@ const errMsg = e => {
 const views = ["post", "komment", "kep", "mentett", "markak"];
 function show(v) {
   if (!views.includes(v)) v = "post";
-  views.forEach(x => { $("#view-" + x).hidden = x !== v; $("#tab-" + x).setAttribute("aria-selected", String(x === v)); });
+  views.forEach(x => { $("#view-" + x).hidden = x !== v; const tb = $("#tab-" + x); if (tb) tb.setAttribute("aria-selected", String(x === v)); });
+  $("#archiveBtn").setAttribute("aria-pressed", String(v === "mentett"));
 }
-document.querySelectorAll("nav.tabs button").forEach(b => b.addEventListener("click", () => { location.hash = b.dataset.view; show(b.dataset.view); }));
+document.querySelectorAll("nav.tabs button, #archiveBtn").forEach(b => b.addEventListener("click", () => { location.hash = b.dataset.view; show(b.dataset.view); }));
 window.addEventListener("hashchange", () => show(location.hash.slice(1)));
 show(location.hash.slice(1));
 
@@ -1128,6 +1137,7 @@ function renderNews(doc) {
 
 /* ---------- saved tab ---------- */
 function renderSaved() {
+  const cnt = $("#archiveCount"); cnt.textContent = String(saved.length); cnt.hidden = !saved.length;
   const posts = saved.filter(s => s.type === "post").sort((a, b) => String(b.savedAt).localeCompare(String(a.savedAt)));
   const news = saved.filter(s => s.type === "news").sort((a, b) => String(b.savedAt).localeCompare(String(a.savedAt)));
   const copyBtn = x => { const b = el("button", { class: "btn small", type: "button", text: t("copy") }); b.addEventListener("click", () => copyText(x, b)); return b; };
