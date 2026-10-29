@@ -37,10 +37,6 @@ header .in{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-in
 .logo i{display:inline-flex;gap:3px}
 .logo .ver{font:400 11px var(--f-mono);color:var(--muted);opacity:.55;align-self:flex-end;padding-bottom:2px;font-variant-numeric:tabular-nums}
 .tools{display:flex;gap:8px;align-items:center}
-.archive-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 12px;font:600 13px var(--f-body);cursor:pointer;white-space:nowrap}
-.archive-btn span[aria-hidden]{color:var(--warn)}
-.archive-btn[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
-.archive-btn .badge{font:600 11px var(--f-mono);background:var(--soft);color:var(--ink);border-radius:999px;padding:1px 6px;min-width:18px;text-align:center}
 .logo .slogan{font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);align-self:flex-end;padding-bottom:2px}
 .logo i b{width:7px;height:18px;border-radius:2px;display:block}
 nav.tabs{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:999px;max-width:100%;overflow-x:auto}
@@ -49,6 +45,52 @@ nav.tabs button[aria-selected="true"]{background:var(--panel);color:var(--ink);b
 .lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
 .lang button{border:0;background:transparent;color:var(--muted);font:600 12px var(--f-mono);padding:6px 10px;cursor:pointer}
 .lang button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.refresh{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ink);background:var(--ink);color:var(--panel);border-radius:999px;padding:6px 12px;font:600 12px var(--f-body);cursor:pointer}
+.refresh:hover,.inkbtn:hover{opacity:.85}
+.inkbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ink);background:var(--ink);color:var(--panel);border-radius:999px;padding:6px 12px;font:600 12px var(--f-body);cursor:pointer}
+.inkbtn svg{width:14px;height:14px;flex:none}
+.scrim{position:fixed;inset:0;z-index:20;background:rgba(10,12,18,.45)}
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:21;width:min(440px,100vw);background:var(--panel);border-left:1px solid var(--line);box-shadow:-8px 0 24px rgba(0,0,0,.18);display:flex;flex-direction:column;transform:translateX(100%);visibility:hidden}
+.drawer.open{transform:none;visibility:visible}
+@media (prefers-reduced-motion:no-preference){.drawer{transition:transform .25s ease,visibility .25s}}
+.drawer .dh{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 12px;border-bottom:1px solid var(--line)}
+.drawer .close{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;width:32px;height:32px;font:600 18px/1 var(--f-body);cursor:pointer;flex:none}
+.archive{display:flex;flex-direction:column;gap:14px;padding:14px 16px calc(24px + env(safe-area-inset-bottom,0px));overflow-y:auto;flex:1}
+.archive .day{display:flex;flex-direction:column;gap:8px}
+.arow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;border:1px solid var(--line);border-left-width:3px;border-radius:8px;padding:8px 10px 8px 12px}
+.arow.done,.nitem.done{border-left-color:var(--ok)}
+.nitem{border-left-width:3px}
+.marks{display:inline-flex;gap:2px;align-items:center}
+.ico{border:0;background:transparent;color:var(--muted);width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.ico:hover{background:var(--bg);color:var(--ink)}
+.ico svg{width:17px;height:17px}
+.ico.star[aria-pressed="true"]{color:var(--warn)}
+.ico.done[aria-pressed="true"]{color:var(--ok)}
+.vote button.done{display:inline-flex;align-items:center;justify-content:center}.vote button.done svg{width:15px;height:15px}
+.vote button.done[aria-pressed="true"]{color:var(--ok);border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+.btn svg{width:15px;height:15px;flex:none}
+.sr,.archive .rx .lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.archive .rx{padding:6px 9px}
+@media (max-width:520px){.nitem .rx .lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.nitem .rx{padding:6px 9px}}
+/* tooltips: hover on desktop, long-press on touch */
+[data-tip]{position:relative;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--ink);color:var(--panel);font:600 12px/1.3 var(--f-body);padding:4px 8px;border-radius:6px;white-space:nowrap;opacity:0;visibility:hidden;pointer-events:none;z-index:40}
+[data-tip].tip-r::after{left:auto;right:0;transform:none}
+[data-tip].tip-dn::after{bottom:auto;top:calc(100% + 6px)}
+@media (hover:hover){[data-tip]:hover::after{opacity:1;visibility:visible}}
+[data-tip].tip-show::after{opacity:1;visibility:visible}
+@media (min-width:521px){.nitem .rx::after{display:none}}
+@media (min-width:521px){.refresh::after{display:none}}
+.arow .t{font-weight:600;font-size:14px;line-height:1.3}
+.arow .s{font:500 12px var(--f-mono);color:var(--muted);overflow-wrap:anywhere;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.arow .s a{color:inherit}
+.arow .dots{display:inline-flex;gap:3px}.arow .dots i{width:8px;height:8px;border-radius:50%;display:block}
+.badge{font:600 10.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;padding:1px 6px;border-radius:999px;border:1px dashed var(--muted);color:var(--muted)}
+.arow.hid{opacity:.5}
+@media (max-width:520px){.refresh{padding:6px 8px}.refresh span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
+.refresh svg{width:14px;height:14px;flex:none}
+@media (prefers-reduced-motion:no-preference){.refresh.spin svg{animation:spin .8s linear infinite}}
+@keyframes spin{to{transform:rotate(360deg)}}
 h1,h2,h3{font-family:var(--f-disp);text-wrap:balance;margin:0}
 h2{font-size:22px;font-weight:700}
 h3{font-size:16px;font-weight:700}
@@ -144,6 +186,13 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 .reply .tag{font:600 11px var(--f-mono);color:var(--muted);padding-top:2px}
 .qlist{display:flex;flex-direction:column;gap:6px}
 .qitem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;font-size:14px}
+.cwrap{position:relative;min-width:0}
+.cwrap > .cpy{position:absolute;top:6px;right:6px;background:var(--panel);border:1px solid var(--line)}
+.cwrap > .cpy svg{width:15px;height:15px}
+.cwrap > textarea{padding-right:44px}
+.cwrap > .better,.cwrap > .txt{padding-right:44px}
+.cline{display:flex;align-items:flex-start;gap:6px;justify-content:space-between}
+.cline .cpy,.reply .cpy,.qitem .cpy{width:28px;height:28px;flex:none}
 .better{background:var(--bg);border-radius:8px;padding:10px 12px;white-space:pre-wrap;font-size:14px}
 /* image tool */
 .stage{position:relative;max-width:100%;border-radius:8px;overflow:hidden;background:var(--bg);cursor:crosshair}
@@ -169,18 +218,20 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.1.0">v1.1.0</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.2.0">v1.2.0</span></div>
   <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
     <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
   </div>
-  <button type="button" class="archive-btn" id="archiveBtn" data-view="mentett" aria-pressed="false"><span aria-hidden="true">★</span><span data-i18n="tab_saved">Archívum</span><span class="badge" id="archiveCount" hidden></span></button>
+  <button type="button" class="inkbtn" id="archiveBtn" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg><span data-i18n="archive">Archív</span></button>
   </div>
+  <button type="button" class="refresh tip-r tip-dn" id="refreshBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg><span data-i18n="refresh">Frissítés</span></button>
   <nav class="tabs" role="tablist">
     <button role="tab" id="tab-post" aria-selected="true" data-view="post" data-i18n="tab_post">Poszt</button>
     <button role="tab" id="tab-komment" aria-selected="false" data-view="komment" data-i18n="tab_comment">Komment</button>
     <button role="tab" id="tab-kep" aria-selected="false" data-view="kep" data-i18n="tab_image">Kép</button>
+    <button role="tab" id="tab-mentett" aria-selected="false" data-view="mentett" data-i18n="tab_saved">Mentett</button>
     <button role="tab" id="tab-markak" aria-selected="false" data-view="markak" data-i18n="tab_brands">Márkák</button>
   </nav>
 </div></header>
@@ -324,6 +375,12 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
   <div class="brandforms" id="brandForms"><div class="empty" data-i18n="br_loading">Márkaprofilok betöltése…</div></div>
 </section>
 </main>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" aria-labelledby="archiveH" aria-hidden="true">
+  <div class="dh"><div><h3 id="archiveH" data-i18n="archive_h">Lekutatott témák</h3><p class="note" style="margin:2px 0 0" data-i18n="archive_lede"></p></div>
+    <button type="button" class="close" id="drawerClose" aria-label="Close">×</button></div>
+  <div class="archive" id="archive"></div>
+</aside>
 
 <script src="/vendor/jszip.min.js"></script>
 <script src="/vendor/smartcrop.js"></script>
@@ -380,11 +437,11 @@ const STR = {
     f_name: "Név", f_url: "Weboldal", f_slug: "Fájlnév rövidítés", f_language: "Nyelv", f_platforms: "Alap platformok (vesszővel)", f_audience: "Közönség", f_voice: "Hangnem és stílus",
     f_offer: "Ajánlat, árak, tények", f_cta: "CTA", f_rules: "Szabályok, tiltások", f_hashtags: "Alap hashtagek", f_source_note: "Forrás",
     ai_lang: "Hungarian",
-    tab_saved: "Archívum", sv_h: "Archívum", sv_lede: "A csillagozott posztok és hírek. A csillagozott posztokat a generálás mintaként használja, a mínuszolt dolgokat legközelebb kerüli.",
+    tab_saved: "Mentett", sv_h: "Mentett", sv_lede: "A csillagozott posztok és hírek. A csillagozott posztokat a generálás mintaként használja, a mínuszolt dolgokat legközelebb kerüli.",
     sv_posts: "Posztok", sv_news: "Hírek", sv_blocked: "Kizárt hashtagek", sv_blocked_h: "Ezeket a generálás már nem ajánlja. Koppints rá a visszaengedéshez.",
     sv_none_posts: "Még nincs csillagozott poszt. A poszt kártyáján a ☆ menti ide.", sv_none_news: "Még nincs csillagozott hír.", sv_none_tags: "Nincs kizárt hashtag.",
     star: "Mentés csillaggal", unstar: "Csillag levétele", minus: "Nem kell, legközelebb se", hidden_news: "Elrejtve, a hírkereső hasonlót sem hoz.", hidden_post: "Elvetve, a generálás kerüli ezt a stílust.", undo: "Visszavon",
-    block_tag: "Hashtag kizárása", remove: "Eltávolítás", open: "Megnyitás", e_save: "Nem sikerült menteni a jelölést."
+    block_tag: "Hashtag kizárása", remove: "Eltávolítás", open: "Megnyitás", e_save: "Nem sikerült menteni a jelölést.", refresh: "Frissítés", posted: "Kész, kiment", unposted: "Kész jelölés levétele", archive: "Archív", archive_h: "Lekutatott témák", archive_lede: "Minden eddigi hír és tartalék téma. Ha ma nincs jobb, innen is reagálhatsz.", archive_empty: "Még nincs korábbi téma.", no_conn: "Most nem érem el a mentett híreket. Zárd be és nyisd meg újra az appot, az adatok megvannak.", extra_badge: "tartalék", hidden_badge: "elrejtve"
   },
   en: {
     tab_post: "Post", tab_comment: "Comment", tab_image: "Image", tab_brands: "Brands",
@@ -431,11 +488,11 @@ const STR = {
     f_name: "Name", f_url: "Website", f_slug: "Filename short name", f_language: "Language", f_platforms: "Default platforms (comma separated)", f_audience: "Audience", f_voice: "Voice and style",
     f_offer: "Offer, prices, facts", f_cta: "CTA", f_rules: "Rules and no-gos", f_hashtags: "Core hashtags", f_source_note: "Source",
     ai_lang: "English",
-    tab_saved: "Archive", sv_h: "Archive", sv_lede: "Your starred posts and stories. Generation uses starred posts as examples and avoids what you minus.",
+    tab_saved: "Saved", sv_h: "Saved", sv_lede: "Your starred posts and stories. Generation uses starred posts as examples and avoids what you minus.",
     sv_posts: "Posts", sv_news: "Stories", sv_blocked: "Blocked hashtags", sv_blocked_h: "Generation won't suggest these any more. Tap one to allow it again.",
     sv_none_posts: "No starred posts yet. Tap ☆ on a post card to save it here.", sv_none_news: "No starred stories yet.", sv_none_tags: "No blocked hashtags.",
     star: "Star to save", unstar: "Remove star", minus: "Not needed, skip next time", hidden_news: "Hidden. The news finder won't bring similar ones.", hidden_post: "Dismissed. Generation will avoid this style.", undo: "Undo",
-    block_tag: "Block hashtag", remove: "Remove", open: "Open", e_save: "Couldn't save your mark."
+    block_tag: "Block hashtag", remove: "Remove", open: "Open", e_save: "Couldn't save your mark.", refresh: "Refresh", posted: "Done, posted", unposted: "Remove done mark", archive: "Archive", archive_h: "Researched topics", archive_lede: "Every story and backup topic so far. If nothing better came today, react from here.", archive_empty: "No earlier topics yet.", no_conn: "Can't reach the saved stories right now. Close and reopen the app; the data is safe.", extra_badge: "backup", hidden_badge: "hidden"
   }
 };
 let lang = "hu";
@@ -446,6 +503,7 @@ function applyLang() {
   document.querySelectorAll("[data-i18n]").forEach(n => n.textContent = t(n.dataset.i18n));
   document.querySelectorAll("[data-i18n-ph]").forEach(n => n.placeholder = t(n.dataset.i18nPh));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  $("#refreshBtn").dataset.tip = t("refresh");
   $("#shotDrop").setAttribute("aria-label", t("shot_txt")); $("#imgDrop").setAttribute("aria-label", t("img_drop"));
   if (shotBlob) $("#shotTxt").textContent = t("shot_done");
   if (srcImg) $("#imgTxt").textContent = imgLabel;
@@ -457,6 +515,24 @@ document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click
   lang = b.dataset.lang; try { localStorage.setItem("reax-lang", lang); } catch {}
   applyLang();
 }));
+// Long-press on touch shows the tooltip without triggering the button.
+let lpTimer = 0, lpEl = null, lpHide = 0;
+document.addEventListener("touchstart", e => {
+  const b = e.target.closest?.("[data-tip]"); if (!b) return;
+  clearTimeout(lpTimer); lpEl = null;
+  lpTimer = setTimeout(() => { document.querySelectorAll(".tip-show").forEach(x => x.classList.remove("tip-show")); b.classList.add("tip-show"); lpEl = b; }, 450);
+}, { passive: true });
+const lpEnd = () => { clearTimeout(lpTimer); if (lpEl) { const b = lpEl; clearTimeout(lpHide); lpHide = setTimeout(() => b.classList.remove("tip-show"), 1200); setTimeout(() => { if (lpEl === b) lpEl = null; }, 400); } };
+["touchend", "touchcancel"].forEach(ev => document.addEventListener(ev, lpEnd, { passive: true }));
+document.addEventListener("touchmove", () => clearTimeout(lpTimer), { passive: true });
+document.addEventListener("click", e => { if (lpEl && e.target.closest?.("[data-tip]") === lpEl) { e.preventDefault(); e.stopPropagation(); } lpEl = null; }, true);
+document.addEventListener("contextmenu", e => { if (e.target.closest?.("[data-tip]")) e.preventDefault(); });
+// Refresh re-reads the data in place. A full page reload can drop the app's connection to its saved data, so never reload.
+$("#refreshBtn").addEventListener("click", () => {
+  const b = $("#refreshBtn"); b.classList.add("spin"); b.disabled = true;
+  const done = () => { b.classList.remove("spin"); b.disabled = false; };
+  if (typeof window.__resubscribe === "function") Promise.resolve(window.__resubscribe()).finally(() => setTimeout(done, 400)); else setTimeout(done, 400);
+});
 
 /* ---------- static config ---------- */
 const BRAND_ORDER = ["asc", "mindhaven", "bereljufot", "sandorkardos"];
@@ -506,6 +582,7 @@ let lastResult = null;
 let lastInput = { src: "", opinion: "" };
 let shotBlob = null;
 let latestNews = null;
+let allNews = [];
 let srcImg = null, imgLabel = "", focusBoxes = [], manualFocus = null, aiRunId = 0;
 let prefs = {};             // prefs/<brandId> {blocked_tags, liked, disliked}; prefs/news {liked, disliked}
 let saved = [];             // saved collection docs {id, ...}
@@ -521,13 +598,41 @@ async function writePref(docId, next) {
   await db.doc("prefs/" + docId).set(next);
 }
 const brandPref = id => ({ blocked_tags: [], liked: [], disliked: [], ...(prefs[id] || {}) });
-const newsPref = () => ({ liked: [], disliked: [], ...(prefs.news || {}) });
+const newsPref = () => ({ liked: [], disliked: [], posted: [], ...(prefs.news || {}) });
+const sameNews = (a, b) => a.url === (b.url || "") && (a.title === b.title || a.title === b.title_original);
+const isNewsPosted = n => newsPref().posted.some(x => sameNews(x, n));
+async function togglePosted(n) {
+  const p = newsPref(), on = isNewsPosted(n);
+  const rest = p.posted.filter(x => !sameNews(x, n));
+  await writePref("news", { ...p, posted: on ? rest : lastN([...rest, { url: n.url || "", title: n.title, source: n.source || "", brands: n.brands || [], at: nowIso() }], 300) });
+  renderNews(latestNews);
+  return !on;
+}
+const ICONS = {
+  copy: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  react: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9Z"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>'
+};
+const icon = (name, fill) => { const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("fill", fill ? "currentColor" : "none"); s.setAttribute("stroke", "currentColor"); s.setAttribute("stroke-width", "2.2"); s.setAttribute("stroke-linecap", "round"); s.setAttribute("stroke-linejoin", "round"); s.setAttribute("aria-hidden", "true"); s.innerHTML = ICONS[name]; return s; };
+function markButtons(n, doc) {
+  const mk = (cls, name, on, lblOn, lblOff, act) => {
+    const b = el("button", { type: "button", class: "ico " + cls });
+    const paint = v => { b.setAttribute("aria-pressed", String(v)); const l = v ? lblOn : lblOff; b.dataset.tip = l; b.setAttribute("aria-label", l); b.replaceChildren(icon(name, v && name === "star")); };
+    paint(on);
+    b.addEventListener("click", async () => { b.disabled = true; try { const v = await act(); if (typeof v === "boolean") paint(v); } catch (e) { alertStatus(e); } finally { b.disabled = false; } });
+    return b;
+  };
+  return el("span", { class: "marks" },
+    mk("star", "star", isNewsStarred(n), t("unstar"), t("star"), async () => { const was = isNewsStarred(n); await toggleNewsStar(n, doc); return !was; }),
+    mk("done", "check", isNewsPosted(n), t("unposted"), t("posted"), () => togglePosted(n)));
+}
 const isNewsHidden = n => newsPref().disliked.some(x => x.url === n.url && x.title === n.title);
 const isNewsStarred = n => saved.some(s => s.id === newsKey(n));
 function voteButtons({ starred, onStar, onMinus }) {
-  const star = el("button", { type: "button", class: "star", "aria-pressed": String(!!starred), title: starred ? t("unstar") : t("star"), "aria-label": starred ? t("unstar") : t("star"), text: starred ? "★" : "☆" });
-  const minus = el("button", { type: "button", class: "minus", title: t("minus"), "aria-label": t("minus"), text: "−" });
-  const paint = on => { star.setAttribute("aria-pressed", String(on)); star.textContent = on ? "★" : "☆"; star.title = on ? t("unstar") : t("star"); star.setAttribute("aria-label", star.title); };
+  const star = el("button", { type: "button", class: "star", "aria-pressed": String(!!starred), "data-tip": starred ? t("unstar") : t("star"), "aria-label": starred ? t("unstar") : t("star"), text: starred ? "★" : "☆" });
+  const minus = el("button", { type: "button", class: "minus", "data-tip": t("minus"), "aria-label": t("minus"), text: "−" });
+  const paint = on => { star.setAttribute("aria-pressed", String(on)); star.textContent = on ? "★" : "☆"; star.dataset.tip = on ? t("unstar") : t("star"); star.setAttribute("aria-label", star.dataset.tip); };
   star.addEventListener("click", async () => { star.disabled = true; try { const on = await onStar(); if (typeof on === "boolean") paint(on); } catch (e) { alertStatus(e); } finally { star.disabled = false; } });
   minus.addEventListener("click", async () => { minus.disabled = true; try { await onMinus(); } catch (e) { alertStatus(e); } finally { minus.disabled = false; } });
   return el("span", { class: "vote" }, star, minus);
@@ -565,6 +670,21 @@ const slugify = (s, max = 60) => {
   return out.slice(0, max).replace(/-+$/, "");
 };
 const setStatus = (node, msg, err = false) => { node.textContent = msg || ""; node.classList.toggle("err", !!err); };
+// One copy icon per text block: copies exactly that text, nothing else.
+function copyIcon(getText) {
+  const b = el("button", { type: "button", class: "ico cpy tip-r", "data-tip": t("copy"), "aria-label": t("copy") });
+  b.append(icon("copy"));
+  b.addEventListener("click", async () => {
+    const text = String(getText() || "").trim(); if (!text) return;
+    let ok = true;
+    try { await navigator.clipboard.writeText(text); }
+    catch { const ta = el("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.append(ta); ta.select(); try { ok = document.execCommand("copy"); } catch { ok = false; } ta.remove(); }
+    b.replaceChildren(icon(ok ? "check" : "copy")); b.dataset.tip = ok ? t("copied") : t("copy_manual"); b.classList.add("tip-show");
+    setTimeout(() => { b.replaceChildren(icon("copy")); b.dataset.tip = t("copy"); b.classList.remove("tip-show"); }, 1400);
+  });
+  return b;
+}
+const withCopy = (node, getText) => el("div", { class: "cwrap" }, node, copyIcon(getText));
 const copyText = async (text, btn) => {
   const o = btn.textContent;
   try { await navigator.clipboard.writeText(text); btn.textContent = t("copied"); setTimeout(() => btn.textContent = o, 1400); }
@@ -583,10 +703,9 @@ const errMsg = e => {
 const views = ["post", "komment", "kep", "mentett", "markak"];
 function show(v) {
   if (!views.includes(v)) v = "post";
-  views.forEach(x => { $("#view-" + x).hidden = x !== v; const tb = $("#tab-" + x); if (tb) tb.setAttribute("aria-selected", String(x === v)); });
-  $("#archiveBtn").setAttribute("aria-pressed", String(v === "mentett"));
+  views.forEach(x => { $("#view-" + x).hidden = x !== v; $("#tab-" + x).setAttribute("aria-selected", String(x === v)); });
 }
-document.querySelectorAll("nav.tabs button, #archiveBtn").forEach(b => b.addEventListener("click", () => { location.hash = b.dataset.view; show(b.dataset.view); }));
+document.querySelectorAll("nav.tabs button").forEach(b => b.addEventListener("click", () => { location.hash = b.dataset.view; show(b.dataset.view); }));
 window.addEventListener("hashchange", () => show(location.hash.slice(1)));
 show(location.hash.slice(1));
 
@@ -776,14 +895,14 @@ function renderPost(b, p, i) {
   });
   card.append(
     el("div", { class: "top" }, el("strong", { text: PLATFORMS.find(x => x.id === p.platform)?.name || p.platform }), el("span", { class: "row", style: "gap:8px" }, cnt, votes)),
-    el("div", { class: "body" }, cap,
+    el("div", { class: "body" }, withCopy(cap, fullText),
       el("div", {}, el("div", { class: "eyebrow", style: "margin-bottom:6px", text: t("tags_hint") }), tagBox),
       el("dl", { class: "meta" },
-        el("dt", { text: t("m_alt") }), el("dd", { text: p.alt_text || "–" }),
+        el("dt", { text: t("m_alt") }), el("dd", { class: "cline" }, el("span", { text: p.alt_text || "–" }), p.alt_text ? copyIcon(() => p.alt_text) : null),
         el("dt", { text: t("m_img") }), el("dd", { text: p.image_idea || "–" }),
         el("dt", { text: t("m_time") }), el("dd", { text: p.best_time || "–" }),
         el("dt", { text: t("m_file") }), el("dd", { class: "mono", text: fname + "-1080x1350.jpg" })),
-      el("div", { class: "row" }, copyBtn, altBtn, imgBtn, anaBtn), anaSt, anaBox));
+      el("div", { class: "row" }, imgBtn, anaBtn), anaSt, anaBox));
   return card;
 }
 
@@ -835,7 +954,7 @@ function renderAnalysis(r, applyText) {
   box.append(m);
   if (r.misunderstanding) box.append(el("div", { class: "flag" }, el("strong", { text: t("misread") }), r.misunderstanding));
   if (r.issues?.filter(Boolean).length) box.append(el("div", { class: "eyebrow", text: t("issues") }), el("ul", { class: "issues" }, r.issues.filter(Boolean).map(x => el("li", { text: x }))));
-  const copyBtn = x => { const b = el("button", { class: "btn small", type: "button", text: t("copy") }); b.addEventListener("click", () => copyText(x, b)); return b; };
+  const copyBtn = x => copyIcon(() => x);
   if (r.trolls?.length) {
     box.append(el("div", { class: "eyebrow", text: t("trolls") }));
     r.trolls.forEach(tr => box.append(el("div", { class: "troll" },
@@ -848,12 +967,12 @@ function renderAnalysis(r, applyText) {
   box.append(el("div", { class: "eyebrow", text: t("spicy") }));
   if (r.spicy_variant) {
     const use = el("button", { class: "btn small", type: "button", text: t("use_this") }); use.addEventListener("click", () => applyText(r.spicy_variant));
-    box.append(el("div", { class: "better", text: r.spicy_variant }), el("div", { class: "row" }, copyBtn(r.spicy_variant), use));
+    box.append(withCopy(el("div", { class: "better", text: r.spicy_variant }), () => r.spicy_variant), el("div", { class: "row" }, use));
   }
   if (r.spicy_note) box.append(el("p", { class: "note", style: "margin:0", text: r.spicy_note }));
   if (r.improved) {
     const use = el("button", { class: "btn small primary", type: "button", text: t("use_improved") }); use.addEventListener("click", () => applyText(r.improved));
-    box.append(el("div", { class: "eyebrow", text: t("improved") }), el("div", { class: "better", text: r.improved }), el("div", { class: "row" }, copyBtn(r.improved), use));
+    box.append(el("div", { class: "eyebrow", text: t("improved") }), withCopy(el("div", { class: "better", text: r.improved }), () => r.improved), el("div", { class: "row" }, use));
   }
   return box;
 }
@@ -1096,7 +1215,61 @@ function renderBrandForms() {
 }
 
 /* ---------- daily news (written each morning by a scheduled task) ---------- */
+function reactBtn(n, doc) {
+  const btn = el("button", { class: "btn small primary rx", type: "button", "data-tip": t("news_react"), "aria-label": t("news_react") }, icon("react"), el("span", { class: "lbl", text: t("news_react") }));
+  btn.addEventListener("click", () => {
+    $("#src").value = `${n.title_original || n.title}\n${n.summary_en || n.summary}\n${t("news_source")}: ${n.source}${n.url ? " " + n.url : ""} (${n.date || doc.date})`;
+    BRAND_ORDER.forEach(id => { const c = $("#bc-" + id); if (c) c.checked = !n.brands?.length || n.brands.includes(id); });
+    if ($("#drawer").classList.contains("open")) setDrawer(false);
+    if ($("#view-post").hidden) { location.hash = "post"; show("post"); }
+    $("#opinion").focus();
+    $("#postForm").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  });
+  return btn;
+}
+function renderArchive() {
+  const box = $("#archive");
+  if (!$("#drawer").classList.contains("open")) return;
+  box.replaceChildren();
+  const en = lang === "en", seen = new Set();
+  let any = false;
+  const byDate = (a, b) => String(b[0].date || "").localeCompare(String(a[0].date || ""));
+  allNews.forEach(doc => {
+    const rows = [...(doc.items || []).map(n => [n, false]), ...(doc.extras || []).map(n => [n, true])]
+      .filter(([n]) => { const k = newsKey(n); if (seen.has(k)) return false; seen.add(k); return true; }).sort(byDate);
+    if (!rows.length) return;
+    any = true;
+    const day = el("div", { class: "day" }, el("div", { class: "eyebrow", text: doc.date }));
+    rows.forEach(([n, extra]) => {
+      const hid = isNewsHidden(n);
+      day.append(el("div", { class: "arow" + (hid ? " hid" : "") + (isNewsPosted(n) ? " done" : "") },
+        el("div", { style: "min-width:0;display:flex;flex-direction:column;gap:3px" },
+          el("span", { class: "t", text: en ? (n.title_en || n.title_original || n.title) : n.title }),
+          el("span", { class: "s" },
+            el("span", { class: "dots" }, (n.brands || []).map(id => el("i", { style: `background:${brandColor(id)}`, title: brands[id]?.name || id }))),
+            n.url ? el("a", { href: n.url, target: "_blank", rel: "noopener", text: n.source || n.url }) : (n.source || ""),
+            `· ${n.date || doc.date}`,
+            extra ? el("span", { class: "badge", text: t("extra_badge") }) : null,
+            hid ? el("span", { class: "badge", text: t("hidden_badge") }) : null)),
+        el("div", { class: "marks" }, markButtons(n, doc), (() => { const r = reactBtn(n, doc); r.classList.add("tip-r"); return r; })())));
+    });
+    box.append(day);
+  });
+  if (!any) box.append(el("div", { class: "empty", text: t("archive_empty") }));
+}
+function setDrawer(open) {
+  const d = $("#drawer");
+  d.classList.toggle("open", open); d.setAttribute("aria-hidden", String(!open)); $("#scrim").hidden = !open;
+  $("#archiveBtn").setAttribute("aria-expanded", String(open));
+  document.body.style.overflow = open ? "hidden" : "";
+  if (open) { renderArchive(); $("#drawerClose").focus(); } else $("#archiveBtn").focus();
+}
+$("#archiveBtn").addEventListener("click", () => setDrawer(true));
+$("#drawerClose").addEventListener("click", () => setDrawer(false));
+$("#scrim").addEventListener("click", () => setDrawer(false));
+document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#drawer").classList.contains("open")) setDrawer(false); });
 function renderNews(doc) {
+  renderArchive();
   const box = $("#newsList");
   if (!doc || !Array.isArray(doc.items) || !doc.items.length) return;
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/London" });
@@ -1118,14 +1291,10 @@ function renderNews(doc) {
     const title = en ? (n.title_en || n.title_original || n.title) : n.title;
     const summary = en ? (n.summary_en || n.summary) : n.summary;
     const angle = en ? (n.angle_en || n.angle) : n.angle;
-    const btn = el("button", { class: "btn small primary", type: "button", text: t("news_react") });
-    btn.addEventListener("click", () => {
-      $("#src").value = `${n.title_original || n.title}\n${n.summary_en || n.summary}\n${t("news_source")}: ${n.source}${n.url ? " " + n.url : ""} (${n.date || doc.date})`;
-      BRAND_ORDER.forEach(id => { const c = $("#bc-" + id); if (c) c.checked = !n.brands?.length || n.brands.includes(id); });
-      $("#opinion").focus();
-      $("#postForm").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
-    });
-    box.append(el("article", { class: "nitem" },
+    const btn = reactBtn(n, doc);
+    const done = isNewsPosted(n);
+    const doneBtn = markButtons(n, doc).lastChild; doneBtn.className = "done"; votes.append(doneBtn);
+    box.append(el("article", { class: "nitem" + (done ? " done" : "") },
       el("div", { class: "chips" }, (n.brands || []).map(id => el("span", { class: "chip", style: "cursor:default;padding:2px 8px;font-size:12px" }, el("span", { class: "dot", style: `background:${brandColor(id)}` }), brands[id]?.name || id))),
       el("h3", { text: title }),
       el("p", { text: summary }),
@@ -1137,7 +1306,6 @@ function renderNews(doc) {
 
 /* ---------- saved tab ---------- */
 function renderSaved() {
-  const cnt = $("#archiveCount"); cnt.textContent = String(saved.length); cnt.hidden = !saved.length;
   const posts = saved.filter(s => s.type === "post").sort((a, b) => String(b.savedAt).localeCompare(String(a.savedAt)));
   const news = saved.filter(s => s.type === "news").sort((a, b) => String(b.savedAt).localeCompare(String(a.savedAt)));
   const copyBtn = x => { const b = el("button", { class: "btn small", type: "button", text: t("copy") }); b.addEventListener("click", () => copyText(x, b)); return b; };
@@ -1148,8 +1316,8 @@ function renderSaved() {
     const full = s.tags?.length ? `${s.text}\n\n${s.tags.join(" ")}` : s.text;
     pBox.append(el("div", { class: "sitem" },
       el("div", { class: "hd" }, el("span", { class: "chip", style: "cursor:default;padding:2px 8px;font-size:12px" }, el("span", { class: "dot", style: `background:${brandColor(s.brand)}` }), `${brands[s.brand]?.name || s.brand} · ${PLATFORMS.find(x => x.id === s.platform)?.name || s.platform}`), el("span", { class: "mono", style: "color:var(--muted)", text: String(s.savedAt || "").slice(0, 10) })),
-      el("div", { class: "txt", text: full }),
-      el("div", { class: "row" }, copyBtn(full), rmBtn(s, async () => { const pr = brandPref(s.brand); await writePref(s.brand, { ...pr, liked: pr.liked.filter(x => x.id !== s.id) }); }))));
+      withCopy(el("div", { class: "txt", text: full }), () => full),
+      el("div", { class: "row" }, rmBtn(s, async () => { const pr = brandPref(s.brand); await writePref(s.brand, { ...pr, liked: pr.liked.filter(x => x.id !== s.id) }); }))));
   });
   const nBox = $("#savedNews"); nBox.replaceChildren();
   if (!news.length) nBox.append(el("p", { class: "note", style: "margin:0", text: t("sv_none_news") }));
@@ -1176,30 +1344,42 @@ function renderSaved() {
 applyLang();
 (async () => {
   const c = window.claude;
-  if (!c || typeof c.use !== "function") { renderBrandForms(); return; }
+  const noConn = () => { renderBrandForms(); $("#newsList").replaceChildren(el("div", { class: "empty", text: t("no_conn") })); };
+  if (!c || typeof c.use !== "function") { noConn(); return; }
   c.use("sample").then(async s => { sample = s; if (s) { const lim = await s.limits().catch(() => null); imagesOk = !!lim?.images; } });
   c.use("downloads").then(d => { downloads = d; });
   db = await c.use("db");
-  if (!db) { renderBrandForms(); return; }
-  db.collection("brands").onSnapshot(snap => {
+  if (!db) { noConn(); return; }
+  let unsubs = [];
+  const subscribe = () => new Promise(resolve => {
+  unsubs.forEach(u => { try { typeof u === "function" && u(); } catch {} });
+  unsubs = [];
+  const add = u => unsubs.push(u);
+  let first = true; const ready = () => { if (first) { first = false; resolve(); } };
+  setTimeout(ready, 4000);
+  add(db.collection("brands").onSnapshot(snap => {
     const next = {}; snap.docs.forEach(d => { if (d.exists) next[d.id] = d.data(); });
     brands = next; renderBrandChips(); renderBrandForms(); renderNews(latestNews);
-  }, () => { renderBrandForms(); });
-  db.collection("news").onSnapshot(snap => {
+  }, () => { renderBrandForms(); }));
+  add(db.collection("news").onSnapshot(snap => {
     const docs = snap.docs.filter(d => d.exists).map(d => d.data()).filter(d => d.date);
     docs.sort((a, b) => String(b.date).localeCompare(String(a.date)));
-    latestNews = docs[0] || null; renderNews(latestNews);
-  }, () => {});
-  db.collection("prefs").onSnapshot(snap => {
+    allNews = docs; latestNews = docs[0] || null; renderNews(latestNews); ready();
+  }, () => ready()));
+  add(db.collection("prefs").onSnapshot(snap => {
     const next = {}; snap.docs.forEach(d => { if (d.exists) next[d.id] = d.data(); });
     prefs = next; renderNews(latestNews); renderSaved();
-  }, () => {});
-  db.collection("saved").onSnapshot(snap => {
+  }, () => {}));
+  add(db.collection("saved").onSnapshot(snap => {
     saved = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
     renderNews(latestNews); renderSaved();
-  }, () => {});
+  }, () => {}));
+  });
+  window.__resubscribe = subscribe;
+  subscribe();
 })();
 })();
 </script>
+
 
 </body></html>

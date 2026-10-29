@@ -1,22 +1,5 @@
 {
  "brands": {
-  "mindhaven": {
-   "audience": "Ambitious professionals and millennials across the UK looking for private-pay online counselling; secondary: people in Edinburgh and Dalkeith wanting in-person sessions.",
-   "cta": "Message me, I reply the same day. mindhaven.uk",
-   "hashtags": "#Counselling #OnlineCounselling #Burnout #MentalHealthUK #EdinburghCounselling #Dalkeith",
-   "language": "English (UK spelling)",
-   "name": "Mindhaven",
-   "offer": "Erika Martin Counselling, accredited counsellor, works mainly online, office in Dalkeith. £60 per session; book 6 sessions, the 7th is free. Contact by message (email, Messenger or WhatsApp) with same-day reply; no online booking calendar.",
-   "platforms": [
-    "facebook",
-    "instagram"
-   ],
-   "rules": "ERIKA APPROVES EVERY POST BEFORE PUBLISHING. No testimonials, client stories or anything that could identify a client. Do not present her as a specialist in somatic or nervous-system work. No diagnosis, cure or outcome promises. Score 0 for tragedies, suicides, violence, disasters or crisis news; never use distress as a hook. If a topic touches self-harm or crisis, add 'If you are struggling right now, Samaritans are free on 116 123' instead of a sales CTA.",
-   "slug": "mindhaven",
-   "source_note": "Built from the mindhaven repo (articles on burnout, high-functioning burnout, imposter syndrome) and Erika's latest feedback (Oct 2026: £60, 6+1 free, Message Me, plainer look). Brand colours: pine #155D49, evergreen #0D2E24, emerald #34D399, lime cream #F6FFA2; font Plus Jakarta Sans.",
-   "url": "mindhaven.uk",
-   "voice": "Calm, warm, plain and non-clinical. Speaks to 'you'. Short paragraphs that explain the difference between two things people mix up (stress vs burnout, tired vs depleted). Gentle, never alarmist, no hype, not 'premium' or boutique. Closes with a soft line about counselling as a calm, reflective space."
-  },
   "asc": {
    "audience": "Parents in Edinburgh and the Lothians booking kids' parties; school PTAs and parent councils, nurseries, event organisers, markets and shopping centres; adult groups and care homes.",
    "cta": "WhatsApp or call 07719 956135, or book at artsandcastle.co.uk. Instagram: @artsandcastle.edinburgh",
@@ -51,6 +34,23 @@
    "url": "bereljufot.hu",
    "voice": "Tegező, gyakorlatias, segítőkész. Konkrét tippek, számok és figyelmeztetések (kaució, B96/BE jogosítvány, 7/13 pólusú adapter, O.1/O.2 vontatható tömeg, matrica). Rövid bekezdések, néha lista. Könnyed humor, legfeljebb egy UFO/utánfutó szójáték posztonként."
   },
+  "mindhaven": {
+   "audience": "Ambitious professionals and millennials across the UK looking for private-pay online counselling; secondary: people in Edinburgh and Dalkeith wanting in-person sessions.",
+   "cta": "Message me, I reply the same day. mindhaven.uk",
+   "hashtags": "#Counselling #OnlineCounselling #Burnout #MentalHealthUK #EdinburghCounselling #Dalkeith",
+   "language": "English (UK spelling)",
+   "name": "Mindhaven",
+   "offer": "Erika Martin Counselling, accredited counsellor, works mainly online, office in Dalkeith. £60 per session; book 6 sessions, the 7th is free. Contact by message (email, Messenger or WhatsApp) with same-day reply; no online booking calendar.",
+   "platforms": [
+    "facebook",
+    "instagram"
+   ],
+   "rules": "ERIKA APPROVES EVERY POST BEFORE PUBLISHING. No testimonials, client stories or anything that could identify a client. Do not present her as a specialist in somatic or nervous-system work. No diagnosis, cure or outcome promises. Score 0 for tragedies, suicides, violence, disasters or crisis news; never use distress as a hook. If a topic touches self-harm or crisis, add 'If you are struggling right now, Samaritans are free on 116 123' instead of a sales CTA.",
+   "slug": "mindhaven",
+   "source_note": "Built from the mindhaven repo (articles on burnout, high-functioning burnout, imposter syndrome) and Erika's latest feedback (Oct 2026: £60, 6+1 free, Message Me, plainer look). Brand colours: pine #155D49, evergreen #0D2E24, emerald #34D399, lime cream #F6FFA2; font Plus Jakarta Sans.",
+   "url": "mindhaven.uk",
+   "voice": "Calm, warm, plain and non-clinical. Speaks to 'you'. Short paragraphs that explain the difference between two things people mix up (stress vs burnout, tired vs depleted). Gentle, never alarmist, no hype, not 'premium' or boutique. Closes with a soft line about counselling as a calm, reflective space."
+  },
   "sandorkardos": {
    "audience": "Small local businesses in Edinburgh (shops, takeaways, traders), Edinburgh landlords and agencies looking for a design and build subcontractor; also employers hiring junior or mid-level product designers and developers.",
    "cta": "First hour free. Book a chat at sandorkardos.com",
@@ -73,6 +73,53 @@
  "news": {
   "2026-10-28": {
    "date": "2026-10-28",
+   "extras": [
+    {
+     "angle": "Sole traderként mit jelent a Making Tax Digital, és miért segít egy egyszerű digitális rendszer most",
+     "angle_en": "What Making Tax Digital means for sole traders, and why a simple digital setup helps now",
+     "brands": [
+      "sandorkardos"
+     ],
+     "date": "2026-10-28",
+     "source": "Simply Business",
+     "summary": "A kormány ma ismerteti a költségvetést. Kisvállalkozóknak a fő kérdések: Making Tax Digital határidők (2027 áprilistól már £30,000 felett), a minimálbér 2027-es emelése, munkáltatói költségek és az üzemanyag-adó befagyasztásának sorsa. A jövedelemadó, ÁFA és NI fő kulcsai a jelzések szerint nem emelkednek.",
+     "summary_en": "The government sets out the Budget today. For small businesses the main questions are Making Tax Digital deadlines (from April 2027 above £30,000), the 2027 minimum wage rise, employer costs and whether the fuel duty freeze continues. Signals suggest the main income tax, VAT and NI rates will not rise.",
+     "title": "Ma van az őszi költségvetés (Autumn Budget 2026)",
+     "title_en": "The Autumn Budget lands today",
+     "title_original": "UK Autumn Budget 2026 delivered on Wednesday 28 October",
+     "url": "https://www.simplybusiness.co.uk/knowledge/business-news/autumn-budget-2026-for-small-business/"
+    },
+    {
+     "angle": "Utánfutóval a dugóban: tervezz útvonalat és időpontot, bérelj közelebb a célhoz",
+     "angle_en": "Towing in the jams: plan route and timing, rent closer to where you're going",
+     "brands": [
+      "bereljufot"
+     ],
+     "date": "2026-10-25",
+     "source": "Pénzcentrum",
+     "summary": "Október 26-tól november harmadik hetéig burkolatjavítás lesz Budaörs, Törökbálint és Diósd térségében. Október 27. és 29. között sávkorlátozások az M7 főváros felé tartó oldalán, a fel- és lehajtók nyitva maradnak. A hosszú hétvége miatt még nagyobb forgalom várható.",
+     "summary_en": "Resurfacing runs from 26 October to the third week of November around Budaörs, Törökbálint and Diósd. From 27 to 29 October there are lane restrictions on the Budapest-bound M7, with all junctions open. The long weekend will add to the traffic.",
+     "title": "Hetekig tartó lezárások az M1-M7 közös szakaszán, az M7-en és az M0-n",
+     "title_en": "Weeks of closures on Hungary's M1-M7, M7 and M0",
+     "title_original": "Hetekig tartó lezárások az M1-M7 közös szakaszán, az M7-en és az M0-n",
+     "url": "https://www.penzcentrum.hu/utazas/20261025/hetfotol-hatalmas-felfordulas-jon-a-magyar-autopalyakon-hetekig-tarto-lezarasokra-es-dugokra-kell-keszulni-1207861"
+    },
+    {
+     "angle": "Kiégés vagy csak stressz? A különbség felismerése, ítélkezés nélkül (Erika jóváhagyásával)",
+     "angle_en": "Burnout or just stress? Spotting the difference without judgement (Erika to approve)",
+     "brands": [
+      "mindhaven"
+     ],
+     "date": "2026-10-08",
+     "source": "IBTimes UK (Robert Half)",
+     "summary": "A Robert Half kutatása szerint a brit szakemberek 55%-a érzi magát kiégettnek. A kiégettek 54%-a a létszámhiány miatti nagyobb munkaterhet, 39% a leépítések utáni rosszabb csapatlégkört, 39% a megrekedt karriert nevezi meg okként.",
+     "summary_en": "Robert Half research finds 55% of UK professionals feel burnt out. Of those, 54% blame heavier workloads from understaffing, 39% lower morale after restructuring and 39% feeling stuck in their careers.",
+     "title": "A brit szakemberek 55%-a kiégettnek érzi magát",
+     "title_en": "55% of UK professionals feel burnt out",
+     "title_original": "55% of UK professionals say they feel burnt out at work (Robert Half research)",
+     "url": "https://www.ibtimes.co.uk/uk-professionals-workplace-burnout-understaffing-research-1824460"
+    }
+   ],
    "items": [
     {
      "angle": "Nincs jégpálya? Nyugodt, beltéri karácsonyi program gyerekeknek: homokkép-stand iskolai vásárra vagy szülinapra",
@@ -121,8 +168,147 @@
     }
    ],
    "note": "generated by scheduled task"
+  },
+  "2026-10-29": {
+   "date": "2026-10-29",
+   "items": [
+    {
+     "angle": "Teszteld az ötleted kis kockázattal: egy egyszerű weboldal vagy eszköz a £3,000-os határ alatt is elindítható, és a növekedéshez jó, ha már digitálisan vezeted a számokat",
+     "angle_en": "Test your idea with low risk: a simple site or tool can launch under the £3,000 line, and keeping digital records from day one makes growing into MTD easier",
+     "brands": [
+      "sandorkardos"
+     ],
+     "date": "2026-10-28",
+     "source": "FreeAgent",
+     "summary": "A FreeAgent költségvetési összefoglalója szerint 2027. április 6-tól a trading allowance 1000 fontról 3000 fontra nő: ez alatt az önfoglalkoztatói bevétel adómentes, és nem kell regisztrálni a HMRC-nél. Felette választani kell az allowance és a tényleges költségek levonása között. Ugyanettől a naptól a Making Tax Digital a 30 000 font feletti bevételű egyéni vállalkozókra is kiterjed, az első négy negyedéves jelentésnél késedelmi bírság nélkül.",
+     "summary_en": "FreeAgent's Budget roundup says that from 6 April 2027 the trading allowance rises from £1,000 to £3,000: self-employment income below that is tax-free and needs no HMRC registration. Above it you choose between the allowance and deducting actual costs. From the same date Making Tax Digital covers sole traders earning over £30,000, with no late filing penalties for the first four quarterly updates.",
+     "title": "£3,000-ra nő a trading allowance: kis mellékvállalkozásnak nem kell regisztrálni",
+     "title_en": "Trading allowance triples to £3,000 for side hustles",
+     "title_original": "Autumn Budget 2026: the key takeaways for small businesses",
+     "url": "https://www.freeagent.com/blog/autumn-budget-2026/"
+    },
+    {
+     "angle": "Munkahelytől független, privát online tanácsadás: te választod a szakembert, és a munkáltatód nem tud róla (Erika jóváhagyásával)",
+     "angle_en": "Private online counselling separate from work: you choose your counsellor and your employer never needs to know (Erika to approve)",
+     "brands": [
+      "mindhaven"
+     ],
+     "date": "2026-10-28",
+     "source": "Personnel Today",
+     "summary": "A Kara Connect felmérése szerint a brit munkavállalók több mint 30%-a tart attól, hogy ha segítséget kér, az a munkahelyét vagy karrierjét veszélyezteti. A visszatartó okok között a szégyenérzet (28%) és a titoktartás bizonytalansága (21,6%) szerepel. Bár 90%-nak van munkahelyi támogatása, 21% csak akkor élne vele, ha maga választhatna terapeutát, 26% pedig szívesebben fordulna online videós vagy chates formához.",
+     "summary_en": "A Kara Connect survey finds over 30% of UK employees worry that asking for help could affect their job or career. Reasons for holding back include embarrassment (28%) and doubts about confidentiality (21.6%). Although 90% have workplace support, 21% would only use it if they could choose their own therapist, and 26% would prefer an online video or chat option.",
+     "title": "A brit dolgozók több mint 30%-a attól tart, hogy a lelki segítség ártana a karrierjének",
+     "title_en": "Over 30% of UK staff fear mental health support could hurt their career",
+     "title_original": "Over 30% of staff worry mental health support will affect their career",
+     "url": "https://www.personneltoday.com/hr/over-30-of-staff-worry-mental-health-support-will-affect-their-career/"
+    },
+    {
+     "angle": "Ajtócsere, új padló? Ponyvás utánfutóval szárazon hazaviszed a burkolatot és az ajtólapokat a tüzépről",
+     "angle_en": "New doors or flooring? A covered trailer gets panels and door leaves home dry from the builders' merchant",
+     "brands": [
+      "bereljufot"
+     ],
+     "date": "2026-10-28",
+     "source": "Economx",
+     "summary": "Az Újház Zrt. körképe szerint az építőanyag-forgalom január és augusztus között értékben 8,5%-kal nőtt, de júliustól augusztusig 3,7%-kal esett, szeptemberben stagnált. A legnagyobb növekedés a belső befejező termékeknél volt: beltéri ajtók +45%, meleg burkolatok +40%, aljzatkiegyenlítők +16%. Az elemzők szerint ez még nem tartós fellendülés.",
+     "summary_en": "Újház Zrt.'s market review says building material sales rose 8.5% in value from January to August, but fell 3.7% in July and August and were flat in September. The biggest growth came in interior finishing: interior doors up 45%, warm floor coverings up 40% and levelling compounds up 16%. Analysts say this is not yet a lasting upturn.",
+     "title": "Ajtók +45%, padlóburkolat +40%: a belső felújítás húzza az építőanyag-piacot",
+     "title_en": "Doors up 45%, flooring up 40%: interior renovation drives Hungarian building supplies",
+     "title_original": "Zavar támadt az erőben: bonyolult sakkjátszmába keveredett a magyar építőipar, és még ott van Wekerle is",
+     "url": "https://economx.hu/magyar-gazdasag/2026/10/28/zavar-tamadt-az-eroben-bonyolult-sakkjatszmaba-keveredett-a-magyar-epitoipar-es-meg-ott-van-wekerle-is"
+    }
+   ],
+   "note": "generated by scheduled task"
   }
  },
- "prefs": {},
- "saved": {}
+ "prefs": {
+  "asc": {
+   "blocked_tags": [],
+   "disliked": [],
+   "liked": [
+    {
+     "id": "p-1793260146412",
+     "platform": "instagram",
+     "text": "No ice rink in Edinburgh this year.\nThe markets and rides still start on 14 November.\n\nAfter almost 30 years, things look different.\nThat is how a city goes sometimes.\n\nWe have just launched something new:\n[FILL: name and one-line description of the new service]\n\nIt is low-mess. No paint, no glue, no water.\nWe bring everything and tidy up.\nParents or organisers stay with the children.\n\nPlanning a party, school fair or nursery event?\nWhatsApp or call 07719 956135, or link in bio.\n\nSource: BBC News (via Yahoo News)"
+    },
+    {
+     "id": "p-1793260150875",
+     "platform": "facebook",
+     "text": "No ice rink in Edinburgh this Christmas, but the family season is not cancelled.\n\nAfter almost 30 years, the rink will not run this year. The Christmas markets, outdoor events and fairground rides still start on 14 November.\n\nThings change in a city, and familiar traditions change with them. We have just launched something new at Art Sand Castle: [FILL: name and one-line description of the new service]. As far as we know, nobody else in Edinburgh offers it.\n\nIf you are planning a school fair, a nursery event or a party this winter, message us on WhatsApp or call 07719 956135, or book at artsandcastle.co.uk. Parents or organisers stay with the children throughout.\n\nSource: BBC News (via Yahoo News) https://www.yahoo.com/news/world/articles/edinburghs-christmas-ice-rink-axed-172901368.html"
+    },
+    {
+     "id": "p-1793262537489",
+     "platform": "facebook",
+     "text": "No ice rink in Edinburgh this Christmas. For a lot of families it was a highlight of the markets, and we will miss it too.\n\nAfter almost 30 years, the rink will not run this year. The Christmas markets, outdoor events and fairground rides still start on 14 November. We hope the rink comes back next year.\n\nIn the meantime, we can bring something different to your winter plans: sand art. Children pick a picture, peel the paper one shape at a time, sprinkle on the coloured sand and take the picture home. It is low-mess, with no paint, no glue and no water. We bring everything and tidy up.\n\nPlanning a school fair, a nursery event or a party? WhatsApp or call 07719 956135, or book at artsandcastle.co.uk. Parents or organisers stay with the children throughout.\n\nSource: BBC News (via Yahoo News) https://www.yahoo.com/news/world/articles/edinburghs-christmas-ice-rink-axed-172901368.html"
+    },
+    {
+     "id": "p-1793262540971",
+     "platform": "instagram",
+     "text": "No ice rink in Edinburgh this Christmas.\nIt was a highlight for many families.\n\nThe markets, outdoor events and rides still start on 14 November.\nWe hope the rink is back next year.\n\nUntil then, we are bringing sand art.\nChildren pick a picture, peel the paper and sprinkle on the coloured sand.\nThey take the picture home.\n\nLow-mess: no paint, no glue, no water.\nWe bring everything and tidy up.\nParents or organisers stay with the children.\n\nParty, school fair or nursery event?\nWhatsApp or call 07719 956135, or link in bio.\n\nSource: BBC News (via Yahoo News)"
+    }
+   ]
+  },
+  "news": {
+   "disliked": [],
+   "liked": [],
+   "posted": []
+  }
+ },
+ "saved": {
+  "p-1793260146412": {
+   "alt": "Coloured sand being sprinkled onto a peeled sticky picture during a sand art session",
+   "brand": "asc",
+   "platform": "instagram",
+   "savedAt": "2026-10-29T07:49:06.415Z",
+   "tags": [
+    "#ArtSandCastle",
+    "#SandArt",
+    "#EdinburghKids",
+    "#EdinburghParties",
+    "#Lothians"
+   ],
+   "text": "No ice rink in Edinburgh this year.\nThe markets and rides still start on 14 November.\n\nAfter almost 30 years, things look different.\nThat is how a city goes sometimes.\n\nWe have just launched something new:\n[FILL: name and one-line description of the new service]\n\nIt is low-mess. No paint, no glue, no water.\nWe bring everything and tidy up.\nParents or organisers stay with the children.\n\nPlanning a party, school fair or nursery event?\nWhatsApp or call 07719 956135, or link in bio.\n\nSource: BBC News (via Yahoo News)",
+   "type": "post"
+  },
+  "p-1793260150875": {
+   "alt": "Child sprinkling coloured sand onto a sticky picture at an Art Sand Castle table",
+   "brand": "asc",
+   "platform": "facebook",
+   "savedAt": "2026-10-29T07:49:10.876Z",
+   "tags": [
+    "#ArtSandCastle",
+    "#EdinburghKids",
+    "#Lothians"
+   ],
+   "text": "No ice rink in Edinburgh this Christmas, but the family season is not cancelled.\n\nAfter almost 30 years, the rink will not run this year. The Christmas markets, outdoor events and fairground rides still start on 14 November.\n\nThings change in a city, and familiar traditions change with them. We have just launched something new at Art Sand Castle: [FILL: name and one-line description of the new service]. As far as we know, nobody else in Edinburgh offers it.\n\nIf you are planning a school fair, a nursery event or a party this winter, message us on WhatsApp or call 07719 956135, or book at artsandcastle.co.uk. Parents or organisers stay with the children throughout.\n\nSource: BBC News (via Yahoo News) https://www.yahoo.com/news/world/articles/edinburghs-christmas-ice-rink-axed-172901368.html",
+   "type": "post"
+  },
+  "p-1793262537489": {
+   "alt": "Child sprinkling coloured sand onto a sticky sand art picture at a table during a party",
+   "brand": "asc",
+   "platform": "facebook",
+   "savedAt": "2026-10-29T08:28:57.490Z",
+   "tags": [
+    "#ArtSandCastle",
+    "#EdinburghKids",
+    "#SandArt"
+   ],
+   "text": "No ice rink in Edinburgh this Christmas. For a lot of families it was a highlight of the markets, and we will miss it too.\n\nAfter almost 30 years, the rink will not run this year. The Christmas markets, outdoor events and fairground rides still start on 14 November. We hope the rink comes back next year.\n\nIn the meantime, we can bring something different to your winter plans: sand art. Children pick a picture, peel the paper one shape at a time, sprinkle on the coloured sand and take the picture home. It is low-mess, with no paint, no glue and no water. We bring everything and tidy up.\n\nPlanning a school fair, a nursery event or a party? WhatsApp or call 07719 956135, or book at artsandcastle.co.uk. Parents or organisers stay with the children throughout.\n\nSource: BBC News (via Yahoo News) https://www.yahoo.com/news/world/articles/edinburghs-christmas-ice-rink-axed-172901368.html",
+   "type": "post"
+  },
+  "p-1793262540971": {
+   "alt": "Coloured sand being sprinkled onto a sand art picture on a table, with a few finished pictures nearby",
+   "brand": "asc",
+   "platform": "instagram",
+   "savedAt": "2026-10-29T08:29:00.971Z",
+   "tags": [
+    "#ArtSandCastle",
+    "#SandArt",
+    "#EdinburghKids",
+    "#EdinburghParties"
+   ],
+   "text": "No ice rink in Edinburgh this Christmas.\nIt was a highlight for many families.\n\nThe markets, outdoor events and rides still start on 14 November.\nWe hope the rink is back next year.\n\nUntil then, we are bringing sand art.\nChildren pick a picture, peel the paper and sprinkle on the coloured sand.\nThey take the picture home.\n\nLow-mess: no paint, no glue, no water.\nWe bring everything and tidy up.\nParents or organisers stay with the children.\n\nParty, school fair or nursery event?\nWhatsApp or call 07719 956135, or link in bio.\n\nSource: BBC News (via Yahoo News)",
+   "type": "post"
+  }
+ }
 }

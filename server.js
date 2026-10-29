@@ -119,13 +119,27 @@ const DB_FILE = path.join(DATA_DIR, "db.json");
 const NAME_RE = /^[A-Za-z0-9_\-.~:@+]{1,200}$/;
 let db = { rev: 0, collections: {} };
 
+// Seed docs are imported once each: new ones arrive with a deploy, existing data is never overwritten,
+// and anything you delete stays deleted (imported ids are remembered in db.seeded).
 function loadDb() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (fs.existsSync(DB_FILE)) { db = JSON.parse(fs.readFileSync(DB_FILE, "utf8")); return; }
+  const fresh = !fs.existsSync(DB_FILE);
+  if (!fresh) db = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
+  db.seeded ||= {};
   const seedFile = path.join(DEFAULTS_DIR, "seed.json");
-  if (fs.existsSync(seedFile)) db = { rev: 1, collections: JSON.parse(fs.readFileSync(seedFile, "utf8")) };
-  saveDb();
-  console.log("[db] created " + DB_FILE + " from seed");
+  let added = 0;
+  if (fs.existsSync(seedFile)) {
+    const seed = JSON.parse(fs.readFileSync(seedFile, "utf8"));
+    for (const [c, docs] of Object.entries(seed)) for (const [id, data] of Object.entries(docs)) {
+      const key = c + "/" + id;
+      if (db.seeded[key]) continue;
+      db.seeded[key] = true;
+      if (!col(c)[id]) { col(c)[id] = data; added++; }
+      else if (c === "news" && Array.isArray(data.extras) && !col(c)[id].extras) { col(c)[id].extras = data.extras; added++; }
+    }
+  }
+  if (added || fresh) { db.rev++; saveDb(); }
+  console.log(`[db] ${fresh ? "created" : "loaded"} ${DB_FILE}, ${added} new seed item(s) imported`);
 }
 function saveDb() {
   const tmp = DB_FILE + ".tmp";
