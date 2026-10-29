@@ -199,6 +199,9 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 .cardprev{display:flex;flex-direction:column;gap:6px;align-items:center}
 .cardcv{max-width:100%;height:auto;border-radius:8px;touch-action:none;cursor:grab;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .cardctl{display:flex;flex-direction:column;gap:10px;min-width:0}
+[hidden]{display:none!important}
+@media (min-width:860px){.cardbox.car{grid-template-columns:1fr}.cardbox.car .slidebox{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}}
+.slidebox{display:grid;gap:12px}
 .newstoggle{display:inline-flex;align-items:center;gap:8px;border:0;background:none;color:var(--ink);padding:0;cursor:pointer;text-align:left}
 .newstoggle .chev{font-size:16px;color:var(--muted);display:inline-block}
 @media (prefers-reduced-motion:no-preference){.newstoggle .chev{transition:transform .2s}}
@@ -242,7 +245,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.6.1">v1.6.1</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.7.0">v1.7.0</span></div>
   <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
@@ -473,7 +476,7 @@ const STR = {
     f_name: "Név", f_url: "Weboldal", f_slug: "Fájlnév rövidítés", f_language: "Nyelv", f_platforms: "Alap platformok (vesszővel)", f_audience: "Közönség", f_voice: "Hangnem és stílus",
     f_offer: "Ajánlat, árak, tények", f_cta: "CTA", f_rules: "Szabályok, tiltások", f_hashtags: "Alap hashtagek", f_source_note: "Forrás",
     ai_lang: "Hungarian",
-    card_copy: "Kép másolása", card_png: "PNG letöltése", card_share: "Megosztás", card_copied: "A kép a vágólapon: a posztnál nyomj Ctrl+V-t.", card_copy_fail: "Itt a böngésző nem engedi a kép másolását. Töltsd le PNG-ként.", card_h: "Kép a poszthoz", card_headline: "Cím a képen", card_sub: "Alcím", card_overlay: "Szöveg a képen", card_bg: "Háttérkép", card_bg_hint: "Tölts fel háttérképet, vagy maradhat a márkaszínes háttér.", card_drag: "Húzd a képet a kivágás igazításához.", card_zip: "Kártyák letöltése (ZIP)", card_prompt: "Képprompt (ComfyUI / Gemini)", card_source: "Forrás", art_fetching: "Cikk letöltése…", art_ok: "Cikk letöltve ({n} karakter).", art_fail: "A cikket nem sikerült letölteni, a meglévő szövegből dolgozom.",
+    car_label: "Carousel", car_n: "Diák:", car_hook: "horog", car_point: "lényeg", car_end: "zárás + CTA", car_head: "Cím", car_body: "Szöveg (új sor = új bekezdés)", car_cta: "CTA az utolsó dián", car_pdf: "LinkedIn PDF", car_zip: "Diák (ZIP) Instához", car_copy: "Dia másolása:", car_hint: "LinkedInre a PDF-et töltsd fel dokumentumként (adj neki címet). Instagramra a diákat sorban, egy posztba. A szaggatott vonal a vágás, az exportban nem látszik.", card_copy: "Kép másolása", card_png: "PNG letöltése", card_share: "Megosztás", card_copied: "A kép a vágólapon: a posztnál nyomj Ctrl+V-t.", card_copy_fail: "Itt a böngésző nem engedi a kép másolását. Töltsd le PNG-ként.", card_h: "Kép a poszthoz", card_headline: "Cím a képen", card_sub: "Alcím", card_overlay: "Szöveg a képen", card_bg: "Háttérkép", card_bg_hint: "Tölts fel háttérképet, vagy maradhat a márkaszínes háttér.", card_drag: "Húzd a képet a kivágás igazításához.", card_zip: "Kártyák letöltése (ZIP)", card_prompt: "Képprompt (ComfyUI / Gemini)", card_source: "Forrás", art_fetching: "Cikk letöltése…", art_ok: "Cikk letöltve ({n} karakter).", art_fail: "A cikket nem sikerült letölteni, a meglévő szövegből dolgozom.",
     tab_saved: "Mentett", sv_h: "Mentett", sv_lede: "A csillagozott posztok és hírek. A csillagozott posztokat a generálás mintaként használja, a mínuszolt dolgokat legközelebb kerüli.",
     sv_posts: "Posztok", sv_news: "Hírek", sv_blocked: "Kizárt hashtagek", sv_blocked_h: "Ezeket a generálás már nem ajánlja. Koppints rá a visszaengedéshez.",
     sv_none_posts: "Még nincs csillagozott poszt. A poszt kártyáján a ☆ menti ide.", sv_none_news: "Még nincs csillagozott hír.", sv_none_tags: "Nincs kizárt hashtag.",
@@ -526,7 +529,7 @@ const STR = {
     f_name: "Name", f_url: "Website", f_slug: "Filename short name", f_language: "Language", f_platforms: "Default platforms (comma separated)", f_audience: "Audience", f_voice: "Voice and style",
     f_offer: "Offer, prices, facts", f_cta: "CTA", f_rules: "Rules and no-gos", f_hashtags: "Core hashtags", f_source_note: "Source",
     ai_lang: "English",
-    card_copy: "Copy image", card_png: "Download PNG", card_share: "Share", card_copied: "Image copied: press Ctrl+V in the post.", card_copy_fail: "This browser won't copy images here. Download the PNG instead.", card_h: "Post image", card_headline: "Headline on image", card_sub: "Subheading", card_overlay: "Text on image", card_bg: "Background image", card_bg_hint: "Upload a background image, or keep the brand-colour background.", card_drag: "Drag the image to adjust the crop.", card_zip: "Download cards (ZIP)", card_prompt: "Image prompt (ComfyUI / Gemini)", card_source: "Source", art_fetching: "Fetching article…", art_ok: "Article fetched ({n} characters).", art_fail: "Couldn't fetch the article; working from the existing text.",
+    car_label: "Carousel", car_n: "Slides:", car_hook: "hook", car_point: "point", car_end: "close + CTA", car_head: "Heading", car_body: "Text (new line = new paragraph)", car_cta: "CTA on the last slide", car_pdf: "LinkedIn PDF", car_zip: "Slides (ZIP) for Instagram", car_copy: "Copy slide:", car_hint: "On LinkedIn upload the PDF as a document (give it a title). On Instagram post the slides in order in one post. The dashed line is the cut; it is not in the export.", card_copy: "Copy image", card_png: "Download PNG", card_share: "Share", card_copied: "Image copied: press Ctrl+V in the post.", card_copy_fail: "This browser won't copy images here. Download the PNG instead.", card_h: "Post image", card_headline: "Headline on image", card_sub: "Subheading", card_overlay: "Text on image", card_bg: "Background image", card_bg_hint: "Upload a background image, or keep the brand-colour background.", card_drag: "Drag the image to adjust the crop.", card_zip: "Download cards (ZIP)", card_prompt: "Image prompt (ComfyUI / Gemini)", card_source: "Source", art_fetching: "Fetching article…", art_ok: "Article fetched ({n} characters).", art_fail: "Couldn't fetch the article; working from the existing text.",
     tab_saved: "Saved", sv_h: "Saved", sv_lede: "Your starred posts and stories. Generation uses starred posts as examples and avoids what you minus.",
     sv_posts: "Posts", sv_news: "Stories", sv_blocked: "Blocked hashtags", sv_blocked_h: "Generation won't suggest these any more. Tap one to allow it again.",
     sv_none_posts: "No starred posts yet. Tap ☆ on a post card to save it here.", sv_none_news: "No starred stories yet.", sv_none_tags: "No blocked hashtags.",
@@ -659,7 +662,7 @@ USER OPINION
 """${opinion || ""}"""
 
 Return ONLY JSON in this shape:
-{"summary":"one line in ${L}","angle_note":"in ${L}, or empty","brands":[{"id":"brand id","score":0,"reason":"short reason in ${L}","seo_keyword":"phrase in the brand language","card":{"headline":"text for the post image, brand language, max 6 words, no hashtags or emoji","subheading":"one short sentence in the brand language","source_name":"outlet name if reacting to news, else empty","image_prompt":"English prompt for a background image: describe subject, setting, light and style; no text, letters or logos; for asc and mindhaven only abstract or illustrative scenes, never identifiable children, clients or realistic people"},"posts":[{"platform":"instagram","caption":"full caption text without hashtags","hashtags_core":["#tag"],"hashtags_extra":["#tag"],"alt_text":"image alt text in the brand language, max 125 chars","image_idea":"what photo or graphic to use, in ${L}","best_time":"suggested posting time, in ${L}"}]}]}
+{"summary":"one line in ${L}","angle_note":"in ${L}, or empty","brands":[{"id":"brand id","score":0,"reason":"short reason in ${L}","seo_keyword":"phrase in the brand language","card":{"headline":"text for the post image, brand language, max 6 words, no hashtags or emoji","subheading":"one short sentence in the brand language","source_name":"outlet name if reacting to news, else empty","image_prompt":"English prompt for a background image: describe subject, setting, light and style; no text, letters or logos; for asc and mindhaven only abstract or illustrative scenes, never identifiable children, clients or realistic people","slides":[{"headline":"slide 1 hook in the brand language, max 8 words","body":"one short line, or empty"},{"headline":"short label, max 4 words","body":"first key point: 2-3 short sentences, or up to 3 lines each starting with • (lines separated by \\n)"},{"headline":"short label","body":"second key point, same style"},{"headline":"short label","body":"third key point, same style"},{"headline":"takeaway or question, max 10 words","body":"one short line leading to the call to action"}]},"posts":[{"platform":"instagram","caption":"full caption text without hashtags","hashtags_core":["#tag"],"hashtags_extra":["#tag"],"alt_text":"image alt text in the brand language, max 125 chars","image_idea":"what photo or graphic to use, in ${L}","best_time":"suggested posting time, in ${L}"}]}]}
 Include every brand listed in BRAND PROFILES in "brands", with "posts": [] when score < 2.`;
 }
 /*</prompts>*/
@@ -1023,11 +1026,123 @@ function drawCard(ctx, W, H, st, brandId) {
   ctx.fillText((brands[brandId]?.url || brands[brandId]?.name || "").replace(/^https?:\/\//, ""), m, H - m * 0.7);
   if (st.source) { ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.textAlign = "right"; ctx.fillText(`${/hungarian|magyar/i.test(brands[brandId]?.language || "") ? "Forrás" : "Source"}: ${st.source}`, W - m, H - m * 0.7); ctx.textAlign = "left"; }
 }
+// Carousel: n slides of 1080x1350, drawn as one panorama so the background and decor run across the cuts.
+const SLIDE_W = 1080, SLIDE_H = 1350;
+const carIdx = n => n >= 5 ? [0, 1, 2, 3, 4] : n === 4 ? [0, 1, 2, 4] : [0, 1, 4];
+function wrapPara(ctx, text, maxW) { return String(text || "").split(/\n+/).map(s => s.trim()).filter(Boolean).flatMap(p => wrapLines(ctx, p, maxW)); }
+function drawCarousel(ctx, n, st, brandId, guides) {
+  const s = cardStyle(brandId), W = SLIDE_W, H = SLIDE_H, PW = W * n, m = 80, lineY = H - m * 1.6;
+  ctx.clearRect(0, 0, PW, H);
+  if (st.bg) {
+    const iw = st.bg.naturalWidth, ih = st.bg.naturalHeight, sc = Math.max(PW / iw, H / ih), cw = PW / sc, ch = H / sc;
+    const x = Math.max(0, Math.min(iw - cw, st.fx * iw - cw / 2)), y = Math.max(0, Math.min(ih - ch, st.fy * ih - ch / 2));
+    ctx.drawImage(st.bg, x, y, cw, ch, 0, 0, PW, H);
+    ctx.fillStyle = "rgba(0,0,0,0.55)"; ctx.fillRect(0, 0, PW, H);
+  } else {
+    const g = ctx.createLinearGradient(0, 0, PW, H); g.addColorStop(0, s.bg[0]); g.addColorStop(1, s.bg[1]);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, PW, H);
+  }
+  // One accent line runs through every slide; a dot sits on each cut, half on each side.
+  ctx.save(); ctx.strokeStyle = s.accent; ctx.globalAlpha = 0.45; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(m, lineY); ctx.lineTo(PW - m, lineY); ctx.stroke();
+  ctx.globalAlpha = 1; ctx.fillStyle = s.accent;
+  for (let k = 1; k < n; k++) { ctx.beginPath(); ctx.arc(k * W, lineY, 12, 0, Math.PI * 2); ctx.fill(); }
+  ctx.restore();
+  const url = (brands[brandId]?.url || brands[brandId]?.name || "").replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const hu = /hungarian|magyar/i.test(brands[brandId]?.language || "");
+  for (let i = 0; i < n; i++) {
+    const sl = st.slides[carIdx(n)[i]] || {}, first = i === 0, last = i === n - 1;
+    ctx.save(); ctx.translate(i * W, 0); ctx.textBaseline = "top"; ctx.textAlign = "right";
+    ctx.font = `600 30px ${SUB_FONT}`; ctx.fillStyle = "rgba(255,255,255,0.75)"; ctx.fillText(`${i + 1}/${n}`, W - m, m);
+    ctx.textAlign = "left";
+    const maxW = W - m * 2, top = m + 90, avail = lineY - 60 - top;
+    let blocks = [], h = 0;
+    for (let k = first ? 1 : 1.3; k >= 0.5; k -= 0.05) {
+      const hs = Math.round((first ? 104 : last ? 84 : 60) * k), bs = Math.round((first ? 46 : 50) * k), cs = Math.round(40 * k);
+      blocks = [];
+      const hf = `${s.weight} ${hs}px ${s.font}`, bf = `500 ${bs}px ${SUB_FONT}`, cf = `700 ${cs}px ${SUB_FONT}`;
+      ctx.font = hf; const hl = wrapPara(ctx, sl.headline, maxW);
+      ctx.font = bf; const bl = wrapPara(ctx, sl.body, maxW);
+      if (hl.length) blocks.push({ font: hf, lines: hl, lh: hs * 1.1, color: first || last ? s.fg : s.accent, gap: 0 });
+      if (bl.length) blocks.push({ font: bf, lines: bl, lh: bs * 1.4, color: "rgba(255,255,255,0.92)", gap: hl.length ? bs * 0.9 : 0 });
+      if (last && st.cta) { ctx.font = cf; blocks.push({ font: cf, lines: wrapPara(ctx, st.cta, maxW - 34), lh: cs * 1.35, color: s.accent, gap: blocks.length ? cs * 1.6 : 0, bar: true }); }
+      h = blocks.reduce((a, bk) => a + bk.gap + bk.lines.length * bk.lh, 0);
+      if (h <= avail) break;
+    }
+    let y = top + Math.max(0, (avail - h) / 2);
+    if (first && blocks.length) { ctx.fillStyle = s.accent; ctx.fillRect(m, y - 44, 120, 10); }
+    for (const bk of blocks) {
+      y += bk.gap; ctx.font = bk.font; ctx.fillStyle = bk.color;
+      if (bk.bar) ctx.fillRect(m, y, 8, bk.lines.length * bk.lh - bk.lh * 0.25);
+      for (const l of bk.lines) { ctx.fillText(l, bk.bar ? m + 34 : m, y); y += bk.lh; }
+    }
+    ctx.textBaseline = "bottom"; ctx.font = `600 28px ${SUB_FONT}`; ctx.fillStyle = s.accent;
+    ctx.fillText(url, m, H - m * 0.6);
+    ctx.textAlign = "right";
+    if (!last) { ctx.font = `700 60px ${SUB_FONT}`; ctx.fillText("→", W - m, H - m * 0.45); }
+    else if (st.source) { ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.fillText(`${hu ? "Forrás" : "Source"}: ${st.source}`, W - m, H - m * 0.6); }
+    ctx.restore();
+  }
+  if (guides) {
+    ctx.save(); ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 3; ctx.setLineDash([18, 14]);
+    for (let k = 1; k < n; k++) { ctx.beginPath(); ctx.moveTo(k * W, 0); ctx.lineTo(k * W, H); ctx.stroke(); }
+    ctx.restore();
+  }
+}
+// Multi-page PDF from JPEG bytes, no library: each page shows one image (JPEG goes in as-is via DCTDecode).
+function makePdf(jpegs, iw, ih, pw, ph) {
+  const enc = new TextEncoder(), parts = [], offs = []; let pos = 0;
+  const add = x => { const b = typeof x === "string" ? enc.encode(x) : x; parts.push(b); pos += b.length; };
+  const obj = (id, body) => { offs[id] = pos; add(`${id} 0 obj\n`); body(); add("\nendobj\n"); };
+  const n = jpegs.length, pageId = i => 3 + i * 3, total = 3 + n * 3;
+  add("%PDF-1.4\n%âãÏÓ\n");
+  obj(1, () => add("<< /Type /Catalog /Pages 2 0 R >>"));
+  obj(2, () => add(`<< /Type /Pages /Count ${n} /Kids [${jpegs.map((_, i) => `${pageId(i)} 0 R`).join(" ")}] >>`));
+  jpegs.forEach((jp, i) => {
+    const p = pageId(i), im = p + 1, c = p + 2, cs = `q ${pw} 0 0 ${ph} 0 0 cm /Im0 Do Q`;
+    obj(p, () => add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pw} ${ph}] /Resources << /XObject << /Im0 ${im} 0 R >> >> /Contents ${c} 0 R >>`));
+    obj(im, () => { add(`<< /Type /XObject /Subtype /Image /Width ${iw} /Height ${ih} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jp.length} >>\nstream\n`); add(jp); add("\nendstream"); });
+    obj(c, () => add(`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream`));
+  });
+  const xref = pos;
+  add(`xref\n0 ${total}\n0000000000 65535 f \n` + Array.from({ length: total - 1 }, (_, i) => String(offs[i + 1]).padStart(10, "0") + " 00000 n \n").join(""));
+  add(`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  return new Blob(parts, { type: "application/pdf" });
+}
+// Slide texts: from the AI (card.slides), else built from the card and the caption.
+function defaultSlides(b) {
+  const src = Array.isArray(b.card?.slides) ? b.card.slides.filter(x => x && (x.headline || x.body)) : [];
+  if (src.length >= 2) {
+    let s = src.map(x => ({ headline: String(x.headline || ""), body: String(x.body || "") }));
+    if (s.length > 5) s = [...s.slice(0, 4), s[s.length - 1]];
+    while (s.length < 5) s.splice(s.length - 1, 0, { headline: "", body: "" });
+    return s;
+  }
+  const cap = ((b.posts || []).find(p => p.platform === "linkedin") || (b.posts || [])[0] || {}).caption || "";
+  const sent = cap.replace(/\s+/g, " ").match(/[^.!?]+[.!?]+/g) || [];
+  const chunk = i => sent.slice(i * 2, i * 2 + 2).join(" ").trim();
+  return [{ headline: b.card?.headline || "", body: b.card?.subheading || "" }, { headline: "", body: chunk(0) }, { headline: "", body: chunk(1) }, { headline: "", body: chunk(2) }, { headline: "", body: "" }];
+}
 const CARD_PREVIEW = { feed: [1080, 1350], story: [1080, 1920], square: [1080, 1080], link: [1200, 630] };
+async function copyPng(blobP, stEl) {
+  try {
+    if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") throw new Error("unsupported");
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blobP })]);
+    setStatus(stEl, t("card_copied"));
+  } catch { setStatus(stEl, t("card_copy_fail"), true); }
+}
 function renderCard(b) {
   const st = b._card ||= { headline: b.card?.headline || "", subheading: b.card?.subheading || "", source: b.card?.source_name || "", overlay: true, bg: null, fx: 0.5, fy: 0.5, preview: "feed" };
+  st.slides ||= defaultSlides(b); st.carN ||= 3; if (st.cta == null) st.cta = brands[b.id]?.cta || "";
+  const isCar = () => st.preview === "car";
   const cv = el("canvas", { class: "cardcv", role: "img", "aria-label": t("card_h") });
-  const draw = () => { const [W, H] = CARD_PREVIEW[st.preview]; const sc = 540 / Math.max(W, H); cv.width = Math.round(W * sc); cv.height = Math.round(H * sc); const ctx = cv.getContext("2d"); ctx.save(); ctx.scale(sc, sc); drawCard(ctx, W, H, st, b.id); ctx.restore(); };
+  const draw = () => {
+    if (isCar()) {
+      const PW = SLIDE_W * st.carN, sc = Math.min(1, 1500 / PW); cv.width = Math.round(PW * sc); cv.height = Math.round(SLIDE_H * sc);
+      const ctx = cv.getContext("2d"); ctx.save(); ctx.scale(sc, sc); drawCarousel(ctx, st.carN, st, b.id, true); ctx.restore(); return;
+    }
+    const [W, H] = CARD_PREVIEW[st.preview]; const sc = 540 / Math.max(W, H); cv.width = Math.round(W * sc); cv.height = Math.round(H * sc); const ctx = cv.getContext("2d"); ctx.save(); ctx.scale(sc, sc); drawCard(ctx, W, H, st, b.id); ctx.restore();
+  };
   const fam = cardStyle(b.id);
   document.fonts?.load?.(`${fam.weight} 48px ${fam.font}`).then(draw).catch(() => {});
   const hl = el("input", { type: "text", id: "card-h-" + b.id, maxlength: "90" }); hl.value = st.headline;
@@ -1037,7 +1152,9 @@ function renderCard(b) {
   const ov = el("input", Object.assign({ type: "checkbox", id: "card-o-" + b.id }, st.overlay ? { checked: "" } : {}));
   ov.addEventListener("change", () => { st.overlay = ov.checked; draw(); });
   const file = el("input", { type: "file", accept: "image/*", hidden: "" });
-  const setBg = f => { const img = new Image(); img.onload = () => { st.bg = img; st.fx = st.fy = 0.5; draw(); }; img.src = URL.createObjectURL(f); };
+  const hint = el("p", { class: "note", style: "margin:0" });
+  const setHint = () => { hint.textContent = st.bg ? t("card_drag") : isCar() ? t("car_hint") : t("card_bg_hint"); };
+  const setBg = f => { const img = new Image(); img.onload = () => { st.bg = img; st.fx = st.fy = 0.5; setHint(); draw(); }; img.src = URL.createObjectURL(f); };
   file.addEventListener("change", () => file.files[0] && setBg(file.files[0]));
   const bgBtn = el("button", { class: "btn small", type: "button", text: t("card_bg") }); bgBtn.addEventListener("click", () => file.click());
   // Drag on the preview moves the crop focus.
@@ -1045,13 +1162,16 @@ function renderCard(b) {
   cv.addEventListener("pointerdown", e => { if (!st.bg) return; drag = { x: e.clientX, y: e.clientY, fx: st.fx, fy: st.fy }; cv.setPointerCapture(e.pointerId); });
   cv.addEventListener("pointermove", e => { if (!drag) return; const r = cv.getBoundingClientRect(); st.fx = Math.min(1, Math.max(0, drag.fx - (e.clientX - drag.x) / r.width * 0.6)); st.fy = Math.min(1, Math.max(0, drag.fy - (e.clientY - drag.y) / r.height * 0.6)); draw(); });
   cv.addEventListener("pointerup", () => { drag = null; });
-  const sizes = el("div", { class: "chips" }, Object.keys(CARD_PREVIEW).map(k => {
-    const c = el("label", { class: "chip" }, el("input", Object.assign({ type: "radio", name: "cp-" + b.id, value: k }, st.preview === k ? { checked: "" } : {})), { feed: "4:5", story: "9:16", square: "1:1", link: "1.91:1" }[k]);
-    c.querySelector("input").addEventListener("change", () => { st.preview = k; draw(); });
+  const sizes = el("div", { class: "chips" }, [...Object.keys(CARD_PREVIEW), "car"].map(k => {
+    const c = el("label", { class: "chip" }, el("input", Object.assign({ type: "radio", name: "cp-" + b.id, value: k }, st.preview === k ? { checked: "" } : {})), { feed: "4:5", story: "9:16", square: "1:1", link: "1.91:1", car: t("car_label") }[k]);
+    c.querySelector("input").addEventListener("change", () => { st.preview = k; sync(); draw(); });
     return c;
   }));
+  const kwbs = () => `${slugify(b.seo_keyword) || "post"}-${slugify(brands[b.id]?.slug || b.id)}`;
+
+  /* single image */
   const zipSt = el("div", { class: "status", role: "status" });
-  const zipBtn = el("button", { class: "btn small primary", type: "button", text: t("card_zip") });
+  const zipBtn = el("button", { class: "btn small", type: "button", text: t("card_zip") });
   zipBtn.addEventListener("click", async () => {
     if (!downloads) return setStatus(zipSt, t("no_dl"), true);
     if (!window.JSZip) return setStatus(zipSt, t("no_zip"), true);
@@ -1071,18 +1191,11 @@ function renderCard(b) {
     } catch (e) { setStatus(zipSt, e?.code === "declined" ? t("declined") : errMsg(e), e?.code !== "declined"); }
     finally { zipBtn.disabled = false; }
   });
-  // Single image of the size shown in the preview: copy to clipboard, save as PNG, or share (phone).
   const renderFull = () => { const [W, H] = CARD_PREVIEW[st.preview]; const c = document.createElement("canvas"); c.width = W; c.height = H; drawCard(c.getContext("2d"), W, H, st, b.id); return new Promise(r => c.toBlob(r, "image/png")); };
-  const oneName = () => { const [W, H] = CARD_PREVIEW[st.preview]; return `${slugify(b.seo_keyword) || "post"}-${slugify(brands[b.id]?.slug || b.id)}-${st.preview}-${W}x${H}.png`; };
+  const oneName = () => { const [W, H] = CARD_PREVIEW[st.preview]; return `${kwbs()}-${st.preview}-${W}x${H}.png`; };
   const imgSt = el("div", { class: "status", role: "status" });
   const copyImg = el("button", { class: "btn small primary", type: "button" }, icon("copy"), el("span", { text: t("card_copy") }));
-  copyImg.addEventListener("click", async () => {
-    try {
-      if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") throw new Error("unsupported");
-      await navigator.clipboard.write([new ClipboardItem({ "image/png": renderFull() })]);
-      setStatus(imgSt, t("card_copied"));
-    } catch { setStatus(imgSt, t("card_copy_fail"), true); }
-  });
+  copyImg.addEventListener("click", () => copyPng(renderFull(), imgSt));
   const pngBtn = el("button", { class: "btn small", type: "button", text: t("card_png") });
   pngBtn.addEventListener("click", async () => {
     if (!downloads) return setStatus(imgSt, t("no_dl"), true);
@@ -1099,19 +1212,82 @@ function renderCard(b) {
       });
     }
   } catch {}
+
+  /* carousel */
+  const slideBlob = (i, type = "image/png", q) => { const c = document.createElement("canvas"); c.width = SLIDE_W; c.height = SLIDE_H; const x = c.getContext("2d"); x.translate(-i * SLIDE_W, 0); drawCarousel(x, st.carN, st, b.id, false); return new Promise(r => c.toBlob(r, type, q)); };
+  const carSt = el("div", { class: "status", role: "status" });
+  const slideBox = el("div", { class: "slidebox" }), carCopy = el("div", { class: "row" });
+  const buildSlides = () => {
+    slideBox.replaceChildren(); carCopy.replaceChildren(el("span", { class: "note", text: t("car_copy") }));
+    const n = st.carN;
+    carIdx(n).forEach((si, i) => {
+      const s = st.slides[si];
+      const role = i === 0 ? t("car_hook") : i === n - 1 ? t("car_end") : t("car_point");
+      const h = el("input", { type: "text", id: `sl-h-${b.id}-${i}`, maxlength: "120", placeholder: t("car_head") }); h.value = s.headline;
+      h.addEventListener("input", () => { s.headline = h.value; draw(); });
+      const bd = el("textarea", { id: `sl-b-${b.id}-${i}`, rows: "3", placeholder: t("car_body"), style: "min-height:72px" }); bd.value = s.body;
+      bd.addEventListener("input", () => { s.body = bd.value; draw(); });
+      slideBox.append(el("div", { class: "f" }, el("label", { class: "eyebrow", for: `sl-h-${b.id}-${i}`, text: `${i + 1}/${n} · ${role}` }), h, bd));
+      const cb = el("button", { class: "btn small", type: "button", "aria-label": `${t("car_copy")} ${i + 1}`, text: String(i + 1) });
+      cb.addEventListener("click", () => copyPng(slideBlob(i), carSt));
+      carCopy.append(cb);
+    });
+  };
+  const cta = el("input", { type: "text", id: "sl-cta-" + b.id, maxlength: "200" }); cta.value = st.cta;
+  cta.addEventListener("input", () => { st.cta = cta.value; draw(); });
+  const nChips = el("div", { class: "chips" }, el("span", { class: "note", text: t("car_n") }), [3, 4, 5].map(n => {
+    const c = el("label", { class: "chip" }, el("input", Object.assign({ type: "radio", name: "cn-" + b.id, value: String(n) }, st.carN === n ? { checked: "" } : {})), String(n));
+    c.querySelector("input").addEventListener("change", () => { st.carN = n; buildSlides(); draw(); });
+    return c;
+  }));
+  const pdfBtn = el("button", { class: "btn small primary", type: "button", text: t("car_pdf") });
+  pdfBtn.addEventListener("click", async () => {
+    if (!downloads) return setStatus(carSt, t("no_dl"), true);
+    pdfBtn.disabled = true;
+    try {
+      const jp = [];
+      for (let i = 0; i < st.carN; i++) jp.push(new Uint8Array(await (await slideBlob(i, "image/jpeg", 0.9)).arrayBuffer()));
+      const name = `${kwbs()}-carousel-${st.carN}.pdf`;
+      await downloads.save({ filename: name, data: makePdf(jp, SLIDE_W, SLIDE_H, 540, 675) });
+      setStatus(carSt, t("saved") + name);
+    } catch (e) { setStatus(carSt, e?.code === "declined" ? t("declined") : errMsg(e), e?.code !== "declined"); }
+    finally { pdfBtn.disabled = false; }
+  });
+  const carZip = el("button", { class: "btn small", type: "button", text: t("car_zip") });
+  carZip.addEventListener("click", async () => {
+    if (!downloads) return setStatus(carSt, t("no_dl"), true);
+    if (!window.JSZip) return setStatus(carSt, t("no_zip"), true);
+    carZip.disabled = true;
+    try {
+      const zip = new JSZip(), n = st.carN;
+      for (let i = 0; i < n; i++) zip.file(`${kwbs()}-${i + 1}of${n}-1080x1350.jpg`, await slideBlob(i, "image/jpeg", 0.92));
+      const name = `${kwbs()}-carousel-${n}.zip`;
+      await downloads.save({ filename: name, data: await zip.generateAsync({ type: "blob" }) });
+      setStatus(carSt, `${t("saved")}${name} (${n} ${t("images_n")})`);
+    } catch (e) { setStatus(carSt, e?.code === "declined" ? t("declined") : errMsg(e), e?.code !== "declined"); }
+    finally { carZip.disabled = false; }
+  });
+  buildSlides();
+
+  const col = (...k) => el("div", { style: "display:flex;flex-direction:column;gap:10px;min-width:0" }, ...k);
+  const singleF = col(
+    el("label", { class: "f", for: "card-h-" + b.id }, t("card_headline"), hl),
+    el("label", { class: "f", for: "card-s-" + b.id }, t("card_sub"), sub),
+    el("label", { class: "chip", style: "align-self:flex-start" }, ov, t("card_overlay")));
+  const singleX = col(el("div", { class: "row" }, copyImg, pngBtn, shareBtn), imgSt, el("div", { class: "row" }, zipBtn), zipSt);
+  const carF = col(nChips, slideBox, el("label", { class: "f", for: "sl-cta-" + b.id }, t("car_cta"), cta));
+  const carX = col(el("div", { class: "row" }, pdfBtn, carZip), carCopy, carSt);
   const prompt = b.card?.image_prompt || "";
-  draw();
-  return el("div", { class: "cardbox" },
-    el("div", { class: "cardprev" }, cv, el("p", { class: "note", style: "margin:0", text: st.bg ? t("card_drag") : t("card_bg_hint") })),
+  const box = el("div", { class: "cardbox" },
+    el("div", { class: "cardprev" }, cv, hint),
     el("div", { class: "cardctl" },
       el("div", { class: "eyebrow", text: t("card_h") }),
-      el("label", { class: "f", for: "card-h-" + b.id }, t("card_headline"), hl),
-      el("label", { class: "f", for: "card-s-" + b.id }, t("card_sub"), sub),
-      el("label", { class: "chip", style: "align-self:flex-start" }, ov, t("card_overlay")),
-      sizes,
-      el("div", { class: "row" }, copyImg, pngBtn, shareBtn), imgSt,
-      el("div", { class: "row" }, bgBtn, file, zipBtn), zipSt,
+      sizes, singleF, carF, singleX, carX,
+      el("div", { class: "row" }, bgBtn, file),
       prompt ? el("div", {}, el("div", { class: "eyebrow", style: "margin-bottom:6px", text: t("card_prompt") }), withCopy(el("div", { class: "better", text: prompt }), () => prompt)) : null));
+  const sync = () => { const c = isCar(); singleF.hidden = singleX.hidden = c; carF.hidden = carX.hidden = !c; box.classList.toggle("car", c); setHint(); };
+  sync(); draw();
+  return box;
 }
 
 /* ---------- article from link (self-hosted server only) ---------- */
