@@ -242,7 +242,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.6.0">v1.6.0</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.6.1">v1.6.1</span></div>
   <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
@@ -473,7 +473,7 @@ const STR = {
     f_name: "Név", f_url: "Weboldal", f_slug: "Fájlnév rövidítés", f_language: "Nyelv", f_platforms: "Alap platformok (vesszővel)", f_audience: "Közönség", f_voice: "Hangnem és stílus",
     f_offer: "Ajánlat, árak, tények", f_cta: "CTA", f_rules: "Szabályok, tiltások", f_hashtags: "Alap hashtagek", f_source_note: "Forrás",
     ai_lang: "Hungarian",
-    card_h: "Kép a poszthoz", card_headline: "Cím a képen", card_sub: "Alcím", card_overlay: "Szöveg a képen", card_bg: "Háttérkép", card_bg_hint: "Tölts fel háttérképet, vagy maradhat a márkaszínes háttér.", card_drag: "Húzd a képet a kivágás igazításához.", card_zip: "Kártyák letöltése (ZIP)", card_prompt: "Képprompt (ComfyUI / Gemini)", card_source: "Forrás", art_fetching: "Cikk letöltése…", art_ok: "Cikk letöltve ({n} karakter).", art_fail: "A cikket nem sikerült letölteni, a meglévő szövegből dolgozom.",
+    card_copy: "Kép másolása", card_png: "PNG letöltése", card_share: "Megosztás", card_copied: "A kép a vágólapon: a posztnál nyomj Ctrl+V-t.", card_copy_fail: "Itt a böngésző nem engedi a kép másolását. Töltsd le PNG-ként.", card_h: "Kép a poszthoz", card_headline: "Cím a képen", card_sub: "Alcím", card_overlay: "Szöveg a képen", card_bg: "Háttérkép", card_bg_hint: "Tölts fel háttérképet, vagy maradhat a márkaszínes háttér.", card_drag: "Húzd a képet a kivágás igazításához.", card_zip: "Kártyák letöltése (ZIP)", card_prompt: "Képprompt (ComfyUI / Gemini)", card_source: "Forrás", art_fetching: "Cikk letöltése…", art_ok: "Cikk letöltve ({n} karakter).", art_fail: "A cikket nem sikerült letölteni, a meglévő szövegből dolgozom.",
     tab_saved: "Mentett", sv_h: "Mentett", sv_lede: "A csillagozott posztok és hírek. A csillagozott posztokat a generálás mintaként használja, a mínuszolt dolgokat legközelebb kerüli.",
     sv_posts: "Posztok", sv_news: "Hírek", sv_blocked: "Kizárt hashtagek", sv_blocked_h: "Ezeket a generálás már nem ajánlja. Koppints rá a visszaengedéshez.",
     sv_none_posts: "Még nincs csillagozott poszt. A poszt kártyáján a ☆ menti ide.", sv_none_news: "Még nincs csillagozott hír.", sv_none_tags: "Nincs kizárt hashtag.",
@@ -526,7 +526,7 @@ const STR = {
     f_name: "Name", f_url: "Website", f_slug: "Filename short name", f_language: "Language", f_platforms: "Default platforms (comma separated)", f_audience: "Audience", f_voice: "Voice and style",
     f_offer: "Offer, prices, facts", f_cta: "CTA", f_rules: "Rules and no-gos", f_hashtags: "Core hashtags", f_source_note: "Source",
     ai_lang: "English",
-    card_h: "Post image", card_headline: "Headline on image", card_sub: "Subheading", card_overlay: "Text on image", card_bg: "Background image", card_bg_hint: "Upload a background image, or keep the brand-colour background.", card_drag: "Drag the image to adjust the crop.", card_zip: "Download cards (ZIP)", card_prompt: "Image prompt (ComfyUI / Gemini)", card_source: "Source", art_fetching: "Fetching article…", art_ok: "Article fetched ({n} characters).", art_fail: "Couldn't fetch the article; working from the existing text.",
+    card_copy: "Copy image", card_png: "Download PNG", card_share: "Share", card_copied: "Image copied: press Ctrl+V in the post.", card_copy_fail: "This browser won't copy images here. Download the PNG instead.", card_h: "Post image", card_headline: "Headline on image", card_sub: "Subheading", card_overlay: "Text on image", card_bg: "Background image", card_bg_hint: "Upload a background image, or keep the brand-colour background.", card_drag: "Drag the image to adjust the crop.", card_zip: "Download cards (ZIP)", card_prompt: "Image prompt (ComfyUI / Gemini)", card_source: "Source", art_fetching: "Fetching article…", art_ok: "Article fetched ({n} characters).", art_fail: "Couldn't fetch the article; working from the existing text.",
     tab_saved: "Saved", sv_h: "Saved", sv_lede: "Your starred posts and stories. Generation uses starred posts as examples and avoids what you minus.",
     sv_posts: "Posts", sv_news: "Stories", sv_blocked: "Blocked hashtags", sv_blocked_h: "Generation won't suggest these any more. Tap one to allow it again.",
     sv_none_posts: "No starred posts yet. Tap ☆ on a post card to save it here.", sv_none_news: "No starred stories yet.", sv_none_tags: "No blocked hashtags.",
@@ -1071,6 +1071,34 @@ function renderCard(b) {
     } catch (e) { setStatus(zipSt, e?.code === "declined" ? t("declined") : errMsg(e), e?.code !== "declined"); }
     finally { zipBtn.disabled = false; }
   });
+  // Single image of the size shown in the preview: copy to clipboard, save as PNG, or share (phone).
+  const renderFull = () => { const [W, H] = CARD_PREVIEW[st.preview]; const c = document.createElement("canvas"); c.width = W; c.height = H; drawCard(c.getContext("2d"), W, H, st, b.id); return new Promise(r => c.toBlob(r, "image/png")); };
+  const oneName = () => { const [W, H] = CARD_PREVIEW[st.preview]; return `${slugify(b.seo_keyword) || "post"}-${slugify(brands[b.id]?.slug || b.id)}-${st.preview}-${W}x${H}.png`; };
+  const imgSt = el("div", { class: "status", role: "status" });
+  const copyImg = el("button", { class: "btn small primary", type: "button" }, icon("copy"), el("span", { text: t("card_copy") }));
+  copyImg.addEventListener("click", async () => {
+    try {
+      if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") throw new Error("unsupported");
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": renderFull() })]);
+      setStatus(imgSt, t("card_copied"));
+    } catch { setStatus(imgSt, t("card_copy_fail"), true); }
+  });
+  const pngBtn = el("button", { class: "btn small", type: "button", text: t("card_png") });
+  pngBtn.addEventListener("click", async () => {
+    if (!downloads) return setStatus(imgSt, t("no_dl"), true);
+    try { const n = oneName(); await downloads.save({ filename: n, data: await renderFull() }); setStatus(imgSt, t("saved") + n); }
+    catch (e) { setStatus(imgSt, e?.code === "declined" ? t("declined") : errMsg(e), e?.code !== "declined"); }
+  });
+  let shareBtn = null;
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [new File([""], "x.png", { type: "image/png" })] })) {
+      shareBtn = el("button", { class: "btn small", type: "button", text: t("card_share") });
+      shareBtn.addEventListener("click", async () => {
+        try { const blob = await renderFull(); await navigator.share({ files: [new File([blob], oneName(), { type: "image/png" })], title: st.headline || brands[b.id]?.name || "" }); }
+        catch (e) { if (e?.name !== "AbortError") setStatus(imgSt, t("card_copy_fail"), true); }
+      });
+    }
+  } catch {}
   const prompt = b.card?.image_prompt || "";
   draw();
   return el("div", { class: "cardbox" },
@@ -1081,6 +1109,7 @@ function renderCard(b) {
       el("label", { class: "f", for: "card-s-" + b.id }, t("card_sub"), sub),
       el("label", { class: "chip", style: "align-self:flex-start" }, ov, t("card_overlay")),
       sizes,
+      el("div", { class: "row" }, copyImg, pngBtn, shareBtn), imgSt,
       el("div", { class: "row" }, bgBtn, file, zipBtn), zipSt,
       prompt ? el("div", {}, el("div", { class: "eyebrow", style: "margin-bottom:6px", text: t("card_prompt") }), withCopy(el("div", { class: "better", text: prompt }), () => prompt)) : null));
 }
