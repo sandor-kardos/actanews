@@ -255,6 +255,33 @@ setInterval(() => {
   if (hm(now) === NEWS_TIME && lastScheduledDay !== ymd(now)) { lastScheduledDay = ymd(now); runNews("scheduled"); }
 }, 30000);
 
+/* ---------------- Article fetch (link -> clean text) ---------------- */
+const PRIVATE_HOST = /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|169\.254\.|0\.|\[?::1\]?$|.*\.local$|.*\.internal$)/i;
+function metaContent(html, key) {
+  const re1 = new RegExp(`<meta[^>]+(?:property|name)=["']${key}["'][^>]*content=["']([^"']*)["']`, "i");
+  const re2 = new RegExp(`<meta[^>]+content=["']([^"']*)["'][^>]*(?:property|name)=["']${key}["']`, "i");
+  const m = re1.exec(html) || re2.exec(html);
+  return m ? decode(m[1]) : "";
+}
+async function fetchArticle(raw) {
+  let u;
+  try { u = new URL(String(raw || "").trim()); } catch { throw new Error("Invalid link"); }
+  if (!/^https?:$/.test(u.protocol) || (env("ARTICLE_ALLOW_PRIVATE") !== "1" && PRIVATE_HOST.test(u.hostname))) throw new Error("This link can't be fetched");
+  const r = await fetch(u, { redirect: "follow", signal: AbortSignal.timeout(15000), headers: { "user-agent": "Mozilla/5.0 (compatible; ActaNews/1.2)", "accept-language": "en-GB,en;q=0.9,hu;q=0.8" } });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  if (!/html/i.test(r.headers.get("content-type") || "")) throw new Error("Not a web page");
+  const html = (await r.text()).slice(0, 3e6);
+  const title = metaContent(html, "og:title") || decode(tag(html, "title"));
+  const description = metaContent(html, "og:description") || metaContent(html, "description");
+  const site = metaContent(html, "og:site_name") || new URL(r.url).hostname.replace(/^www\./, "");
+  const pub = metaContent(html, "article:published_time") || metaContent(html, "datePublished") || metaContent(html, "date");
+  let body = html.replace(/<(script|style|noscript|svg|nav|header|footer|aside|form|figure)[\s\S]*?<\/\1>/gi, " ");
+  const art = /<article[\s\S]*?<\/article>/i.exec(body); if (art) body = art[0];
+  const paras = (body.match(/<p[\s>][\s\S]*?<\/p>/gi) || []).map(decode).filter(p => p.length > 40);
+  const text = [...new Set(paras)].join("\n\n").slice(0, 6000);
+  return { title, description, site, published: pub ? pub.slice(0, 10) : "", url: r.url, text };
+}
+
 /* ---------------- HTTP ---------------- */
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".ico": "image/x-icon" };
 const send = (res, code, obj) => { res.writeHead(code, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }); res.end(JSON.stringify(obj)); };
@@ -296,6 +323,11 @@ const server = http.createServer(async (req, res) => {
       if (req.method === "PUT") { const data = await readBody(req, 2e6); setDoc(c, id, data); return send(res, 200, { ok: true, rev: db.rev }); }
       if (req.method === "PATCH") { const data = await readBody(req, 2e6); setDoc(c, id, { ...(col(c)[id] || {}), ...data }); return send(res, 200, { ok: true, rev: db.rev }); }
       if (req.method === "DELETE") { delDoc(c, id); return send(res, 200, { ok: true, rev: db.rev }); }
+    }
+    if (p === "/api/article" && req.method === "POST") {
+      const b = await readBody(req, 1e5);
+      try { return send(res, 200, await fetchArticle(b.url)); }
+      catch (e) { return send(res, 422, { message: e.message }); }
     }
     if (p === "/api/news/refresh" && req.method === "POST") { runNews("manual"); return send(res, 202, { state: "running" }); }
     if (p === "/api/news/status" && req.method === "GET") return send(res, 200, lastNewsStatus);

@@ -2,7 +2,7 @@
 <title>ActaNews</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Bagel+Fat+One&family=Plus+Jakarta+Sans:wght@500;800&display=swap">
 <style>
 /* Layout: a newsroom desk. Sticky tab bar, one working column on phones, input left / output right on wide screens. */
 :root{
@@ -194,6 +194,11 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 .cwrap > .better,.cwrap > .txt{padding-right:44px}
 .cline{display:flex;align-items:flex-start;gap:6px;justify-content:space-between}
 .cline .cpy,.reply .cpy,.qitem .cpy{width:28px;height:28px;flex:none}
+.cardbox{display:grid;gap:16px;grid-template-columns:1fr;border:1px solid var(--line);border-radius:var(--r);padding:14px;background:var(--panel)}
+@media (min-width:860px){.cardbox{grid-template-columns:minmax(0,300px) minmax(0,1fr)}}
+.cardprev{display:flex;flex-direction:column;gap:6px;align-items:center}
+.cardcv{max-width:100%;height:auto;border-radius:8px;touch-action:none;cursor:grab;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.cardctl{display:flex;flex-direction:column;gap:10px;min-width:0}
 .better{background:var(--bg);border-radius:8px;padding:10px 12px;white-space:pre-wrap;font-size:14px}
 /* image tool */
 .stage{position:relative;max-width:100%;border-radius:8px;overflow:hidden;background:var(--bg);cursor:crosshair}
@@ -219,7 +224,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.2.0">v1.2.0</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.3.0">v1.3.0</span></div>
   <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
@@ -438,6 +443,7 @@ const STR = {
     f_name: "Név", f_url: "Weboldal", f_slug: "Fájlnév rövidítés", f_language: "Nyelv", f_platforms: "Alap platformok (vesszővel)", f_audience: "Közönség", f_voice: "Hangnem és stílus",
     f_offer: "Ajánlat, árak, tények", f_cta: "CTA", f_rules: "Szabályok, tiltások", f_hashtags: "Alap hashtagek", f_source_note: "Forrás",
     ai_lang: "Hungarian",
+    card_h: "Kép a poszthoz", card_headline: "Cím a képen", card_sub: "Alcím", card_overlay: "Szöveg a képen", card_bg: "Háttérkép", card_bg_hint: "Tölts fel háttérképet, vagy maradhat a márkaszínes háttér.", card_drag: "Húzd a képet a kivágás igazításához.", card_zip: "Kártyák letöltése (ZIP)", card_prompt: "Képprompt (ComfyUI / Gemini)", card_source: "Forrás", art_fetching: "Cikk letöltése…", art_ok: "Cikk letöltve ({n} karakter).", art_fail: "A cikket nem sikerült letölteni, a meglévő szövegből dolgozom.",
     tab_saved: "Mentett", sv_h: "Mentett", sv_lede: "A csillagozott posztok és hírek. A csillagozott posztokat a generálás mintaként használja, a mínuszolt dolgokat legközelebb kerüli.",
     sv_posts: "Posztok", sv_news: "Hírek", sv_blocked: "Kizárt hashtagek", sv_blocked_h: "Ezeket a generálás már nem ajánlja. Koppints rá a visszaengedéshez.",
     sv_none_posts: "Még nincs csillagozott poszt. A poszt kártyáján a ☆ menti ide.", sv_none_news: "Még nincs csillagozott hír.", sv_none_tags: "Nincs kizárt hashtag.",
@@ -489,6 +495,7 @@ const STR = {
     f_name: "Name", f_url: "Website", f_slug: "Filename short name", f_language: "Language", f_platforms: "Default platforms (comma separated)", f_audience: "Audience", f_voice: "Voice and style",
     f_offer: "Offer, prices, facts", f_cta: "CTA", f_rules: "Rules and no-gos", f_hashtags: "Core hashtags", f_source_note: "Source",
     ai_lang: "English",
+    card_h: "Post image", card_headline: "Headline on image", card_sub: "Subheading", card_overlay: "Text on image", card_bg: "Background image", card_bg_hint: "Upload a background image, or keep the brand-colour background.", card_drag: "Drag the image to adjust the crop.", card_zip: "Download cards (ZIP)", card_prompt: "Image prompt (ComfyUI / Gemini)", card_source: "Source", art_fetching: "Fetching article…", art_ok: "Article fetched ({n} characters).", art_fail: "Couldn't fetch the article; working from the existing text.",
     tab_saved: "Saved", sv_h: "Saved", sv_lede: "Your starred posts and stories. Generation uses starred posts as examples and avoids what you minus.",
     sv_posts: "Posts", sv_news: "Stories", sv_blocked: "Blocked hashtags", sv_blocked_h: "Generation won't suggest these any more. Tap one to allow it again.",
     sv_none_posts: "No starred posts yet. Tap ☆ on a post card to save it here.", sv_none_news: "No starred stories yet.", sv_none_tags: "No blocked hashtags.",
@@ -780,7 +787,7 @@ USER OPINION
 """${opinion || ""}"""
 
 Return ONLY JSON in this shape:
-{"summary":"one line in ${L}","angle_note":"in ${L}, or empty","brands":[{"id":"brand id","score":0,"reason":"short reason in ${L}","seo_keyword":"phrase in the brand language","posts":[{"platform":"instagram","caption":"full caption text without hashtags","hashtags_core":["#tag"],"hashtags_extra":["#tag"],"alt_text":"image alt text in the brand language, max 125 chars","image_idea":"what photo or graphic to use, in ${L}","best_time":"suggested posting time, in ${L}"}]}]}
+{"summary":"one line in ${L}","angle_note":"in ${L}, or empty","brands":[{"id":"brand id","score":0,"reason":"short reason in ${L}","seo_keyword":"phrase in the brand language","card":{"headline":"text for the post image, brand language, max 6 words, no hashtags or emoji","subheading":"one short sentence in the brand language","source_name":"outlet name if reacting to news, else empty","image_prompt":"English prompt for a background image: describe subject, setting, light and style; no text, letters or logos; for asc and mindhaven only abstract or illustrative scenes, never identifiable children, clients or realistic people"},"posts":[{"platform":"instagram","caption":"full caption text without hashtags","hashtags_core":["#tag"],"hashtags_extra":["#tag"],"alt_text":"image alt text in the brand language, max 125 chars","image_idea":"what photo or graphic to use, in ${L}","best_time":"suggested posting time, in ${L}"}]}]}
 Include every brand listed in BRAND PROFILES in "brands", with "posts": [] when score < 2.`;
 }
 
@@ -828,7 +835,7 @@ function renderResult(res) {
         b.id === "mindhaven" ? el("span", { class: "approval", text: t("approval") }) : null));
     const grid = el("div", { class: "posts" });
     b.posts.forEach((p, i) => grid.append(renderPost(b, p, i)));
-    blk.append(grid); out.append(blk);
+    blk.append(grid, renderCard(b)); out.append(blk);
   });
 }
 
@@ -906,6 +913,146 @@ function renderPost(b, p, i) {
       el("div", { class: "row" }, imgBtn, anaBtn), anaSt, anaBox));
   return card;
 }
+
+/* ---------- post image card: brand template, live preview, text on/off, all platform sizes ---------- */
+const CARD_STYLE = {
+  asc:          { bg: ["#10324A", "#0B7A8C"], accent: "#FFC21A", fg: "#FFFFFF", font: '"Bagel Fat One", "Bricolage Grotesque", sans-serif', weight: "400" },
+  mindhaven:    { bg: ["#0D2E24", "#155D49"], accent: "#F6FFA2", fg: "#FFFFFF", font: '"Plus Jakarta Sans", "IBM Plex Sans", sans-serif', weight: "800" },
+  bereljufot:   { bg: ["#0F172A", "#0E7C5A"], accent: "#00FF9D", fg: "#FFFFFF", font: '"Bricolage Grotesque", sans-serif', weight: "700" },
+  sandorkardos: { bg: ["#0A0B0D", "#0039B3"], accent: "#5C8DFF", fg: "#FFFFFF", font: '"Bricolage Grotesque", sans-serif', weight: "700" }
+};
+const SUB_FONT = '"IBM Plex Sans", "Segoe UI", sans-serif';
+function wrapLines(ctx, text, maxW) {
+  const words = String(text || "").split(/\s+/).filter(Boolean), lines = [];
+  let line = "";
+  for (const w of words) { const tryL = line ? line + " " + w : w; if (ctx.measureText(tryL).width <= maxW || !line) line = tryL; else { lines.push(line); line = w; } }
+  if (line) lines.push(line);
+  return lines;
+}
+// Draws one card. Text block sits at the bottom; the headline shrinks until it fits in 3 lines.
+function drawCard(ctx, W, H, st, brandId) {
+  const s = CARD_STYLE[brandId] || CARD_STYLE.sandorkardos, m = Math.round(Math.min(W, H) * 0.065);
+  ctx.clearRect(0, 0, W, H);
+  if (st.bg) {
+    const iw = st.bg.naturalWidth, ih = st.bg.naturalHeight, sc = Math.max(W / iw, H / ih);
+    const cw = W / sc, ch = H / sc;
+    const x = Math.max(0, Math.min(iw - cw, st.fx * iw - cw / 2)), y = Math.max(0, Math.min(ih - ch, st.fy * ih - ch / 2));
+    ctx.drawImage(st.bg, x, y, cw, ch, 0, 0, W, H);
+  } else {
+    const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, s.bg[0]); g.addColorStop(1, s.bg[1]);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  }
+  if (!st.overlay) return;
+  const maxW = W - m * 2;
+  let size = Math.round(Math.min(W, H) * (W / H > 1.4 ? 0.1 : 0.095)), lines = [];
+  for (; size > 18; size -= 2) { ctx.font = `${s.weight} ${size}px ${s.font}`; lines = wrapLines(ctx, st.headline, maxW); if (lines.length <= 3) break; }
+  const subSize = Math.round(size * 0.42);
+  ctx.font = `500 ${subSize}px ${SUB_FONT}`;
+  const subLines = st.subheading ? wrapLines(ctx, st.subheading, maxW).slice(0, 2) : [];
+  const footSize = Math.max(14, Math.round(Math.min(W, H) * 0.024));
+  const blockH = lines.length * size * 1.08 + (subLines.length ? subSize * 0.6 + subLines.length * subSize * 1.3 : 0) + footSize * 2.6 + m * 0.5;
+  const top = H - m - blockH;
+  const scrim = ctx.createLinearGradient(0, Math.max(0, top - m * 2), 0, H);
+  scrim.addColorStop(0, "rgba(0,0,0,0)"); scrim.addColorStop(0.35, "rgba(0,0,0,0.55)"); scrim.addColorStop(1, "rgba(0,0,0,0.82)");
+  ctx.fillStyle = scrim; ctx.fillRect(0, Math.max(0, top - m * 2), W, H);
+  let y = top;
+  ctx.fillStyle = s.accent; ctx.fillRect(m, y - size * 0.35, Math.round(size * 1.2), Math.max(4, Math.round(size * 0.09)));
+  ctx.fillStyle = s.fg; ctx.textBaseline = "top";
+  ctx.font = `${s.weight} ${size}px ${s.font}`;
+  lines.forEach(l => { ctx.fillText(l, m, y); y += size * 1.08; });
+  if (subLines.length) {
+    y += subSize * 0.6; ctx.font = `500 ${subSize}px ${SUB_FONT}`; ctx.fillStyle = "rgba(255,255,255,0.9)";
+    subLines.forEach(l => { ctx.fillText(l, m, y); y += subSize * 1.3; });
+  }
+  ctx.font = `600 ${footSize}px ${SUB_FONT}`; ctx.fillStyle = s.accent; ctx.textBaseline = "bottom";
+  ctx.fillText((brands[brandId]?.url || brands[brandId]?.name || "").replace(/^https?:\/\//, ""), m, H - m * 0.7);
+  if (st.source) { ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.textAlign = "right"; ctx.fillText(`${/hungarian|magyar/i.test(brands[brandId]?.language || "") ? "Forrás" : "Source"}: ${st.source}`, W - m, H - m * 0.7); ctx.textAlign = "left"; }
+}
+const CARD_PREVIEW = { feed: [1080, 1350], story: [1080, 1920], square: [1080, 1080], link: [1200, 630] };
+function renderCard(b) {
+  const st = b._card ||= { headline: b.card?.headline || "", subheading: b.card?.subheading || "", source: b.card?.source_name || "", overlay: true, bg: null, fx: 0.5, fy: 0.5, preview: "feed" };
+  const cv = el("canvas", { class: "cardcv", role: "img", "aria-label": t("card_h") });
+  const draw = () => { const [W, H] = CARD_PREVIEW[st.preview]; const sc = 540 / Math.max(W, H); cv.width = Math.round(W * sc); cv.height = Math.round(H * sc); const ctx = cv.getContext("2d"); ctx.save(); ctx.scale(sc, sc); drawCard(ctx, W, H, st, b.id); ctx.restore(); };
+  const fam = (CARD_STYLE[b.id] || CARD_STYLE.sandorkardos);
+  document.fonts?.load?.(`${fam.weight} 48px ${fam.font}`).then(draw).catch(() => {});
+  const hl = el("input", { type: "text", id: "card-h-" + b.id, maxlength: "90" }); hl.value = st.headline;
+  hl.addEventListener("input", () => { st.headline = hl.value; draw(); });
+  const sub = el("input", { type: "text", id: "card-s-" + b.id, maxlength: "140" }); sub.value = st.subheading;
+  sub.addEventListener("input", () => { st.subheading = sub.value; draw(); });
+  const ov = el("input", Object.assign({ type: "checkbox", id: "card-o-" + b.id }, st.overlay ? { checked: "" } : {}));
+  ov.addEventListener("change", () => { st.overlay = ov.checked; draw(); });
+  const file = el("input", { type: "file", accept: "image/*", hidden: "" });
+  const setBg = f => { const img = new Image(); img.onload = () => { st.bg = img; st.fx = st.fy = 0.5; draw(); }; img.src = URL.createObjectURL(f); };
+  file.addEventListener("change", () => file.files[0] && setBg(file.files[0]));
+  const bgBtn = el("button", { class: "btn small", type: "button", text: t("card_bg") }); bgBtn.addEventListener("click", () => file.click());
+  // Drag on the preview moves the crop focus.
+  let drag = null;
+  cv.addEventListener("pointerdown", e => { if (!st.bg) return; drag = { x: e.clientX, y: e.clientY, fx: st.fx, fy: st.fy }; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener("pointermove", e => { if (!drag) return; const r = cv.getBoundingClientRect(); st.fx = Math.min(1, Math.max(0, drag.fx - (e.clientX - drag.x) / r.width * 0.6)); st.fy = Math.min(1, Math.max(0, drag.fy - (e.clientY - drag.y) / r.height * 0.6)); draw(); });
+  cv.addEventListener("pointerup", () => { drag = null; });
+  const sizes = el("div", { class: "chips" }, Object.keys(CARD_PREVIEW).map(k => {
+    const c = el("label", { class: "chip" }, el("input", Object.assign({ type: "radio", name: "cp-" + b.id, value: k }, st.preview === k ? { checked: "" } : {})), { feed: "4:5", story: "9:16", square: "1:1", link: "1.91:1" }[k]);
+    c.querySelector("input").addEventListener("change", () => { st.preview = k; draw(); });
+    return c;
+  }));
+  const zipSt = el("div", { class: "status", role: "status" });
+  const zipBtn = el("button", { class: "btn small primary", type: "button", text: t("card_zip") });
+  zipBtn.addEventListener("click", async () => {
+    if (!downloads) return setStatus(zipSt, t("no_dl"), true);
+    if (!window.JSZip) return setStatus(zipSt, t("no_zip"), true);
+    zipBtn.disabled = true; setStatus(zipSt, t("zip_busy"));
+    try {
+      const plats = new Set((b.posts || []).map(p => p.platform));
+      const list = SIZES.filter(s => plats.has(s.plat));
+      const zip = new JSZip(), kw = slugify(b.seo_keyword) || "post", bs = slugify(brands[b.id]?.slug || b.id);
+      for (const s of list) {
+        const c = document.createElement("canvas"); c.width = s.w; c.height = s.h; drawCard(c.getContext("2d"), s.w, s.h, st, b.id);
+        zip.file(`${kw}-${bs}-${s.plat}-${s.fmt}-${s.w}x${s.h}.jpg`, await new Promise(r => c.toBlob(r, "image/jpeg", 0.92)));
+      }
+      const alt = (b.posts || []).find(p => p.alt_text)?.alt_text; if (alt) zip.file("alt-text.txt", alt + "\n");
+      const name = `${kw}-${bs}-cards.zip`;
+      await downloads.save({ filename: name, data: await zip.generateAsync({ type: "blob" }) });
+      setStatus(zipSt, `${t("saved")}${name} (${list.length} ${t("images_n")})`);
+    } catch (e) { setStatus(zipSt, e?.code === "declined" ? t("declined") : errMsg(e), e?.code !== "declined"); }
+    finally { zipBtn.disabled = false; }
+  });
+  const prompt = b.card?.image_prompt || "";
+  draw();
+  return el("div", { class: "cardbox" },
+    el("div", { class: "cardprev" }, cv, el("p", { class: "note", style: "margin:0", text: st.bg ? t("card_drag") : t("card_bg_hint") })),
+    el("div", { class: "cardctl" },
+      el("div", { class: "eyebrow", text: t("card_h") }),
+      el("label", { class: "f", for: "card-h-" + b.id }, t("card_headline"), hl),
+      el("label", { class: "f", for: "card-s-" + b.id }, t("card_sub"), sub),
+      el("label", { class: "chip", style: "align-self:flex-start" }, ov, t("card_overlay")),
+      sizes,
+      el("div", { class: "row" }, bgBtn, file, zipBtn), zipSt,
+      prompt ? el("div", {}, el("div", { class: "eyebrow", style: "margin-bottom:6px", text: t("card_prompt") }), withCopy(el("div", { class: "better", text: prompt }), () => prompt)) : null));
+}
+
+/* ---------- article from link (self-hosted server only) ---------- */
+const URL_RE = /^https?:\/\/\S+$/i;
+async function fetchArticleInto(url, keepPrefix = "") {
+  const st = $("#genStatus");
+  if (!window.ACTA_LOCAL) return false;
+  setStatus(st, t("art_fetching"));
+  try {
+    const r = await fetch("/api/article", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url }) });
+    const j = await r.json();
+    if (!r.ok || !j.text) throw new Error(j.message || "empty");
+    const head = [j.title, [j.site, j.published].filter(Boolean).join(" · "), url].filter(Boolean).join("\n");
+    $("#src").value = (keepPrefix ? keepPrefix + "\n\n" : "") + head + (j.description ? "\n\n" + j.description : "") + "\n\n" + j.text;
+    setStatus(st, t("art_ok", { n: j.text.length }));
+    return true;
+  } catch { setStatus(st, t("art_fail")); return false; }
+}
+document.addEventListener("paste", e => {
+  const txt = (e.clipboardData?.getData("text/plain") || "").trim();
+  if (!URL_RE.test(txt) || !window.ACTA_LOCAL) return;
+  const tg = e.target, inField = tg && (tg.tagName === "INPUT" || tg.tagName === "TEXTAREA") && tg.id !== "src";
+  if (inField || $("#view-post").hidden) return;
+  e.preventDefault(); $("#src").value = txt; fetchArticleInto(txt);
+});
 
 /* ---------- analysis (posts and comment replies) ---------- */
 const SPICY_BLOCKED = new Set(["mindhaven", "asc"]); // counselling and kids' brands never bait arguments
@@ -1220,6 +1367,7 @@ function reactBtn(n, doc) {
   const btn = el("button", { class: "btn small primary rx", type: "button", "data-tip": t("news_react"), "aria-label": t("news_react") }, icon("react"), el("span", { class: "lbl", text: t("news_react") }));
   btn.addEventListener("click", () => {
     $("#src").value = `${n.title_original || n.title}\n${n.summary_en || n.summary}\n${t("news_source")}: ${n.source}${n.url ? " " + n.url : ""} (${n.date || doc.date})`;
+    if (n.url && window.ACTA_LOCAL) fetchArticleInto(n.url, $("#src").value);
     BRAND_ORDER.forEach(id => { const c = $("#bc-" + id); if (c) c.checked = !n.brands?.length || n.brands.includes(id); });
     if ($("#drawer").classList.contains("open")) setDrawer(false);
     if ($("#view-post").hidden) { location.hash = "post"; show("post"); }
