@@ -92,24 +92,5 @@
       sel.addEventListener("change", () => { paid = sel.value === "1"; try { localStorage.setItem("acta-paid", paid ? "1" : "0"); } catch {} });
       header.insertBefore(sel, header.querySelector("nav"));
     }
-    const dateEl = document.getElementById("newsDate");
-    if (dateEl) {
-      const btn = document.createElement("button");
-      btn.type = "button"; btn.className = "btn small"; btn.style.marginLeft = "8px";
-      const label = () => (hu() ? "Hírek frissítése" : "Refresh stories");
-      btn.textContent = label();
-      btn.addEventListener("click", async () => {
-        btn.disabled = true; btn.textContent = hu() ? "Keresés… (1-3 perc)" : "Searching… (1-3 min)";
-        await fetch("/api/news/refresh", { method: "POST" });
-        const poll = setInterval(async () => {
-          const s = await (await fetch("/api/news/status")).json().catch(() => ({}));
-          if (s.state === "running") return;
-          clearInterval(poll); btn.disabled = false; btn.textContent = label();
-          if (s.state === "error") { dateEl.textContent = (hu() ? "Hiba: " : "Error: ") + s.message; }
-          subs.forEach((_, col) => refresh(col));
-        }, 3000);
-      });
-      dateEl.after(btn);
-    }
   });
 })();

@@ -199,6 +199,14 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 .cardprev{display:flex;flex-direction:column;gap:6px;align-items:center}
 .cardcv{max-width:100%;height:auto;border-radius:8px;touch-action:none;cursor:grab;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .cardctl{display:flex;flex-direction:column;gap:10px;min-width:0}
+.newstoggle{display:inline-flex;align-items:center;gap:8px;border:0;background:none;color:var(--ink);padding:0;cursor:pointer;text-align:left}
+.newstoggle .chev{font-size:16px;color:var(--muted);display:inline-block}
+@media (prefers-reduced-motion:no-preference){.newstoggle .chev{transition:transform .2s}}
+.panel.news.collapsed .newsgrid{display:none}
+.panel.news.collapsed .chev{transform:rotate(-90deg)}
+.post.has-fill{border-color:var(--warn);box-shadow:0 0 0 1px var(--warn)}
+.fillwarn{display:flex;gap:8px;align-items:center;font:600 13px var(--f-body);color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent);border-radius:8px;padding:6px 10px}
+.btn.jack{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .better{background:var(--bg);border-radius:8px;padding:10px 12px;white-space:pre-wrap;font-size:14px}
 /* image tool */
 .stage{position:relative;max-width:100%;border-radius:8px;overflow:hidden;background:var(--bg);cursor:crosshair}
@@ -224,7 +232,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.3.0">v1.3.0</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.4.0">v1.4.0</span></div>
   <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
@@ -246,9 +254,9 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 
 <!-- POST -->
 <section class="view" id="view-post">
-  <div class="panel news" style="margin-bottom:20px">
+  <div class="panel news" id="newsPanel" style="margin-bottom:20px">
     <div class="row" style="justify-content:space-between">
-      <h2 data-i18n="news_h">Mai 3 hír</h2>
+      <button type="button" class="newstoggle" id="newsToggle" aria-expanded="true" aria-controls="newsList"><span class="chev" aria-hidden="true">▾</span><h2 data-i18n="news_h">Mai 3 hír</h2></button>
       <span class="note" id="newsDate"></span>
     </div>
     <div class="newsgrid" id="newsList"><div class="empty" data-i18n="news_empty">A mai hírek minden reggel 7 előtt érkeznek. Amíg nincs friss, a legutóbbiakat látod itt.</div></div>
@@ -402,7 +410,7 @@ const STR = {
     tab_post: "Poszt", tab_comment: "Komment", tab_image: "Kép", tab_brands: "Márkák",
     news_h: "Mai 3 hír", news_empty: "A mai hírek minden reggel 7 előtt érkeznek. Amíg nincs friss, a legutóbbiakat látod itt.",
     news_updated: "Frissítve: {d}", news_latest: "Legutóbbi: {d} (a mai még nem érkezett meg)", news_react: "Reagálok", news_angle: "Szög: ", news_source: "Forrás",
-    post_h: "Mire reagálsz?", post_lede: "Másold be a hír szövegét vagy tölts fel képernyőképet, írd mellé egy mondatban a véleményed. A linkeket az app nem tudja megnyitni, ezért a szöveg vagy a screenshot kell.",
+    post_lede_local: "Illessz be egy linket (a cikket magától letölti), másold be a szöveget, vagy tölts fel képernyőképet, és írd mellé egy mondatban a véleményed.", jack: "Jack it!", jack_tip: "Cikk + posztok + kép egy kattintással", fill_warn: "[FILL] maradt a szövegben: töltsd ki másolás előtt.", news_refreshing: "Hírek keresése… (1-3 perc)", news_err: "Hiba: ", post_h: "Mire reagálsz?", post_lede: "Másold be a hír szövegét vagy tölts fel képernyőképet, írd mellé egy mondatban a véleményed. A linkeket az app nem tudja megnyitni, ezért a szöveg vagy a screenshot kell.",
     src_label: "Hír, poszt vagy jegyzet", src_ph: "Pl. a cikk bekezdése, egy poszt szövege, vagy a link + pár szó arról, miről szól",
     shot_txt: "Képernyőkép feltöltése vagy beillesztése (Ctrl+V)", shot_done: "Képernyőkép csatolva. Kattints a cseréhez.",
     op_label: "A véleményed", op_hint: "Ez lesz a posztok gerince. Bármelyik nyelven írhatod.", op_ph: "Pl. szerintem ez a kisvállalkozásoknak jó hír, mert...",
@@ -454,7 +462,7 @@ const STR = {
     tab_post: "Post", tab_comment: "Comment", tab_image: "Image", tab_brands: "Brands",
     news_h: "Today's 3 stories", news_empty: "Today's stories arrive before 7am every morning. Until then you see the latest ones.",
     news_updated: "Updated: {d}", news_latest: "Latest: {d} (today's hasn't arrived yet)", news_react: "React", news_angle: "Angle: ", news_source: "Source",
-    post_h: "What are you reacting to?", post_lede: "Paste the story text or upload a screenshot, and add your opinion in one sentence. The app can't open links, so it needs the text or a screenshot.",
+    post_lede_local: "Paste a link (the article is fetched for you), paste the text, or upload a screenshot, and add your opinion in one sentence.", jack: "Jack it!", jack_tip: "Article + posts + image in one click", fill_warn: "[FILL] left in the text: fill it in before copying.", news_refreshing: "Searching stories… (1-3 min)", news_err: "Error: ", post_h: "What are you reacting to?", post_lede: "Paste the story text or upload a screenshot, and add your opinion in one sentence. The app can't open links, so it needs the text or a screenshot.",
     src_label: "Story, post or note", src_ph: "E.g. a paragraph of the article, a post's text, or the link plus a few words on what it says",
     shot_txt: "Upload or paste a screenshot (Ctrl+V)", shot_done: "Screenshot attached. Click to replace.",
     op_label: "Your opinion", op_hint: "This becomes the spine of every post. Write it in any language.", op_ph: "E.g. I think this is good news for small businesses because...",
@@ -511,6 +519,7 @@ function applyLang() {
   document.querySelectorAll("[data-i18n]").forEach(n => n.textContent = t(n.dataset.i18n));
   document.querySelectorAll("[data-i18n-ph]").forEach(n => n.placeholder = t(n.dataset.i18nPh));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  if (window.ACTA_LOCAL) { const ld = document.querySelector('[data-i18n="post_lede"]'); if (ld) ld.textContent = t("post_lede_local"); }
   $("#refreshBtn").dataset.tip = t("refresh");
   $("#shotDrop").setAttribute("aria-label", t("shot_txt")); $("#imgDrop").setAttribute("aria-label", t("img_drop"));
   if (shotBlob) $("#shotTxt").textContent = t("shot_done");
@@ -539,7 +548,18 @@ document.addEventListener("contextmenu", e => { if (e.target.closest?.("[data-ti
 $("#refreshBtn").addEventListener("click", () => {
   const b = $("#refreshBtn"); b.classList.add("spin"); b.disabled = true;
   const done = () => { b.classList.remove("spin"); b.disabled = false; };
-  if (typeof window.__resubscribe === "function") Promise.resolve(window.__resubscribe()).finally(() => setTimeout(done, 400)); else setTimeout(done, 400);
+  const reread = () => typeof window.__resubscribe === "function" ? Promise.resolve(window.__resubscribe()) : Promise.resolve();
+  if (!window.ACTA_LOCAL) { reread().finally(() => setTimeout(done, 400)); return; }
+  newsError = ""; $("#newsDate").textContent = t("news_refreshing");
+  fetch("/api/news/refresh", { method: "POST" }).then(() => new Promise(res => {
+    const started = Date.now();
+    const poll = setInterval(async () => {
+      const s = await fetch("/api/news/status").then(r => r.json()).catch(() => ({}));
+      if (s.state === "running" && Date.now() - started < 240000) return;
+      clearInterval(poll);
+      res(s);
+    }, 2500);
+  })).then(s => { if (s?.state === "error") newsError = s.message; return reread().then(() => renderNews(latestNews)); }).finally(done);
 });
 
 /* ---------- static config ---------- */
@@ -590,6 +610,7 @@ let lastResult = null;
 let lastInput = { src: "", opinion: "" };
 let shotBlob = null;
 let latestNews = null;
+let newsError = "";
 let allNews = [];
 let srcImg = null, imgLabel = "", focusBoxes = [], manualFocus = null, aiRunId = 0;
 let prefs = {};             // prefs/<brandId> {blocked_tags, liked, disliked}; prefs/news {liked, disliked}
@@ -620,7 +641,8 @@ const ICONS = {
   copy: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
   react: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
   star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9Z"/>',
-  check: '<path d="M20 6 9 17l-5-5"/>'
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  bolt: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/>'
 };
 const icon = (name, fill) => { const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("fill", fill ? "currentColor" : "none"); s.setAttribute("stroke", "currentColor"); s.setAttribute("stroke-width", "2.2"); s.setAttribute("stroke-linecap", "round"); s.setAttribute("stroke-linejoin", "round"); s.setAttribute("aria-hidden", "true"); s.innerHTML = ICONS[name]; return s; };
 function markButtons(n, doc) {
@@ -810,6 +832,7 @@ $("#postForm").addEventListener("submit", async e => {
     const res = await sample.json(buildPrompt(src, opinion, brandIds, platIds), opts);
     if (!res || !Array.isArray(res.brands)) throw { message: t("e_format") };
     lastResult = res; lastInput = { src: src || ("(screenshot) " + (res.summary || "")), opinion };
+    setNewsCollapsed(true);
     renderResult(res); setStatus(st, t("done"));
     const firstKw = res.brands.find(b => b.score >= 2 && b.seo_keyword);
     if (firstKw) { $("#imgBrand").value = firstKw.id; syncKwFromResult(); }
@@ -835,14 +858,17 @@ function renderResult(res) {
         b.id === "mindhaven" ? el("span", { class: "approval", text: t("approval") }) : null));
     const grid = el("div", { class: "posts" });
     b.posts.forEach((p, i) => grid.append(renderPost(b, p, i)));
-    blk.append(grid, renderCard(b)); out.append(blk);
+    blk.append(renderCard(b), grid); out.append(blk);
   });
 }
 
 function renderPost(b, p, i) {
   const uid = `${b.id}-${p.platform}-${i}`;
   const cap = el("textarea", { class: "cap", id: "cap-" + uid, "aria-label": "caption" }); cap.value = p.caption || "";
-  cap.addEventListener("input", () => { p.caption = cap.value; cnt.textContent = cap.value.length + " " + t("chars"); });
+  const fillWarn = el("div", { class: "fillwarn", role: "status", hidden: "" }, "⚠", el("span", { text: t("fill_warn") }));
+  const checkFill = () => { const has = /\[FILL[^\]]*\]/i.test(cap.value); fillWarn.hidden = !has; cap.closest(".post")?.classList.toggle("has-fill", has); };
+  cap.addEventListener("input", () => { p.caption = cap.value; cnt.textContent = cap.value.length + " " + t("chars"); checkFill(); });
+  setTimeout(checkFill, 0);
   const tagBox = el("div", { class: "chips" });
   const blocked = new Set(brandPref(b.id).blocked_tags.map(x => x.toLowerCase()));
   const addTag = (tg, extra) => {
@@ -903,7 +929,7 @@ function renderPost(b, p, i) {
   });
   card.append(
     el("div", { class: "top" }, el("strong", { text: PLATFORMS.find(x => x.id === p.platform)?.name || p.platform }), el("span", { class: "row", style: "gap:8px" }, cnt, votes)),
-    el("div", { class: "body" }, withCopy(cap, fullText),
+    el("div", { class: "body" }, fillWarn, withCopy(cap, fullText),
       el("div", {}, el("div", { class: "eyebrow", style: "margin-bottom:6px", text: t("tags_hint") }), tagBox),
       el("dl", { class: "meta" },
         el("dt", { text: t("m_alt") }), el("dd", { class: "cline" }, el("span", { text: p.alt_text || "–" }), p.alt_text ? copyIcon(() => p.alt_text) : null),
@@ -1363,19 +1389,31 @@ function renderBrandForms() {
 }
 
 /* ---------- daily news (written each morning by a scheduled task) ---------- */
+// Fill the form from a story; with auto=true it also generates right away (Jack it!).
+async function startReact(n, doc, auto) {
+  $("#src").value = `${n.title_original || n.title}\n${n.summary_en || n.summary}\n${t("news_source")}: ${n.source}${n.url ? " " + n.url : ""} (${n.date || doc.date})`;
+  BRAND_ORDER.forEach(id => { const c = $("#bc-" + id); if (c) c.checked = !n.brands?.length || n.brands.includes(id); });
+  if ($("#drawer").classList.contains("open")) setDrawer(false);
+  if ($("#view-post").hidden) { location.hash = "post"; show("post"); }
+  const smooth = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  if (!auto) { $("#opinion").focus(); $("#postForm").scrollIntoView({ behavior: smooth, block: "start" }); }
+  if (n.url && window.ACTA_LOCAL) await fetchArticleInto(n.url, $("#src").value);
+  if (auto) { setNewsCollapsed(true); $("#postForm").scrollIntoView({ behavior: smooth, block: "start" }); $("#postForm").requestSubmit(); }
+}
 function reactBtn(n, doc) {
   const btn = el("button", { class: "btn small primary rx", type: "button", "data-tip": t("news_react"), "aria-label": t("news_react") }, icon("react"), el("span", { class: "lbl", text: t("news_react") }));
-  btn.addEventListener("click", () => {
-    $("#src").value = `${n.title_original || n.title}\n${n.summary_en || n.summary}\n${t("news_source")}: ${n.source}${n.url ? " " + n.url : ""} (${n.date || doc.date})`;
-    if (n.url && window.ACTA_LOCAL) fetchArticleInto(n.url, $("#src").value);
-    BRAND_ORDER.forEach(id => { const c = $("#bc-" + id); if (c) c.checked = !n.brands?.length || n.brands.includes(id); });
-    if ($("#drawer").classList.contains("open")) setDrawer(false);
-    if ($("#view-post").hidden) { location.hash = "post"; show("post"); }
-    $("#opinion").focus();
-    $("#postForm").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
-  });
+  btn.addEventListener("click", () => startReact(n, doc, false));
   return btn;
 }
+function jackBtn(n, doc) {
+  const btn = el("button", { class: "btn small jack", type: "button", "data-tip": t("jack_tip"), "aria-label": t("jack_tip") }, icon("bolt"), el("span", { text: t("jack") }));
+  btn.addEventListener("click", () => startReact(n, doc, true));
+  return btn;
+}
+function setNewsCollapsed(on) {
+  $("#newsPanel").classList.toggle("collapsed", on); $("#newsToggle").setAttribute("aria-expanded", String(!on));
+}
+$("#newsToggle").addEventListener("click", () => setNewsCollapsed(!$("#newsPanel").classList.contains("collapsed")));
 function renderArchive() {
   const box = $("#archive");
   if (!$("#drawer").classList.contains("open")) return;
@@ -1436,7 +1474,7 @@ function renderNews(doc) {
   const box = $("#newsList");
   if (!doc || !Array.isArray(doc.items) || !doc.items.length) return;
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/London" });
-  $("#newsDate").textContent = doc.date === today ? t("news_updated", { d: doc.date }) : t("news_latest", { d: doc.date });
+  $("#newsDate").textContent = (doc.date === today ? t("news_updated", { d: doc.date }) : t("news_latest", { d: doc.date })) + (newsError ? " · " + t("news_err") + newsError : "");
   box.replaceChildren();
   doc.items.slice(0, 3).forEach(n => {
     if (isNewsHidden(n)) {
@@ -1463,7 +1501,7 @@ function renderNews(doc) {
       el("p", { text: summary }),
       angle ? el("div", { class: "angle", text: t("news_angle") + angle }) : null,
       el("div", { class: "src" }, n.url ? el("a", { href: n.url, target: "_blank", rel: "noopener", text: n.source }) : n.source, ` · ${n.date || doc.date}`),
-      el("div", { class: "acts" }, btn, votes)));
+      el("div", { class: "acts" }, jackBtn(n, doc), btn, votes)));
   });
 }
 
