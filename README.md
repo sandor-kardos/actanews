@@ -18,11 +18,11 @@ Without Docker (Node 20+): `node server.js` with the same variables set.
 
 ## Models
 
-- **Primary** (`LLM_PRIMARY_*`): Anthropic API by default. Any OpenAI-compatible API also works with `LLM_PRIMARY_KIND=openai`.
+- **Primary** (`LLM_PRIMARY_*`): the default for everything, Claude Haiku (cheap, fast). Any OpenAI-compatible API also works with `LLM_PRIMARY_KIND=openai`.
 - **Fallback** (`LLM_FALLBACK_*`, optional): used only if the primary call fails, e.g. OmniRoute or a local Ollama.
 - **Quick model** (`LLM_QUICK_*`, optional): a cheap model (e.g. Claude Haiku) for picking the daily stories and image focus. Empty = primary does everything.
 - **Morning drafts** (`PREGEN_DRAFTS=true`): after the stories are picked, the primary model writes the posts for each one in the background, so ⚡ Jack it! opens a ready draft instantly. Write your opinion and press Generate posts to rewrite it.
-- **Second model** (`LLM_PAID_*`, optional): never automatic; a dropdown appears in the header to switch to it.
+- **Better model** (`LLM_PAID_*`, optional, e.g. Claude Sonnet): never automatic; a dropdown appears in the header to switch to it for important posts.
 
 Keys stay on the server; the browser never sees them.
 
@@ -40,6 +40,11 @@ Feed entry formats:
 {"brand": "bereljufot", "lang": "hu", "google": {"q": "utánfutó"}}
 {"brand": "asc", "lang": "en", "url": "https://feeds.bbci.co.uk/news/scotland/edinburgh_east_and_fife/rss.xml", "source": "BBC News"}
 ```
+
+## Brands and clients
+
+Brands → **+ New brand**: paste a website, the server reads it and AI drafts the profile with colours and font. Set Type = Client for client work.
+The **Service** tab tracks clients (package, price, status), monthly revenue, editable packages and writes tailored proposal emails.
 
 ## Data
 

@@ -102,7 +102,7 @@ section.view{padding-top:20px}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
 label.f{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:13px}
 label.f span.h{font-weight:400;color:var(--muted)}
-textarea,input[type=text],select{width:100%;font:15px/1.45 var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+textarea,input[type=text],input[type=number],input[type=date],select{width:100%;font:15px/1.45 var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
 textarea{resize:vertical;min-height:92px}
 textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .eyebrow{font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -208,6 +208,15 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 .fillwarn{display:flex;gap:8px;align-items:center;font:600 13px var(--f-body);color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent);border-radius:8px;padding:6px 10px}
 .btn.jack{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .badge.ready{border-style:solid;border-color:var(--ok);color:var(--ok)}
+.svc{display:flex;flex-direction:column;gap:16px}
+.kpis{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.kpi strong{font:700 26px var(--f-disp);font-variant-numeric:tabular-nums}
+.client{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:10px}
+.cgrid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.pkgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.pkg{border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.newbrand{border-style:dashed}
 .better{background:var(--bg);border-radius:8px;padding:10px 12px;white-space:pre-wrap;font-size:14px}
 /* image tool */
 .stage{position:relative;max-width:100%;border-radius:8px;overflow:hidden;background:var(--bg);cursor:crosshair}
@@ -233,7 +242,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.5.0">v1.5.0</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.6.0">v1.6.0</span></div>
   <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
@@ -247,6 +256,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
     <button role="tab" id="tab-komment" aria-selected="false" data-view="komment" data-i18n="tab_comment">Komment</button>
     <button role="tab" id="tab-kep" aria-selected="false" data-view="kep" data-i18n="tab_image">Kép</button>
     <button role="tab" id="tab-mentett" aria-selected="false" data-view="mentett" data-i18n="tab_saved">Mentett</button>
+    <button role="tab" id="tab-szolg" aria-selected="false" data-view="szolg" data-i18n="tab_service">Szolgáltatás</button>
     <button role="tab" id="tab-markak" aria-selected="false" data-view="markak" data-i18n="tab_brands">Márkák</button>
   </nav>
 </div></header>
@@ -387,7 +397,17 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
     <h2 data-i18n="br_h">Márkastílusok</h2>
     <p class="lede" data-i18n="br_lede">Ezekből dolgozik a generálás.</p>
   </div>
+  <div id="newBrand" style="margin-bottom:16px"></div>
   <div class="brandforms" id="brandForms"><div class="empty" data-i18n="br_loading">Márkaprofilok betöltése…</div></div>
+</section>
+
+<!-- SZOLGÁLTATÁS -->
+<section class="view" id="view-szolg" hidden>
+  <div class="panel" style="margin-bottom:16px">
+    <h2 data-i18n="sv2_h">Szolgáltatás</h2>
+    <p class="lede" data-i18n="sv2_lede">Ügyfelek, csomagok, havi bevétel és ajánlatíró.</p>
+  </div>
+  <div class="svc" id="serviceBox"></div>
 </section>
 </main>
 <div class="scrim" id="scrim" hidden></div>
@@ -408,6 +428,7 @@ const el = (t, a = {}, ...kids) => { const n = document.createElement(t); for (c
 /* ---------- language ---------- */
 const STR = {
   hu: {
+    tab_service: "Szolgáltatás", sv2_h: "Szolgáltatás", sv2_lede: "Ügyfelek, csomagok, havi bevétel és ajánlatíró. Az ügyfél is egy márka: a Márkák fülön veszed fel, itt kezeled.", sv2_active: "Aktív ügyfél", sv2_trial: "Próbaidős", sv2_mrr: "Havi bevétel (aktív)", sv2_clients: "Ügyfelek", sv2_add: "+ Új ügyfél", sv2_none: "Még nincs ügyfél. Az + Új ügyfél gombbal a weboldaluk linkjéből 1 perc alatt felveheted.", sv2_package: "Csomag", sv2_price: "Egyedi ár (£/hó)", sv2_status: "Állapot", sv2_started: "Kezdés", sv2_contact: "Kapcsolat", sv2_notes: "Megjegyzés", per_month: "/hó", st_trial: "Próba", st_active: "Aktív", st_paused: "Szünetel", st_ended: "Lezárt", sv2_packages: "Csomagok", sv2_pk_lede: "Az árak a UK piaci sávhoz igazított javaslatok, írd át őket.", pk_name: "Név", pk_price: "Ár (£/hó)", pk_posts_week: "Poszt / hét", pk_platforms: "Platformok", pk_includes: "Tartalmazza", sv2_pitch: "Ajánlatíró", sv2_pitch_lede: "Rövid, személyre szabott e-mail egy leendő ügyfélnek, 3 posztötlettel.", sv2_who: "Kinek", sv2_lang: "Nyelv", sv2_pitch_go: "Ajánlat írása", sv2_email: "E-mail", sv2_ideas: "Posztötletek", kind_own: "Saját márka", kind_client: "Ügyfél", f_kind: "Típus", f_color: "Fő szín", f_accent: "Kiemelő szín", f_font: "Betűtípus (Google Fonts)", br_delete: "Márka törlése", br_delete_sure: "Biztos? Kattints újra", nb_h: "+ Új márka", nb_lede_local: "Add meg a weboldalt: a szerver beolvassa, az AI megírja a profilt a színekkel és a betűvel. Utána átnézed lent.", nb_lede: "Add meg a nevet, és írj pár mondatot a vállalkozásról: az AI megírja a profilt. Utána átnézed lent.", nb_notes: "Pár mondat róla (nem kötelező)", nb_ai: "Profil megírása AI-val", nb_blank: "Üres profil", nb_need: "Adj meg nevet vagy weboldalt.", nb_busy: "Weboldal beolvasása és profil írása… (15-30 mp)", nb_done: "Kész, lent megnyitottam: nézd át és mentsd.",
     tab_post: "Poszt", tab_comment: "Komment", tab_image: "Kép", tab_brands: "Márkák",
     news_h: "Mai 3 hír", news_empty: "A mai hírek minden reggel 7 előtt érkeznek. Amíg nincs friss, a legutóbbiakat látod itt.",
     news_updated: "Frissítve: {d}", news_latest: "Legutóbbi: {d} (a mai még nem érkezett meg)", news_react: "Reagálok", news_angle: "Szög: ", news_source: "Forrás",
@@ -460,6 +481,7 @@ const STR = {
     block_tag: "Hashtag kizárása", remove: "Eltávolítás", open: "Megnyitás", e_save: "Nem sikerült menteni a jelölést.", refresh: "Frissítés", posted: "Kész, kiment", unposted: "Kész jelölés levétele", archive: "Archív", archive_posts: "Mentett posztok", archive_h: "Lekutatott témák", archive_lede: "Minden eddigi hír és tartalék téma. Ha ma nincs jobb, innen is reagálhatsz.", archive_empty: "Még nincs korábbi téma.", no_conn: "Most nem érem el a mentett híreket. Zárd be és nyisd meg újra az appot, az adatok megvannak.", extra_badge: "tartalék", hidden_badge: "elrejtve"
   },
   en: {
+    tab_service: "Service", sv2_h: "Service", sv2_lede: "Clients, packages, monthly revenue and a proposal writer. A client is a brand: add it on the Brands tab, manage it here.", sv2_active: "Active clients", sv2_trial: "On trial", sv2_mrr: "Monthly revenue (active)", sv2_clients: "Clients", sv2_add: "+ New client", sv2_none: "No clients yet. Use + New client to add one from their website in a minute.", sv2_package: "Package", sv2_price: "Custom price (£/mo)", sv2_status: "Status", sv2_started: "Started", sv2_contact: "Contact", sv2_notes: "Notes", per_month: "/mo", st_trial: "Trial", st_active: "Active", st_paused: "Paused", st_ended: "Ended", sv2_packages: "Packages", sv2_pk_lede: "Prices are suggestions set to the UK market range; edit them.", pk_name: "Name", pk_price: "Price (£/mo)", pk_posts_week: "Posts / week", pk_platforms: "Platforms", pk_includes: "Includes", sv2_pitch: "Proposal writer", sv2_pitch_lede: "A short, tailored email to a prospective client, with 3 post ideas.", sv2_who: "For", sv2_lang: "Language", sv2_pitch_go: "Write proposal", sv2_email: "Email", sv2_ideas: "Post ideas", kind_own: "Own brand", kind_client: "Client", f_kind: "Type", f_color: "Main colour", f_accent: "Accent colour", f_font: "Font (Google Fonts)", br_delete: "Delete brand", br_delete_sure: "Sure? Click again", nb_h: "+ New brand", nb_lede_local: "Enter the website: the server reads it and AI drafts the profile with colours and font. Review it below.", nb_lede: "Enter the name and a few sentences about the business: AI drafts the profile. Review it below.", nb_notes: "A few sentences about it (optional)", nb_ai: "Draft profile with AI", nb_blank: "Empty profile", nb_need: "Enter a name or a website.", nb_busy: "Reading the website and drafting… (15-30 s)", nb_done: "Done, opened below: review and save.",
     tab_post: "Post", tab_comment: "Comment", tab_image: "Image", tab_brands: "Brands",
     news_h: "Today's 3 stories", news_empty: "Today's stories arrive before 7am every morning. Until then you see the latest ones.",
     news_updated: "Updated: {d}", news_latest: "Latest: {d} (today's hasn't arrived yet)", news_react: "React", news_angle: "Angle: ", news_source: "Source",
@@ -525,7 +547,8 @@ function applyLang() {
   $("#shotDrop").setAttribute("aria-label", t("shot_txt")); $("#imgDrop").setAttribute("aria-label", t("img_drop"));
   if (shotBlob) $("#shotTxt").textContent = t("shot_done");
   if (srcImg) $("#imgTxt").textContent = imgLabel;
-  renderSizeList(); renderBrandChips(); renderBrandForms(); renderNews(latestNews); renderSaved();
+  renderSizeList(); renderBrandChips(); renderBrandForms(); renderNews(latestNews); renderSaved(); renderService();
+  const nb = $("#newBrand"); if (nb) { nb.replaceChildren(); renderNewBrand(nb); }
   if (lastResult) renderResult(lastResult);
   if (srcImg) renderCrops();
 }
@@ -564,7 +587,6 @@ $("#refreshBtn").addEventListener("click", () => {
 });
 
 /* ---------- static config ---------- */
-const BRAND_ORDER = ["asc", "mindhaven", "bereljufot", "sandorkardos"];
 const BRAND_VAR = { asc: "--b-asc", mindhaven: "--b-mindhaven", bereljufot: "--b-bereljufot", sandorkardos: "--b-sandorkardos" };
 const PLATFORMS = [
   { id: "facebook", name: "Facebook" },
@@ -759,7 +781,7 @@ const copyText = async (text, btn) => {
   try { await navigator.clipboard.writeText(text); btn.textContent = t("copied"); setTimeout(() => btn.textContent = o, 1400); }
   catch { const ta = el("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.append(ta); ta.select(); try { document.execCommand("copy"); btn.textContent = t("copied"); } catch { btn.textContent = t("copy_manual"); } ta.remove(); setTimeout(() => btn.textContent = o, 1800); }
 };
-const brandColor = id => `var(${BRAND_VAR[id] || "--accent"})`;
+const brandColor = id => BRAND_VAR[id] ? `var(${BRAND_VAR[id]})` : (/^#[0-9a-f]{6}$/i.test(brands[id]?.color || "") ? brands[id].color : "var(--accent)");
 const errMsg = e => {
   const c = e && e.code;
   if (c === "not_granted") return t("e_not_granted");
@@ -769,7 +791,7 @@ const errMsg = e => {
 };
 
 /* ---------- tabs ---------- */
-const views = ["post", "komment", "kep", "mentett", "markak"];
+const views = ["post", "komment", "kep", "mentett", "szolg", "markak"];
 function show(v) {
   if (!views.includes(v)) v = "post";
   views.forEach(x => { $("#view-" + x).hidden = x !== v; $("#tab-" + x).setAttribute("aria-selected", String(x === v)); });
@@ -783,13 +805,13 @@ function renderBrandChips() {
   const box = $("#brandChips");
   const prev = new Set([...box.querySelectorAll("input")].filter(i => !i.checked).map(i => i.value));
   box.replaceChildren();
-  BRAND_ORDER.filter(id => brands[id]).forEach(id => {
+  brandOrder().filter(id => brands[id]).forEach(id => {
     box.append(el("label", { class: "chip" }, el("input", Object.assign({ type: "checkbox", id: "bc-" + id, value: id }, prev.has(id) ? {} : { checked: "" })), el("span", { class: "dot", style: `background:${brandColor(id)}` }), brands[id].name));
   });
   if (!box.children.length) box.append(el("span", { class: "note", text: t("brands_loading") }));
   for (const sid of ["#imgBrand", "#kBrand"]) {
     const sel = $(sid), cur = sel.value; sel.replaceChildren();
-    BRAND_ORDER.filter(id => brands[id]).forEach(id => sel.append(el("option", { value: id, text: brands[id].name })));
+    brandOrder().filter(id => brands[id]).forEach(id => sel.append(el("option", { value: id, text: brands[id].name })));
     if (cur && brands[cur]) sel.value = cur;
   }
   updateFilenames();
@@ -824,7 +846,7 @@ $("#postForm").addEventListener("submit", async e => {
   e.preventDefault();
   const st = $("#genStatus");
   const src = $("#src").value.trim(), opinion = $("#opinion").value.trim();
-  const brandIds = BRAND_ORDER.filter(id => $("#bc-" + id)?.checked);
+  const brandIds = brandOrder().filter(id => $("#bc-" + id)?.checked);
   const platIds = PLATFORMS.map(p => p.id).filter(id => $("#pc-" + id).checked);
   if (!src && !shotBlob) return setStatus(st, t("e_need_src"), true);
   if (!brandIds.length) return setStatus(st, t("e_need_brand"), true);
@@ -834,7 +856,7 @@ $("#postForm").addEventListener("submit", async e => {
   const btn = $("#genBtn"); btn.disabled = true;
   setStatus(st, t("gen_busy"));
   try {
-    const opts = { modelTier: "default", cache: false };
+    const opts = { modelTier: "quick", cache: false };
     if (shotBlob) opts.images = [shotBlob];
     const res = await sample.json(buildPrompt(src, opinion, brandIds, platIds), opts);
     if (!res || !Array.isArray(res.brands)) throw { message: t("e_format") };
@@ -964,7 +986,7 @@ function wrapLines(ctx, text, maxW) {
 }
 // Draws one card. Text block sits at the bottom; the headline shrinks until it fits in 3 lines.
 function drawCard(ctx, W, H, st, brandId) {
-  const s = CARD_STYLE[brandId] || CARD_STYLE.sandorkardos, m = Math.round(Math.min(W, H) * 0.065);
+  const s = cardStyle(brandId), m = Math.round(Math.min(W, H) * 0.065);
   ctx.clearRect(0, 0, W, H);
   if (st.bg) {
     const iw = st.bg.naturalWidth, ih = st.bg.naturalHeight, sc = Math.max(W / iw, H / ih);
@@ -1006,7 +1028,7 @@ function renderCard(b) {
   const st = b._card ||= { headline: b.card?.headline || "", subheading: b.card?.subheading || "", source: b.card?.source_name || "", overlay: true, bg: null, fx: 0.5, fy: 0.5, preview: "feed" };
   const cv = el("canvas", { class: "cardcv", role: "img", "aria-label": t("card_h") });
   const draw = () => { const [W, H] = CARD_PREVIEW[st.preview]; const sc = 540 / Math.max(W, H); cv.width = Math.round(W * sc); cv.height = Math.round(H * sc); const ctx = cv.getContext("2d"); ctx.save(); ctx.scale(sc, sc); drawCard(ctx, W, H, st, b.id); ctx.restore(); };
-  const fam = (CARD_STYLE[b.id] || CARD_STYLE.sandorkardos);
+  const fam = cardStyle(b.id);
   document.fonts?.load?.(`${fam.weight} 48px ${fam.font}`).then(draw).catch(() => {});
   const hl = el("input", { type: "text", id: "card-h-" + b.id, maxlength: "90" }); hl.value = st.headline;
   hl.addEventListener("input", () => { st.headline = hl.value; draw(); });
@@ -1119,7 +1141,7 @@ Return ONLY JSON:
 async function analyze(args) {
   if (!sample) throw { message: t("e_no_ai") };
   if (!args.text) throw { message: t("e_empty_text") };
-  const r = await sample.json(analyzePrompt(args), { modelTier: "default", cache: false });
+  const r = await sample.json(analyzePrompt(args), { modelTier: "quick", cache: false });
   if (!r || !r.scores) throw { message: t("e_format") };
   return r;
 }
@@ -1366,32 +1388,40 @@ $("#zipBtn").addEventListener("click", async () => {
 });
 
 /* ---------- brand profiles (db) ---------- */
-const FIELDS = [["name", "text"], ["url", "text"], ["slug", "text"], ["language", "text"], ["platforms", "text"], ["audience", "area"], ["voice", "area"], ["offer", "area"], ["cta", "area"], ["rules", "area"], ["hashtags", "area"], ["source_note", "area"]];
+const FIELDS = [["name", "text"], ["url", "text"], ["kind", "select"], ["color", "text"], ["accent", "text"], ["font", "text"], ["slug", "text"], ["language", "text"], ["platforms", "text"], ["audience", "area"], ["voice", "area"], ["offer", "area"], ["cta", "area"], ["rules", "area"], ["hashtags", "area"], ["source_note", "area"]];
 function renderBrandForms() {
   const box = $("#brandForms");
   const openIds = new Set([...box.querySelectorAll("details[open]")].map(d => d.dataset.id));
   box.replaceChildren();
-  const ids = BRAND_ORDER.filter(id => brands[id]);
+  const ids = brandOrder().filter(id => brands[id]);
   if (!ids.length) { box.append(el("div", { class: "empty", text: db ? t("br_none") : t("br_no_db") })); return; }
   ids.forEach(id => {
     const b = brands[id];
     const form = el("form", { class: "panel" });
     FIELDS.forEach(([k, kind]) => {
       const val = Array.isArray(b[k]) ? b[k].join(", ") : (b[k] || "");
-      const inp = kind === "area" ? el("textarea", { id: `bf-${id}-${k}`, rows: k === "voice" || k === "rules" ? 5 : 3 }) : el("input", { type: "text", id: `bf-${id}-${k}` });
-      inp.value = val; form.append(el("label", { class: "f", for: `bf-${id}-${k}` }, t("f_" + k), inp));
+      const inp = kind === "area" ? el("textarea", { id: `bf-${id}-${k}`, rows: k === "voice" || k === "rules" ? 5 : 3 })
+        : kind === "select" ? el("select", { id: `bf-${id}-${k}` }, el("option", { value: "own", text: t("kind_own") }), el("option", { value: "client", text: t("kind_client") }))
+        : el("input", { type: "text", id: `bf-${id}-${k}`, placeholder: k === "color" || k === "accent" ? "#RRGGBB" : k === "font" ? "Google Font" : "" });
+      inp.value = k === "kind" ? (val || "own") : val; form.append(el("label", { class: "f", for: `bf-${id}-${k}` }, t("f_" + k), inp));
     });
     const st = el("div", { class: "status", role: "status" });
-    form.append(el("div", { class: "row" }, el("button", { class: "btn primary", type: "submit", text: t("save") }), st));
+    const del = el("button", { class: "btn small", type: "button", text: t("br_delete") });
+    del.addEventListener("click", async () => {
+      if (del.dataset.armed !== "1") { del.dataset.armed = "1"; del.textContent = t("br_delete_sure"); setTimeout(() => { del.dataset.armed = ""; del.textContent = t("br_delete"); }, 4000); return; }
+      try { await db.doc("brands/" + id).delete(); } catch { setStatus(st, t("save_fail"), true); }
+    });
+    form.append(el("div", { class: "row" }, el("button", { class: "btn primary", type: "submit", text: t("save") }), KNOWN_BRANDS.includes(id) ? null : del, st));
     form.addEventListener("submit", async e => {
       e.preventDefault();
       const next = {}; FIELDS.forEach(([k]) => { const v = $(`#bf-${id}-${k}`).value.trim(); next[k] = k === "platforms" ? v.split(",").map(x => x.trim().toLowerCase()).filter(Boolean) : v; });
-      try { await db.doc("brands/" + id).set(next); setStatus(st, t("saved_ok")); }
+      try { await db.doc("brands/" + id).set({ ...brands[id], ...next }); setStatus(st, t("saved_ok")); }
       catch (err) { setStatus(st, err?.message ? t("save_fail") + " " + err.message : t("save_fail"), true); }
     });
-    const det = el("details", Object.assign({ class: "bform", "data-id": id }, openIds.has(id) ? { open: "" } : {}),
-      el("summary", {}, el("span", { class: "sw", style: `background:${brandColor(id)}` }), el("h3", { text: b.name }), el("span", { class: "sub", text: (b.language || "") + " · " + (b.platforms || []).join(", ") })), form);
+    const det = el("details", Object.assign({ class: "bform", "data-id": id }, openIds.has(id) || openBrandId === id ? { open: "" } : {}),
+      el("summary", {}, el("span", { class: "sw", style: `background:${brandColor(id)}` }), el("h3", { text: b.name }), b.kind === "client" ? el("span", { class: "badge", text: t("kind_client") }) : null, el("span", { class: "sub", text: (b.language || "") + " · " + (b.platforms || []).join(", ") })), form);
     box.append(det);
+    if (openBrandId === id) { openBrandId = null; setTimeout(() => det.scrollIntoView({ block: "start" }), 50); }
   });
 }
 
@@ -1400,7 +1430,7 @@ function renderBrandForms() {
 async function startReact(n, doc, auto) {
   if (auto && n.draft?.res?.brands) return loadDraft(n);
   $("#src").value = `${n.title_original || n.title}\n${n.summary_en || n.summary}\n${t("news_source")}: ${n.source}${n.url ? " " + n.url : ""} (${n.date || doc.date})`;
-  BRAND_ORDER.forEach(id => { const c = $("#bc-" + id); if (c) c.checked = !n.brands?.length || n.brands.includes(id); });
+  brandOrder().forEach(id => { const c = $("#bc-" + id); if (c) c.checked = !n.brands?.length || n.brands.includes(id); });
   if ($("#drawer").classList.contains("open")) setDrawer(false);
   if ($("#view-post").hidden) { location.hash = "post"; show("post"); }
   const smooth = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
@@ -1413,7 +1443,7 @@ function loadDraft(n) {
   const d = n.draft;
   $("#src").value = d.src || "";
   $("#opinion").value = "";
-  BRAND_ORDER.forEach(id => { const c = $("#bc-" + id); if (c) c.checked = (d.brandIds || []).includes(id); });
+  brandOrder().forEach(id => { const c = $("#bc-" + id); if (c) c.checked = (d.brandIds || []).includes(id); });
   PLATFORMS.forEach(p => { const c = $("#pc-" + p.id); if (c) c.checked = (d.platIds || []).includes(p.id); });
   if ($("#drawer").classList.contains("open")) setDrawer(false);
   if ($("#view-post").hidden) { location.hash = "post"; show("post"); }
@@ -1556,13 +1586,181 @@ function renderSaved() {
   });
   const tBox = $("#blockedTags"); tBox.replaceChildren();
   let any = false;
-  BRAND_ORDER.forEach(id => brandPref(id).blocked_tags.forEach(tag => {
+  brandOrder().forEach(id => brandPref(id).blocked_tags.forEach(tag => {
     any = true;
     const b = el("button", { type: "button", class: "chip tag", title: t("undo") }, el("span", { class: "dot", style: `background:${brandColor(id)}` }), tag, " ×");
     b.addEventListener("click", () => blockTag(id, tag, true).catch(alertStatus));
     tBox.append(b);
   }));
   if (!any) tBox.append(el("span", { class: "note", text: t("sv_none_tags") }));
+}
+
+/* ---------- dynamic brands: own brands and client brands ---------- */
+const KNOWN_BRANDS = ["asc", "mindhaven", "bereljufot", "sandorkardos"];
+const brandOrder = () => [...KNOWN_BRANDS.filter(id => brands[id]), ...Object.keys(brands).filter(id => !KNOWN_BRANDS.includes(id)).sort((a, b) => String(brands[a]?.name).localeCompare(String(brands[b]?.name)))];
+const HEX = /^#[0-9a-f]{6}$/i;
+const loadedFonts = new Set();
+function ensureFont(name) {
+  const n = String(name || "").trim();
+  if (!n || loadedFonts.has(n) || !/^[\w\s-]{2,40}$/.test(n)) return;
+  loadedFonts.add(n);
+  document.head.append(el("link", { rel: "stylesheet", href: `https://fonts.googleapis.com/css2?family=${encodeURIComponent(n).replace(/%20/g, "+")}:wght@400;700;800&display=swap` }));
+}
+function cardStyle(id) {
+  if (CARD_STYLE[id]) return CARD_STYLE[id];
+  const b = brands[id] || {};
+  const main = HEX.test(b.color || "") ? b.color : "#3A3FD8";
+  if (b.font) ensureFont(b.font);
+  return { bg: ["#14171F", main], accent: HEX.test(b.accent || "") ? b.accent : "#FFFFFF", fg: "#FFFFFF", font: b.font ? `"${b.font}", "Bricolage Grotesque", sans-serif` : '"Bricolage Grotesque", sans-serif', weight: "700" };
+}
+
+// New brand: from a website (self-hosted server reads it) or from your own notes, AI drafts the profile.
+async function draftBrandProfile({ name, url, notes, kind }) {
+  let site = null;
+  if (window.ACTA_LOCAL && url) {
+    const r = await fetch("/api/site-profile", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url }) });
+    if (r.ok) site = await r.json();
+  }
+  if (!sample) throw { message: t("e_no_ai") };
+  const prompt = `Draft a social media brand profile for a ${kind === "client" ? "client business managed by a social media freelancer" : "small business"}.
+Use ONLY facts found below. Never invent prices, dates, awards, guarantees or numbers; if unknown, leave the offer short and general.
+NAME: ${name || "(from the site)"}
+WEBSITE: ${url || "(none)"}
+OWNER NOTES: """${notes || ""}"""
+SITE DATA (JSON): ${site ? JSON.stringify(site).slice(0, 9000) : "(not available)"}
+Return ONLY JSON:
+{"name":"","slug":"short-file-name-slug","language":"English (UK spelling) | Hungarian (tegezés) | ...","platforms":["facebook","instagram"],"audience":"who they sell to","voice":"tone and style in 2-4 sentences","offer":"what they offer, facts only","cta":"call to action with contact or website","rules":"no-gos and safety rules sensible for this business (e.g. no invented prices, no client stories)","hashtags":"5-7 core hashtags","color":"#RRGGBB main brand colour from the site colours, or empty","accent":"#RRGGBB contrasting accent, or empty","font":"one Google Font family name close to the site's display font, or empty","source_note":"one line on what this was built from"}`;
+  const j = await sample.json(prompt, { modelTier: "quick", cache: false });
+  if (!j || !j.name && !name) throw { message: t("e_format") };
+  return j;
+}
+function renderNewBrand(box) {
+  const wrap = el("div", { class: "panel newbrand" });
+  const nm = el("input", { type: "text", id: "nb-name" }), url = el("input", { type: "text", id: "nb-url", placeholder: "https://" });
+  const kind = el("select", { id: "nb-kind" }, el("option", { value: "own", text: t("kind_own") }), el("option", { value: "client", text: t("kind_client") }));
+  if (window.__newBrandKind) { kind.value = window.__newBrandKind; window.__newBrandKind = null; }
+  const notes = el("textarea", { id: "nb-notes", rows: 3 });
+  const st = el("div", { class: "status", role: "status" });
+  const go = el("button", { class: "btn primary", type: "button", text: t("nb_ai") });
+  const blank = el("button", { class: "btn", type: "button", text: t("nb_blank") });
+  const create = async useAi => {
+    const name = nm.value.trim(), u = url.value.trim();
+    if (!name && !u) return setStatus(st, t("nb_need"), true);
+    if (!db) return setStatus(st, t("br_no_db"), true);
+    go.disabled = blank.disabled = true; setStatus(st, useAi ? t("nb_busy") : "");
+    try {
+      let p = { name: name || u.replace(/^https?:\/\/(www\.)?/, "").split("/")[0], url: u.replace(/^https?:\/\//, "").replace(/\/$/, ""), platforms: ["facebook", "instagram"], language: "English (UK spelling)" };
+      if (useAi) p = { ...p, ...(await draftBrandProfile({ name, url: u, notes: notes.value.trim(), kind: kind.value })) };
+      if (name) p.name = name;
+      if (!Array.isArray(p.platforms)) p.platforms = String(p.platforms || "facebook,instagram").split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
+      let id = slugify(p.slug || p.name, 30) || "brand"; while (brands[id]) id += "-2";
+      p.kind = kind.value; if (kind.value === "client") Object.assign(p, { status: "trial", started: new Date().toISOString().slice(0, 10) });
+      openBrandId = id;
+      await db.doc("brands/" + id).set(p);
+      setStatus(st, t("nb_done"));
+      nm.value = url.value = notes.value = "";
+    } catch (e) { setStatus(st, errMsg(e), true); }
+    finally { go.disabled = blank.disabled = false; }
+  };
+  go.addEventListener("click", () => create(true)); blank.addEventListener("click", () => create(false));
+  wrap.append(el("h3", { text: t("nb_h") }), el("p", { class: "note", style: "margin:0", text: window.ACTA_LOCAL ? t("nb_lede_local") : t("nb_lede") }),
+    el("div", { class: "row" }, el("label", { class: "f", for: "nb-name", style: "flex:1 1 180px" }, t("f_name"), nm), el("label", { class: "f", for: "nb-url", style: "flex:2 1 240px" }, t("f_url"), url), el("label", { class: "f", for: "nb-kind", style: "flex:1 1 140px" }, t("f_kind"), kind)),
+    el("label", { class: "f", for: "nb-notes" }, el("span", { text: t("nb_notes") }), notes),
+    el("div", { class: "row" }, go, blank), st);
+  box.append(wrap);
+}
+let openBrandId = null;
+
+/* ---------- service: clients, packages, MRR, proposals ---------- */
+const DEFAULT_PACKAGES = [
+  { id: "starter", name: "Starter", price: 250, posts_week: 3, platforms: "Facebook, Instagram", includes: "Brand-template images, 1 revision round" },
+  { id: "growth", name: "Growth", price: 450, posts_week: 5, platforms: "Facebook, Instagram, LinkedIn", includes: "News reactions, brand images, monthly report" },
+  { id: "pro", name: "Pro", price: 750, posts_week: 7, platforms: "Facebook, Instagram, LinkedIn, TikTok", includes: "Daily posts, comment reply drafts, monthly strategy call" }
+];
+let servicePackages = null;
+const packages = () => servicePackages?.items?.length ? servicePackages.items : DEFAULT_PACKAGES;
+const gbp = n => "£" + Math.round(Number(n) || 0).toLocaleString("en-GB");
+function renderService() {
+  const root = $("#serviceBox"); if (!root) return;
+  root.replaceChildren();
+  const clients = brandOrder().filter(id => brands[id]?.kind === "client");
+  const pk = id => packages().find(p => p.id === id);
+  const priceOf = b => Number(b.price) || Number(pk(b.package)?.price) || 0;
+  const active = clients.filter(id => brands[id].status === "active");
+  const mrr = active.reduce((s, id) => s + priceOf(brands[id]), 0);
+  root.append(el("div", { class: "kpis" },
+    el("div", { class: "kpi" }, el("span", { class: "eyebrow", text: t("sv2_active") }), el("strong", { text: String(active.length) })),
+    el("div", { class: "kpi" }, el("span", { class: "eyebrow", text: t("sv2_trial") }), el("strong", { text: String(clients.filter(id => brands[id].status === "trial").length) })),
+    el("div", { class: "kpi" }, el("span", { class: "eyebrow", text: t("sv2_mrr") }), el("strong", { text: gbp(mrr) }))));
+  // clients
+  const cl = el("div", { class: "panel" }, el("div", { class: "row", style: "justify-content:space-between" }, el("h3", { text: t("sv2_clients") }),
+    (() => { const b = el("button", { class: "btn small primary", type: "button", text: t("sv2_add") }); b.addEventListener("click", () => { location.hash = "markak"; show("markak"); const k = $("#nb-kind"); if (k) k.value = "client"; $("#newBrand").scrollIntoView({ block: "start" }); $("#nb-name")?.focus(); }); return b; })()));
+  if (!clients.length) cl.append(el("p", { class: "note", style: "margin:0", text: t("sv2_none") }));
+  clients.forEach(id => {
+    const b = brands[id], st = el("div", { class: "status", role: "status" });
+    const pkSel = el("select", { id: `cl-${id}-package` }, el("option", { value: "", text: "-" }), packages().map(p => el("option", { value: p.id, text: `${p.name} (${gbp(p.price)})` }))); pkSel.value = b.package || "";
+    const price = el("input", { type: "number", id: `cl-${id}-price`, min: "0", step: "10", placeholder: String(pk(b.package)?.price || "") }); price.value = b.price || "";
+    const status = el("select", { id: `cl-${id}-status` }, ["trial", "active", "paused", "ended"].map(s => el("option", { value: s, text: t("st_" + s) }))); status.value = b.status || "trial";
+    const contact = el("input", { type: "text", id: `cl-${id}-contact` }); contact.value = b.contact || "";
+    const started = el("input", { type: "date", id: `cl-${id}-started` }); started.value = b.started || "";
+    const notes = el("input", { type: "text", id: `cl-${id}-notes` }); notes.value = b.client_notes || "";
+    const save = el("button", { class: "btn small primary", type: "button", text: t("save") });
+    save.addEventListener("click", async () => {
+      try { await db.doc("brands/" + id).set({ ...brands[id], package: pkSel.value, price: price.value ? Number(price.value) : "", status: status.value, contact: contact.value.trim(), started: started.value, client_notes: notes.value.trim() }); setStatus(st, t("saved_ok")); }
+      catch (e) { setStatus(st, t("save_fail"), true); }
+    });
+    cl.append(el("div", { class: "client" },
+      el("div", { class: "brandhead" }, el("span", { class: "sw", style: `background:${brandColor(id)}` }), el("h3", { text: b.name }), el("span", { class: "note", text: b.url || "" }), el("span", { class: "mono", style: "margin-left:auto", text: gbp(priceOf(b)) + t("per_month") })),
+      el("div", { class: "cgrid" },
+        el("label", { class: "f", for: pkSel.id }, t("sv2_package"), pkSel), el("label", { class: "f", for: price.id }, t("sv2_price"), price),
+        el("label", { class: "f", for: status.id }, t("sv2_status"), status), el("label", { class: "f", for: started.id }, t("sv2_started"), started),
+        el("label", { class: "f", for: contact.id }, t("sv2_contact"), contact), el("label", { class: "f", for: notes.id }, t("sv2_notes"), notes)),
+      el("div", { class: "row" }, save, st)));
+  });
+  root.append(cl);
+  // packages
+  const pp = el("div", { class: "panel" }, el("h3", { text: t("sv2_packages") }), el("p", { class: "note", style: "margin:0", text: t("sv2_pk_lede") }));
+  const rows = packages().map(p => ({ ...p }));
+  const grid = el("div", { class: "pkgrid" });
+  rows.forEach((p, i) => {
+    const f = (k, type = "text") => { const inp = el("input", { type, id: `pk-${i}-${k}` }); inp.value = p[k] ?? ""; inp.addEventListener("input", () => { p[k] = type === "number" ? Number(inp.value) : inp.value; }); return el("label", { class: "f", for: inp.id }, t("pk_" + k), inp); };
+    grid.append(el("div", { class: "pkg" }, f("name"), f("price", "number"), f("posts_week", "number"), f("platforms"), f("includes")));
+  });
+  const pst = el("div", { class: "status", role: "status" });
+  const psave = el("button", { class: "btn small primary", type: "button", text: t("save") });
+  psave.addEventListener("click", async () => { try { await db.doc("service/packages").set({ items: rows }); setStatus(pst, t("saved_ok")); } catch { setStatus(pst, t("save_fail"), true); } });
+  pp.append(grid, el("div", { class: "row" }, psave, pst));
+  root.append(pp);
+  // proposal writer
+  const pr = el("div", { class: "panel" }, el("h3", { text: t("sv2_pitch") }), el("p", { class: "note", style: "margin:0", text: t("sv2_pitch_lede") }));
+  const who = el("select", { id: "pitch-who" }, brandOrder().map(id => el("option", { value: id, text: brands[id].name })));
+  if (clients[0]) who.value = clients[0];
+  const pkg = el("select", { id: "pitch-pkg" }, packages().map(p => el("option", { value: p.id, text: `${p.name} (${gbp(p.price)})` })));
+  const lng = el("select", { id: "pitch-lang" }, el("option", { value: "English (UK)", text: "English" }), el("option", { value: "Hungarian (tegező, barátságos)", text: "Magyar" }));
+  const out = el("div"), pst2 = el("div", { class: "status", role: "status" });
+  const gen = el("button", { class: "btn primary", type: "button", text: t("sv2_pitch_go") });
+  gen.addEventListener("click", async () => {
+    if (!sample) return setStatus(pst2, t("e_no_ai"), true);
+    gen.disabled = true; setStatus(pst2, t("ana_busy"));
+    try {
+      const b = brands[who.value] || {}, p = packages().find(x => x.id === pkg.value) || packages()[0];
+      const r = await sample.json(`Write a short, warm, no-hype outreach email from a freelance social media manager (Sándor Kardos, Edinburgh, sandorkardos.com) to this business, offering a monthly social media package.
+Language: ${lng.value}. No em dashes. No AI-typical phrases. Max 170 words in the body. Do not invent facts about the business beyond the profile.
+BUSINESS PROFILE (JSON): ${JSON.stringify({ name: b.name, url: b.url, audience: b.audience, offer: b.offer, voice: b.voice, platforms: b.platforms })}
+PACKAGE: ${JSON.stringify(p)}
+Include: one specific observation about their social media opportunity, what the package covers, the monthly price (GBP), a no-risk first step (e.g. 2 free sample posts), and a simple call to reply.
+Also give 3 sample post ideas fitted to their brand (one line each).
+Return ONLY JSON: {"subject":"","body":"","ideas":["","",""]}`, { modelTier: "quick", cache: false });
+      const full = `${r.subject}\n\n${r.body}`;
+      out.replaceChildren(
+        el("div", { class: "eyebrow", text: t("sv2_email") }), withCopy(el("div", { class: "better", text: full }), () => full),
+        el("div", { class: "eyebrow", style: "margin-top:10px", text: t("sv2_ideas") }), el("ul", { class: "issues" }, (r.ideas || []).map(x => el("li", { text: x }))));
+      setStatus(pst2, "");
+    } catch (e) { setStatus(pst2, errMsg(e), true); }
+    finally { gen.disabled = false; }
+  });
+  pr.append(el("div", { class: "row" }, el("label", { class: "f", for: who.id, style: "flex:2 1 180px" }, t("sv2_who"), who), el("label", { class: "f", for: pkg.id, style: "flex:2 1 180px" }, t("sv2_package"), pkg), el("label", { class: "f", for: lng.id, style: "flex:1 1 120px" }, t("sv2_lang"), lng)), el("div", { class: "row" }, gen, pst2), out);
+  root.append(pr);
 }
 
 /* ---------- boot ---------- */
@@ -1584,8 +1782,11 @@ applyLang();
   setTimeout(ready, 4000);
   add(db.collection("brands").onSnapshot(snap => {
     const next = {}; snap.docs.forEach(d => { if (d.exists) next[d.id] = d.data(); });
-    brands = next; renderBrandChips(); renderBrandForms(); renderNews(latestNews);
+    brands = next; renderBrandChips(); renderBrandForms(); renderNews(latestNews); renderService();
   }, () => { renderBrandForms(); }));
+  add(db.collection("service").onSnapshot(snap => {
+    const d = snap.docs.find(x => x.id === "packages" && x.exists); servicePackages = d ? d.data() : null; renderService();
+  }, () => {}));
   add(db.collection("news").onSnapshot(snap => {
     const docs = snap.docs.filter(d => d.exists).map(d => d.data()).filter(d => d.date);
     docs.sort((a, b) => String(b.date).localeCompare(String(a.date)));

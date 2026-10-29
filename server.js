@@ -22,6 +22,7 @@ const DEFAULTS_DIR = path.join(__dirname, "defaults");
 function provider(prefix) {
   const url = env(prefix + "_URL");
   if (!url) return null;
+  if (env(prefix + "_KIND", "openai") === "anthropic" && !env(prefix + "_KEY")) return null; // no key, not usable
   return {
     name: prefix.replace("LLM_", "").toLowerCase(),
     kind: env(prefix + "_KIND", "openai"), // openai (any OpenAI-compatible API) | anthropic
@@ -285,6 +286,30 @@ async function fetchArticle(raw) {
   return { title, description, site, published: pub ? pub.slice(0, 10) : "", url: r.url, text };
 }
 
+/* ---------------- Site profile (website -> facts, colours, fonts for a new brand) ---------------- */
+async function siteProfile(raw) {
+  let u;
+  try { u = new URL(/^https?:/i.test(String(raw || "").trim()) ? String(raw).trim() : "https://" + String(raw || "").trim()); } catch { throw new Error("Invalid link"); }
+  if (env("ARTICLE_ALLOW_PRIVATE") !== "1" && PRIVATE_HOST.test(u.hostname)) throw new Error("This link can't be fetched");
+  const r = await fetch(u, { redirect: "follow", signal: AbortSignal.timeout(15000), headers: { "user-agent": "Mozilla/5.0 (compatible; ActaNews/1.6)", "accept-language": "en-GB,en;q=0.9,hu;q=0.8" } });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  const html = (await r.text()).slice(0, 3e6);
+  const counts = {};
+  (html.match(/#[0-9a-fA-F]{6}\b/g) || []).forEach(c => { const k = c.toUpperCase(); if (!/^#(F{6}|0{6}|F[0-9A-F]F[0-9A-F]F[0-9A-F]|EE?E?E?E?E?)$/.test(k)) counts[k] = (counts[k] || 0) + 1; });
+  const colors = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([c, n]) => `${c} x${n}`);
+  const fonts = [...new Set([...html.matchAll(/fonts\.googleapis\.com\/css2?\?[^"'>]*?family=([^"'&>:]+)/gi)].map(m => decodeURIComponent(m[1]).replace(/\+/g, " ")))].slice(0, 4);
+  const cssFonts = [...new Set([...html.matchAll(/font-family:\s*['"]?([^;'",}]+)/gi)].map(m => m[1].trim()))].slice(0, 6);
+  const body = html.replace(/<(script|style|noscript|svg)[\s\S]*?<\/\1>/gi, " ");
+  const heads = (body.match(/<h[1-3][\s>][\s\S]*?<\/h[1-3]>/gi) || []).map(decode).filter(Boolean).slice(0, 15);
+  const paras = [...new Set((body.match(/<(p|li)[\s>][\s\S]*?<\/(p|li)>/gi) || []).map(decode).filter(x => x.length > 30))];
+  return {
+    url: r.url, title: decode(tag(html, "title")), site: metaContent(html, "og:site_name"),
+    description: metaContent(html, "og:description") || metaContent(html, "description"),
+    theme_color: metaContent(html, "theme-color"), colors, google_fonts: fonts, css_fonts: cssFonts,
+    headings: heads, text: paras.join("\n").slice(0, 5000)
+  };
+}
+
 /* ---------------- Morning drafts ----------------
  * After the stories are picked, write the posts for each one in the background, using the exact
  * prompt the page uses (read from the prompts block marked in index.html), so Jack it! opens instantly.
@@ -363,6 +388,11 @@ const server = http.createServer(async (req, res) => {
       if (req.method === "PUT") { const data = await readBody(req, 2e6); setDoc(c, id, data); return send(res, 200, { ok: true, rev: db.rev }); }
       if (req.method === "PATCH") { const data = await readBody(req, 2e6); setDoc(c, id, { ...(col(c)[id] || {}), ...data }); return send(res, 200, { ok: true, rev: db.rev }); }
       if (req.method === "DELETE") { delDoc(c, id); return send(res, 200, { ok: true, rev: db.rev }); }
+    }
+    if (p === "/api/site-profile" && req.method === "POST") {
+      const b = await readBody(req, 1e5);
+      try { return send(res, 200, await siteProfile(b.url)); }
+      catch (e) { return send(res, 422, { message: e.message }); }
     }
     if (p === "/api/article" && req.method === "POST") {
       const b = await readBody(req, 1e5);
