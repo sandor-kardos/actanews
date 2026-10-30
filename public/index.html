@@ -69,6 +69,9 @@ nav.tabs button[aria-selected="true"]{background:var(--panel);color:var(--ink);b
 .vote button.done{display:inline-flex;align-items:center;justify-content:center}.vote button.done svg{width:15px;height:15px}
 .vote button.done[aria-pressed="true"]{color:var(--ok);border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
 .btn svg{width:15px;height:15px;flex:none}
+.btn.up::before,.btn.dl::before{content:"";width:16px;height:16px;flex:none;background:currentColor;-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
+.btn.up{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 15V3'/%3E%3Cpath d='m7 8 5-5 5 5'/%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/%3E%3C/svg%3E")}
+.btn.dl{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/%3E%3C/svg%3E")}
 .sr,.archive .rx .lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .archive .rx{padding:6px 9px}
 @media (max-width:520px){.nitem .rx .lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.nitem .rx{padding:6px 9px}}
@@ -245,7 +248,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.7.0">v1.7.0</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.7.1">v1.7.1</span></div>
   <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
@@ -371,7 +374,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
         <h3 data-i18n="img_focus_h">Eredeti és fókusz</h3>
         <div class="row">
           <button class="btn small" id="aiFocusBtn" type="button" disabled data-i18n="img_refocus">Fókusz újrakeresése</button>
-          <button class="btn small primary" id="zipBtn" type="button" disabled data-i18n="img_zip">Mind letöltése (ZIP)</button>
+          <button class="btn small primary dl" id="zipBtn" type="button" disabled data-i18n="img_zip">Mind letöltése (ZIP)</button>
         </div>
       </div>
       <div class="stage" id="stage" hidden><canvas id="srcCanvas"></canvas></div>
@@ -476,7 +479,7 @@ const STR = {
     f_name: "Név", f_url: "Weboldal", f_slug: "Fájlnév rövidítés", f_language: "Nyelv", f_platforms: "Alap platformok (vesszővel)", f_audience: "Közönség", f_voice: "Hangnem és stílus",
     f_offer: "Ajánlat, árak, tények", f_cta: "CTA", f_rules: "Szabályok, tiltások", f_hashtags: "Alap hashtagek", f_source_note: "Forrás",
     ai_lang: "Hungarian",
-    car_label: "Carousel", car_n: "Diák:", car_hook: "horog", car_point: "lényeg", car_end: "zárás + CTA", car_head: "Cím", car_body: "Szöveg (új sor = új bekezdés)", car_cta: "CTA az utolsó dián", car_pdf: "LinkedIn PDF", car_zip: "Diák (ZIP) Instához", car_copy: "Dia másolása:", car_hint: "LinkedInre a PDF-et töltsd fel dokumentumként (adj neki címet). Instagramra a diákat sorban, egy posztba. A szaggatott vonal a vágás, az exportban nem látszik.", card_copy: "Kép másolása", card_png: "PNG letöltése", card_share: "Megosztás", card_copied: "A kép a vágólapon: a posztnál nyomj Ctrl+V-t.", card_copy_fail: "Itt a böngésző nem engedi a kép másolását. Töltsd le PNG-ként.", card_h: "Kép a poszthoz", card_headline: "Cím a képen", card_sub: "Alcím", card_overlay: "Szöveg a képen", card_bg: "Háttérkép", card_bg_hint: "Tölts fel háttérképet, vagy maradhat a márkaszínes háttér.", card_drag: "Húzd a képet a kivágás igazításához.", card_zip: "Kártyák letöltése (ZIP)", card_prompt: "Képprompt (ComfyUI / Gemini)", card_source: "Forrás", art_fetching: "Cikk letöltése…", art_ok: "Cikk letöltve ({n} karakter).", art_fail: "A cikket nem sikerült letölteni, a meglévő szövegből dolgozom.",
+    car_label: "Carousel", car_n: "Diák:", car_hook: "horog", car_point: "lényeg", car_end: "zárás + CTA", car_head: "Cím", car_body: "Szöveg (új sor = új bekezdés)", car_cta: "CTA az utolsó dián", car_pdf: "LinkedIn PDF", car_zip: "Diák (ZIP) Instához", car_copy: "Dia másolása:", car_hint: "LinkedInre a PDF-et töltsd fel dokumentumként (adj neki címet). Instagramra a diákat sorban, egy posztba. A szaggatott vonal a vágás, az exportban nem látszik.", card_copy: "Kép másolása", card_png: "PNG letöltése", card_share: "Megosztás", card_copied: "A kép a vágólapon: a posztnál nyomj Ctrl+V-t.", card_copy_fail: "Itt a böngésző nem engedi a kép másolását. Töltsd le PNG-ként.", card_h: "Kép a poszthoz", card_headline: "Cím a képen", card_sub: "Alcím", card_overlay: "Szöveg a képen", card_bg: "Háttérkép feltöltése", card_bg_hint: "A szöveget húzással mozgathatod fel-le. Saját fotót a „Háttérkép feltöltése” gombbal teszel alá.", card_drag: "A szöveget húzva mozgatod, a szövegen kívül húzva a fotó kivágását igazítod.", card_pos: "Szöveg:", card_top: "fent", card_mid: "középen", card_bot: "lent", card_zip: "Kártyák letöltése (ZIP)", card_prompt: "Képprompt (ComfyUI / Gemini)", card_source: "Forrás", art_fetching: "Cikk letöltése…", art_ok: "Cikk letöltve ({n} karakter).", art_fail: "A cikket nem sikerült letölteni, a meglévő szövegből dolgozom.",
     tab_saved: "Mentett", sv_h: "Mentett", sv_lede: "A csillagozott posztok és hírek. A csillagozott posztokat a generálás mintaként használja, a mínuszolt dolgokat legközelebb kerüli.",
     sv_posts: "Posztok", sv_news: "Hírek", sv_blocked: "Kizárt hashtagek", sv_blocked_h: "Ezeket a generálás már nem ajánlja. Koppints rá a visszaengedéshez.",
     sv_none_posts: "Még nincs csillagozott poszt. A poszt kártyáján a ☆ menti ide.", sv_none_news: "Még nincs csillagozott hír.", sv_none_tags: "Nincs kizárt hashtag.",
@@ -529,7 +532,7 @@ const STR = {
     f_name: "Name", f_url: "Website", f_slug: "Filename short name", f_language: "Language", f_platforms: "Default platforms (comma separated)", f_audience: "Audience", f_voice: "Voice and style",
     f_offer: "Offer, prices, facts", f_cta: "CTA", f_rules: "Rules and no-gos", f_hashtags: "Core hashtags", f_source_note: "Source",
     ai_lang: "English",
-    car_label: "Carousel", car_n: "Slides:", car_hook: "hook", car_point: "point", car_end: "close + CTA", car_head: "Heading", car_body: "Text (new line = new paragraph)", car_cta: "CTA on the last slide", car_pdf: "LinkedIn PDF", car_zip: "Slides (ZIP) for Instagram", car_copy: "Copy slide:", car_hint: "On LinkedIn upload the PDF as a document (give it a title). On Instagram post the slides in order in one post. The dashed line is the cut; it is not in the export.", card_copy: "Copy image", card_png: "Download PNG", card_share: "Share", card_copied: "Image copied: press Ctrl+V in the post.", card_copy_fail: "This browser won't copy images here. Download the PNG instead.", card_h: "Post image", card_headline: "Headline on image", card_sub: "Subheading", card_overlay: "Text on image", card_bg: "Background image", card_bg_hint: "Upload a background image, or keep the brand-colour background.", card_drag: "Drag the image to adjust the crop.", card_zip: "Download cards (ZIP)", card_prompt: "Image prompt (ComfyUI / Gemini)", card_source: "Source", art_fetching: "Fetching article…", art_ok: "Article fetched ({n} characters).", art_fail: "Couldn't fetch the article; working from the existing text.",
+    car_label: "Carousel", car_n: "Slides:", car_hook: "hook", car_point: "point", car_end: "close + CTA", car_head: "Heading", car_body: "Text (new line = new paragraph)", car_cta: "CTA on the last slide", car_pdf: "LinkedIn PDF", car_zip: "Slides (ZIP) for Instagram", car_copy: "Copy slide:", car_hint: "On LinkedIn upload the PDF as a document (give it a title). On Instagram post the slides in order in one post. The dashed line is the cut; it is not in the export.", card_copy: "Copy image", card_png: "Download PNG", card_share: "Share", card_copied: "Image copied: press Ctrl+V in the post.", card_copy_fail: "This browser won't copy images here. Download the PNG instead.", card_h: "Post image", card_headline: "Headline on image", card_sub: "Subheading", card_overlay: "Text on image", card_bg: "Upload background photo", card_bg_hint: "Drag the text to move it up or down. Add your own photo with “Upload background photo”.", card_drag: "Drag the text to move it; drag outside the text to adjust the photo crop.", card_pos: "Text:", card_top: "top", card_mid: "middle", card_bot: "bottom", card_zip: "Download cards (ZIP)", card_prompt: "Image prompt (ComfyUI / Gemini)", card_source: "Source", art_fetching: "Fetching article…", art_ok: "Article fetched ({n} characters).", art_fail: "Couldn't fetch the article; working from the existing text.",
     tab_saved: "Saved", sv_h: "Saved", sv_lede: "Your starred posts and stories. Generation uses starred posts as examples and avoids what you minus.",
     sv_posts: "Posts", sv_news: "Stories", sv_blocked: "Blocked hashtags", sv_blocked_h: "Generation won't suggest these any more. Tap one to allow it again.",
     sv_none_posts: "No starred posts yet. Tap ☆ on a post card to save it here.", sv_none_news: "No starred stories yet.", sv_none_tags: "No blocked hashtags.",
@@ -1000,7 +1003,7 @@ function drawCard(ctx, W, H, st, brandId) {
     const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, s.bg[0]); g.addColorStop(1, s.bg[1]);
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   }
-  if (!st.overlay) return;
+  if (!st.overlay) return null;
   const maxW = W - m * 2;
   let size = Math.round(Math.min(W, H) * (W / H > 1.4 ? 0.1 : 0.095)), lines = [];
   for (; size > 18; size -= 2) { ctx.font = `${s.weight} ${size}px ${s.font}`; lines = wrapLines(ctx, st.headline, maxW); if (lines.length <= 3) break; }
@@ -1008,11 +1011,24 @@ function drawCard(ctx, W, H, st, brandId) {
   ctx.font = `500 ${subSize}px ${SUB_FONT}`;
   const subLines = st.subheading ? wrapLines(ctx, st.subheading, maxW).slice(0, 2) : [];
   const footSize = Math.max(14, Math.round(Math.min(W, H) * 0.024));
-  const blockH = lines.length * size * 1.08 + (subLines.length ? subSize * 0.6 + subLines.length * subSize * 1.3 : 0) + footSize * 2.6 + m * 0.5;
-  const top = H - m - blockH;
-  const scrim = ctx.createLinearGradient(0, Math.max(0, top - m * 2), 0, H);
-  scrim.addColorStop(0, "rgba(0,0,0,0)"); scrim.addColorStop(0.35, "rgba(0,0,0,0.55)"); scrim.addColorStop(1, "rgba(0,0,0,0.82)");
-  ctx.fillStyle = scrim; ctx.fillRect(0, Math.max(0, top - m * 2), W, H);
+  const textH = lines.length * size * 1.08 + (subLines.length ? subSize * 0.6 + subLines.length * subSize * 1.3 : 0);
+  const blockH = textH + footSize * 2.6 + m * 0.5;
+  const defTop = H - m - blockH, minTop = m + size * 0.35, pos = st.ty == null ? 1 : st.ty;
+  const top = minTop + pos * Math.max(0, defTop - minTop);
+  if (pos >= 0.999) {
+    const scrim = ctx.createLinearGradient(0, Math.max(0, top - m * 2), 0, H);
+    scrim.addColorStop(0, "rgba(0,0,0,0)"); scrim.addColorStop(0.35, "rgba(0,0,0,0.55)"); scrim.addColorStop(1, "rgba(0,0,0,0.82)");
+    ctx.fillStyle = scrim; ctx.fillRect(0, Math.max(0, top - m * 2), W, H);
+  } else {
+    // Dark band only behind the moved text, plus a light one under the footer.
+    const b0 = Math.max(0, top - m * 1.6), b1 = Math.min(H, top + textH + m * 1.2);
+    const band = ctx.createLinearGradient(0, b0, 0, b1);
+    band.addColorStop(0, "rgba(0,0,0,0)"); band.addColorStop(0.3, "rgba(0,0,0,0.6)"); band.addColorStop(0.75, "rgba(0,0,0,0.6)"); band.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = band; ctx.fillRect(0, b0, W, b1 - b0);
+    const f0 = H - footSize * 2 - m; const foot = ctx.createLinearGradient(0, f0, 0, H);
+    foot.addColorStop(0, "rgba(0,0,0,0)"); foot.addColorStop(1, "rgba(0,0,0,0.6)");
+    ctx.fillStyle = foot; ctx.fillRect(0, f0, W, H - f0);
+  }
   let y = top;
   ctx.fillStyle = s.accent; ctx.fillRect(m, y - size * 0.35, Math.round(size * 1.2), Math.max(4, Math.round(size * 0.09)));
   ctx.fillStyle = s.fg; ctx.textBaseline = "top";
@@ -1025,6 +1041,7 @@ function drawCard(ctx, W, H, st, brandId) {
   ctx.font = `600 ${footSize}px ${SUB_FONT}`; ctx.fillStyle = s.accent; ctx.textBaseline = "bottom";
   ctx.fillText((brands[brandId]?.url || brands[brandId]?.name || "").replace(/^https?:\/\//, ""), m, H - m * 0.7);
   if (st.source) { ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.textAlign = "right"; ctx.fillText(`${/hungarian|magyar/i.test(brands[brandId]?.language || "") ? "Forrás" : "Source"}: ${st.source}`, W - m, H - m * 0.7); ctx.textAlign = "left"; }
+  return { H, top, y0: top - size * 0.6, y1: top + textH + size * 0.2, minTop, defTop };
 }
 // Carousel: n slides of 1080x1350, drawn as one panorama so the background and decor run across the cuts.
 const SLIDE_W = 1080, SLIDE_H = 1350;
@@ -1141,8 +1158,9 @@ function renderCard(b) {
       const PW = SLIDE_W * st.carN, sc = Math.min(1, 1500 / PW); cv.width = Math.round(PW * sc); cv.height = Math.round(SLIDE_H * sc);
       const ctx = cv.getContext("2d"); ctx.save(); ctx.scale(sc, sc); drawCarousel(ctx, st.carN, st, b.id, true); ctx.restore(); return;
     }
-    const [W, H] = CARD_PREVIEW[st.preview]; const sc = 540 / Math.max(W, H); cv.width = Math.round(W * sc); cv.height = Math.round(H * sc); const ctx = cv.getContext("2d"); ctx.save(); ctx.scale(sc, sc); drawCard(ctx, W, H, st, b.id); ctx.restore();
+    const [W, H] = CARD_PREVIEW[st.preview]; const sc = 540 / Math.max(W, H); cv.width = Math.round(W * sc); cv.height = Math.round(H * sc); const ctx = cv.getContext("2d"); ctx.save(); ctx.scale(sc, sc); tb = drawCard(ctx, W, H, st, b.id); ctx.restore();
   };
+  let tb = null;
   const fam = cardStyle(b.id);
   document.fonts?.load?.(`${fam.weight} 48px ${fam.font}`).then(draw).catch(() => {});
   const hl = el("input", { type: "text", id: "card-h-" + b.id, maxlength: "90" }); hl.value = st.headline;
@@ -1153,15 +1171,30 @@ function renderCard(b) {
   ov.addEventListener("change", () => { st.overlay = ov.checked; draw(); });
   const file = el("input", { type: "file", accept: "image/*", hidden: "" });
   const hint = el("p", { class: "note", style: "margin:0" });
-  const setHint = () => { hint.textContent = st.bg ? t("card_drag") : isCar() ? t("car_hint") : t("card_bg_hint"); };
+  const setHint = () => { hint.textContent = isCar() ? t("car_hint") : st.bg ? t("card_drag") : t("card_bg_hint"); };
   const setBg = f => { const img = new Image(); img.onload = () => { st.bg = img; st.fx = st.fy = 0.5; setHint(); draw(); }; img.src = URL.createObjectURL(f); };
   file.addEventListener("change", () => file.files[0] && setBg(file.files[0]));
-  const bgBtn = el("button", { class: "btn small", type: "button", text: t("card_bg") }); bgBtn.addEventListener("click", () => file.click());
-  // Drag on the preview moves the crop focus.
+  const bgBtn = el("button", { class: "btn small up", type: "button", text: t("card_bg") }); bgBtn.addEventListener("click", () => file.click());
+  // Drag on the text moves the text up or down; drag anywhere else moves the photo crop.
   let drag = null;
-  cv.addEventListener("pointerdown", e => { if (!st.bg) return; drag = { x: e.clientX, y: e.clientY, fx: st.fx, fy: st.fy }; cv.setPointerCapture(e.pointerId); });
-  cv.addEventListener("pointermove", e => { if (!drag) return; const r = cv.getBoundingClientRect(); st.fx = Math.min(1, Math.max(0, drag.fx - (e.clientX - drag.x) / r.width * 0.6)); st.fy = Math.min(1, Math.max(0, drag.fy - (e.clientY - drag.y) / r.height * 0.6)); draw(); });
+  const onText = e => { if (isCar() || !tb) return false; const r = cv.getBoundingClientRect(), y = (e.clientY - r.top) / r.height * tb.H; return y >= tb.y0 && y <= tb.y1; };
+  const setPos = v => { st.ty = Math.min(1, Math.max(0, v)); posChips.querySelectorAll("input").forEach(i => { i.checked = Math.abs(+i.value - st.ty) < 0.01; }); draw(); };
+  cv.addEventListener("pointerdown", e => {
+    if (onText(e)) { drag = { text: true, y: e.clientY, top: tb.top }; cv.setPointerCapture(e.pointerId); return; }
+    if (!st.bg) return; drag = { x: e.clientX, y: e.clientY, fx: st.fx, fy: st.fy }; cv.setPointerCapture(e.pointerId);
+  });
+  cv.addEventListener("pointermove", e => {
+    if (!drag) { cv.style.cursor = onText(e) ? "ns-resize" : st.bg ? "grab" : "default"; return; }
+    const r = cv.getBoundingClientRect();
+    if (drag.text) { const nt = drag.top + (e.clientY - drag.y) / r.height * tb.H; return setPos(tb.defTop > tb.minTop ? (nt - tb.minTop) / (tb.defTop - tb.minTop) : 1); }
+    st.fx = Math.min(1, Math.max(0, drag.fx - (e.clientX - drag.x) / r.width * 0.6)); st.fy = Math.min(1, Math.max(0, drag.fy - (e.clientY - drag.y) / r.height * 0.6)); draw();
+  });
   cv.addEventListener("pointerup", () => { drag = null; });
+  const posChips = el("div", { class: "chips" }, el("span", { class: "note", text: t("card_pos") }), [[0, "card_top"], [0.5, "card_mid"], [1, "card_bot"]].map(([v, k]) => {
+    const c = el("label", { class: "chip" }, el("input", Object.assign({ type: "radio", name: "tp-" + b.id, value: String(v) }, (st.ty ?? 1) === v ? { checked: "" } : {})), t(k));
+    c.querySelector("input").addEventListener("change", () => setPos(v));
+    return c;
+  }));
   const sizes = el("div", { class: "chips" }, [...Object.keys(CARD_PREVIEW), "car"].map(k => {
     const c = el("label", { class: "chip" }, el("input", Object.assign({ type: "radio", name: "cp-" + b.id, value: k }, st.preview === k ? { checked: "" } : {})), { feed: "4:5", story: "9:16", square: "1:1", link: "1.91:1", car: t("car_label") }[k]);
     c.querySelector("input").addEventListener("change", () => { st.preview = k; sync(); draw(); });
@@ -1171,7 +1204,7 @@ function renderCard(b) {
 
   /* single image */
   const zipSt = el("div", { class: "status", role: "status" });
-  const zipBtn = el("button", { class: "btn small", type: "button", text: t("card_zip") });
+  const zipBtn = el("button", { class: "btn small dl", type: "button", text: t("card_zip") });
   zipBtn.addEventListener("click", async () => {
     if (!downloads) return setStatus(zipSt, t("no_dl"), true);
     if (!window.JSZip) return setStatus(zipSt, t("no_zip"), true);
@@ -1196,7 +1229,7 @@ function renderCard(b) {
   const imgSt = el("div", { class: "status", role: "status" });
   const copyImg = el("button", { class: "btn small primary", type: "button" }, icon("copy"), el("span", { text: t("card_copy") }));
   copyImg.addEventListener("click", () => copyPng(renderFull(), imgSt));
-  const pngBtn = el("button", { class: "btn small", type: "button", text: t("card_png") });
+  const pngBtn = el("button", { class: "btn small dl", type: "button", text: t("card_png") });
   pngBtn.addEventListener("click", async () => {
     if (!downloads) return setStatus(imgSt, t("no_dl"), true);
     try { const n = oneName(); await downloads.save({ filename: n, data: await renderFull() }); setStatus(imgSt, t("saved") + n); }
@@ -1240,7 +1273,7 @@ function renderCard(b) {
     c.querySelector("input").addEventListener("change", () => { st.carN = n; buildSlides(); draw(); });
     return c;
   }));
-  const pdfBtn = el("button", { class: "btn small primary", type: "button", text: t("car_pdf") });
+  const pdfBtn = el("button", { class: "btn small primary dl", type: "button", text: t("car_pdf") });
   pdfBtn.addEventListener("click", async () => {
     if (!downloads) return setStatus(carSt, t("no_dl"), true);
     pdfBtn.disabled = true;
@@ -1253,7 +1286,7 @@ function renderCard(b) {
     } catch (e) { setStatus(carSt, e?.code === "declined" ? t("declined") : errMsg(e), e?.code !== "declined"); }
     finally { pdfBtn.disabled = false; }
   });
-  const carZip = el("button", { class: "btn small", type: "button", text: t("car_zip") });
+  const carZip = el("button", { class: "btn small dl", type: "button", text: t("car_zip") });
   carZip.addEventListener("click", async () => {
     if (!downloads) return setStatus(carSt, t("no_dl"), true);
     if (!window.JSZip) return setStatus(carSt, t("no_zip"), true);
@@ -1273,7 +1306,7 @@ function renderCard(b) {
   const singleF = col(
     el("label", { class: "f", for: "card-h-" + b.id }, t("card_headline"), hl),
     el("label", { class: "f", for: "card-s-" + b.id }, t("card_sub"), sub),
-    el("label", { class: "chip", style: "align-self:flex-start" }, ov, t("card_overlay")));
+    el("label", { class: "chip", style: "align-self:flex-start" }, ov, t("card_overlay")), posChips);
   const singleX = col(el("div", { class: "row" }, copyImg, pngBtn, shareBtn), imgSt, el("div", { class: "row" }, zipBtn), zipSt);
   const carF = col(nChips, slideBox, el("label", { class: "f", for: "sl-cta-" + b.id }, t("car_cta"), cta));
   const carX = col(el("div", { class: "row" }, pdfBtn, carZip), carCopy, carSt);
@@ -1556,7 +1589,7 @@ function renderCrops() {
   selectedSizes().forEach(s => {
     const cv = el("canvas", { role: "img", "aria-label": sizeLabel(s) + " " + t("preview") });
     const c = renderCrop(s, cv, false);
-    const dl = el("button", { class: "btn small", type: "button", text: t("download") });
+    const dl = el("button", { class: "btn small dl", type: "button", text: t("download") });
     dl.addEventListener("click", () => saveOne(s, dl));
     box.append(el("div", { class: "crop", "data-size": s.id },
       el("div", { class: "frame" }, cv),
