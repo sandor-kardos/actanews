@@ -30,7 +30,7 @@ Keys stay on the server; the browser never sees them.
 
 The app doesn't browse the web itself, so the 3 daily stories come from RSS:
 Google News searches per brand plus BBC feeds, listed in `data/feeds.json`
-(created on first start, edit freely). Every day at `NEWS_TIME` the model
+(created on first start, edit freely). With `NEWS_AUTO=true` (off by default), every day at `NEWS_TIME` the model
 picks 3 from fresh items, skipping anything you minused or already saw.
 "Refresh stories" next to the date runs it on demand.
 

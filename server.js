@@ -11,6 +11,7 @@ const PORT = Number(env("PORT", "8787"));
 const DATA_DIR = env("DATA_DIR", path.join(__dirname, "data"));
 const TZ = env("TZ", "Europe/London");
 const NEWS_TIME = env("NEWS_TIME", "06:39");
+const NEWS_AUTO = env("NEWS_AUTO", "false") === "true"; // daily automatic news run; off by default, the refresh button still works
 const PUBLIC_DIR = path.join(__dirname, "public");
 const DEFAULTS_DIR = path.join(__dirname, "defaults");
 
@@ -272,7 +273,7 @@ Return ONLY JSON: {"items":[{"index":0,"brand":"brand id","title":"short Hungari
 let lastScheduledDay = "";
 setInterval(() => {
   const now = new Date();
-  if (hm(now) === NEWS_TIME && lastScheduledDay !== ymd(now)) { lastScheduledDay = ymd(now); runNews("scheduled"); }
+  if (NEWS_AUTO && hm(now) === NEWS_TIME && lastScheduledDay !== ymd(now)) { lastScheduledDay = ymd(now); runNews("scheduled"); }
 }, 30000);
 
 /* ---------------- Article fetch (link -> clean text) ---------------- */
@@ -436,5 +437,5 @@ server.listen(PORT, () => {
   console.log(`  fallback: ${FALLBACK ? FALLBACK.model + " @ " + FALLBACK.url : "not set"}`);
   console.log(`  quick   : ${QUICK ? QUICK.model + " (story picking, scoring)" : "not set, using primary"}`);
   console.log(`  paid    : ${PAID ? PAID.model + " (manual only)" : "not set"}`);
-  console.log(`  news    : daily at ${NEWS_TIME} ${TZ}, feeds in ${FEEDS_FILE}`);
+  console.log(`  news    : ${NEWS_AUTO ? `daily at ${NEWS_TIME} ${TZ}` : "automatic run off (NEWS_AUTO=false), refresh button only"}, feeds in ${FEEDS_FILE}`);
 });
