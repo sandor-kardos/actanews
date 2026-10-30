@@ -260,7 +260,9 @@ Return ONLY JSON: {"items":[{"index":0,"brand":"brand id","title":"short Hungari
         brands: [brands[p.brand] ? p.brand : c.brand]
       };
     });
-    setDoc("news", date, { date, items, note: `RSS + ${out.provider} (${out.model}), ${reason}` });
+    // A refresh adds to the day instead of replacing it, so earlier stories stay visible (newest first).
+    const prev = (col("news")[date]?.items || []).filter(o => !items.some(n => (n.url && n.url === o.url) || n.title_original === o.title_original));
+    setDoc("news", date, { date, items: [...items, ...prev], note: `RSS + ${out.provider} (${out.model}), ${reason}` });
     lastNewsStatus = { state: "done", date, count: items.length, provider: out.provider, finishedAt: new Date().toISOString() };
     pregenDrafts(date).catch(e => console.warn("[drafts] " + e.message));
     console.log(`[news] ${date}: ${items.map(i => i.title).join(" | ")}`);
