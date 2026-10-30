@@ -137,14 +137,17 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 .post{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);display:flex;flex-direction:column;min-width:0}
 .post .top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line)}
 .post .body{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
-.post textarea.cap{min-height:150px;background:var(--panel)}
+#src{max-height:60vh;overflow:auto}
+.srclinks{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;margin-top:-4px}
+.srclinks a{color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:2px;word-break:break-all}
+.post textarea.cap{min-height:150px;background:var(--panel);font-size:16px;line-height:1.6;overflow:hidden;resize:none}
 .meta{display:grid;grid-template-columns:90px 1fr;gap:6px 10px;font-size:13px}
 .meta dt{color:var(--muted)}
 .meta dd{margin:0;min-width:0;overflow-wrap:anywhere}
 .mono{font-family:var(--f-mono);font-size:12.5px}
 .approval{font:600 11px var(--f-mono);letter-spacing:.06em;color:var(--warn);text-transform:uppercase}
 .posts{display:grid;gap:12px;grid-template-columns:1fr}
-@media (min-width:700px){.posts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1500px){.posts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:var(--r);padding:20px}
 .empty b{color:var(--ink)}
 /* news */
@@ -248,7 +251,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.7.1">v1.7.1</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.7.3">v1.7.3</span></div>
   <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
@@ -287,6 +290,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
       <label class="f" for="src"><span data-i18n="src_label">Hír, poszt vagy jegyzet</span>
         <textarea id="src" rows="5" data-i18n-ph="src_ph"></textarea>
       </label>
+      <div class="srclinks" id="srcLinks" hidden></div>
       <div class="drop" id="shotDrop" tabindex="0" role="button">
         <span id="shotTxt" data-i18n="shot_txt">Képernyőkép feltöltése vagy beillesztése (Ctrl+V)</span>
         <input type="file" id="shotFile" accept="image/png,image/jpeg,image/webp" hidden>
@@ -781,6 +785,24 @@ function copyIcon(getText) {
   });
   return b;
 }
+// Caption boxes grow to show the whole text (measured once they are visible).
+const growIO = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => e.isIntersecting && grow(e.target))) : null;
+function grow(ta) { if (!ta.scrollHeight) return; ta.style.height = "auto"; ta.style.height = ta.scrollHeight + 2 + "px"; }
+const autoGrow = ta => { ta.addEventListener("input", () => grow(ta)); growIO?.observe(ta); requestAnimationFrame(() => grow(ta)); return ta; };
+// Links in the source box show up underneath as clickable links (open in a new tab).
+function updateSrcLinks() {
+  const box = $("#srcLinks"); if (!box) return;
+  const urls = [...new Set((($("#src")?.value || "").match(/https?:\/\/[^\s<>"')\]]+/g) || []).map(u => u.replace(/[.,;:!?]+$/, "")))].slice(0, 5);
+  box.replaceChildren(...urls.map(u => { let label = u; try { const x = new URL(u); label = x.hostname.replace(/^www\./, "") + (x.pathname.length > 1 ? x.pathname.slice(0, 40) + (x.pathname.length > 40 ? "…" : "") : ""); } catch {} return el("a", { href: u, target: "_blank", rel: "noopener noreferrer", title: u, text: label + " ↗" }); }));
+  box.hidden = !urls.length;
+}
+const hookSrc = () => {
+  const ta = $("#src"); if (!ta || ta._hooked) return; ta._hooked = true;
+  const d = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value");
+  Object.defineProperty(ta, "value", { configurable: true, get() { return d.get.call(this); }, set(v) { d.set.call(this, v); updateSrcLinks(); } });
+  ta.addEventListener("input", updateSrcLinks); updateSrcLinks(); autoGrow(ta);
+};
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", hookSrc); else hookSrc();
 const withCopy = (node, getText) => el("div", { class: "cwrap" }, node, copyIcon(getText));
 const copyText = async (text, btn) => {
   const o = btn.textContent;
@@ -902,7 +924,7 @@ function renderPost(b, p, i) {
   const cap = el("textarea", { class: "cap", id: "cap-" + uid, "aria-label": "caption" }); cap.value = p.caption || "";
   const fillWarn = el("div", { class: "fillwarn", role: "status", hidden: "" }, "⚠", el("span", { text: t("fill_warn") }));
   const checkFill = () => { const has = /\[FILL[^\]]*\]/i.test(cap.value); fillWarn.hidden = !has; cap.closest(".post")?.classList.toggle("has-fill", has); };
-  cap.addEventListener("input", () => { p.caption = cap.value; cnt.textContent = cap.value.length + " " + t("chars"); checkFill(); });
+  cap.addEventListener("input", () => { p.caption = cap.value; cnt.textContent = cap.value.length + " " + t("chars"); checkFill(); }); autoGrow(cap);
   setTimeout(checkFill, 0);
   const tagBox = el("div", { class: "chips" });
   const blocked = new Set(brandPref(b.id).blocked_tags.map(x => x.toLowerCase()));
@@ -934,7 +956,7 @@ function renderPost(b, p, i) {
     anaBtn.disabled = true; setStatus(anaSt, t("ana_busy"));
     try {
       const r = await analyze({ brandId: b.id, platform: p.platform, kind: "post", source: lastInput.src, opinion: lastInput.opinion, text: cap.value.trim() });
-      anaBox.replaceChildren(renderAnalysis(r, txt => { cap.value = txt; p.caption = txt; cnt.textContent = txt.length + " " + t("chars"); })); anaBox.hidden = false; setStatus(anaSt, "");
+      anaBox.replaceChildren(renderAnalysis(r, txt => { cap.value = txt; p.caption = txt; cnt.textContent = txt.length + " " + t("chars"); grow(cap); })); anaBox.hidden = false; setStatus(anaSt, "");
     } catch (err) { setStatus(anaSt, errMsg(err), true); }
     finally { anaBtn.disabled = false; }
   });

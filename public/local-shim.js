@@ -7,12 +7,21 @@
   let paid = false;
   try { paid = localStorage.getItem("acta-paid") === "1"; } catch {}
 
+  // Faint cost line in the header: last call and this month (estimate from token counts).
+  const money = v => v == null ? "?" : v < 0.01 ? "$" + v.toFixed(4) : "$" + v.toFixed(2);
+  function showCost(j) {
+    const elC = document.getElementById("acta-cost"); if (!elC) return;
+    const hu = (document.documentElement.lang || "hu") === "hu";
+    elC.textContent = (j.cost !== undefined ? `~${money(j.cost)} · ` : "") + `${hu ? "hó" : "mo"} ~${money(j.monthCost)}`;
+    elC.title = hu ? "Becsült költség a tokenszámból (nem számla)." : "Estimate from token counts (not an invoice).";
+  }
   const blobToDataUrl = b => new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(b); });
   async function callAi(input, opts = {}, json) {
     const imgs = opts.images ? [].concat(opts.images instanceof FileList ? [...opts.images] : opts.images) : [];
     const images = await Promise.all(imgs.map(blobToDataUrl));
     const r = await fetch("/api/sample", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ input, images, json, paid, tier: opts.modelTier || "default" }), signal: opts.signal });
     const j = await r.json().catch(() => ({}));
+    if (r.ok) showCost(j);
     if (!r.ok) throw { code: j.code || (r.status === 429 ? "rate_limited" : "unavailable"), message: j.message || "HTTP " + r.status };
     return j;
   }
@@ -83,14 +92,28 @@
     const c = await cfgP;
     const hu = () => (document.documentElement.lang || "hu") === "hu";
     const header = document.querySelector("header .in");
-    if (header && c.paidAvailable) {
-      const sel = document.createElement("select");
-      sel.id = "acta-model"; sel.title = "AI";
-      sel.style.cssText = "width:auto;padding:5px 8px;font-size:12px;border-radius:999px";
-      sel.innerHTML = `<option value="0">${c.primary?.model || "local"}${c.fallback ? " → " + c.fallback.model : ""}</option><option value="1">${c.paid.model} ($)</option>`;
-      sel.value = paid ? "1" : "0";
-      sel.addEventListener("change", () => { paid = sel.value === "1"; try { localStorage.setItem("acta-paid", paid ? "1" : "0"); } catch {} });
-      header.insertBefore(sel, header.querySelector("nav"));
-    }
+    if (!header) return;
+    // Model picker is always visible: automatic (cheap) chain, plus the paid model when it is configured.
+    const sel = document.createElement("select");
+    sel.id = "acta-model"; sel.title = "AI";
+    sel.style.cssText = "width:auto;max-width:150px;padding:5px 8px;font-size:12px;border-radius:999px";
+    const short = m => String(m || "?").replace(/^claude-/, "");
+    const auto = "Auto · " + short(c.primary?.model) + (c.fallback ? " → " + short(c.fallback.model) : "");
+    sel.innerHTML = `<option value="0">${auto}</option>` + (c.paidAvailable
+      ? `<option value="1">${short(c.paid.model)} ($)</option>`
+      : `<option value="1" disabled>${hu() ? "Drágább modell: nincs beállítva" : "Paid model: not set up"}</option>`);
+    if (!c.paidAvailable) paid = false;
+    sel.value = paid ? "1" : "0";
+    sel.addEventListener("change", () => { paid = sel.value === "1"; try { localStorage.setItem("acta-paid", paid ? "1" : "0"); } catch {} });
+    const cost = document.createElement("span");
+    cost.id = "acta-cost";
+    cost.style.cssText = "font:12px/1.3 ui-monospace,monospace;opacity:.55;white-space:nowrap";
+    // Under the generate button, where the choice matters; header stays one line.
+    const row = document.createElement("div");
+    row.style.cssText = "display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px";
+    row.append(sel, cost);
+    const gen = document.getElementById("genBtn");
+    if (gen) gen.parentElement.after(row); else header.insertBefore(row, header.querySelector("nav"));
+    showCost({ monthCost: c.monthCost || 0 });
   });
 })();

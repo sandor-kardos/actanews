@@ -56,3 +56,10 @@ The local and claude.ai versions don't sync with each other.
 
 Bound to `127.0.0.1` only and has no login. Don't publish the port. To reach it
 from elsewhere, put it behind Cloudflare Zero Trust like your other services.
+
+## Model picker and cost
+
+Under **Generate posts** there is a model picker: *Auto* uses the cheap chain (primary, then fallback);
+the paid model appears there once `LLM_PAID_*` is set, otherwise it shows as not set up.
+Next to it, faintly: the estimated cost of the last AI call and this month's running total, from token counts
+(`LLM_<NAME>_PRICE=in,out` overrides the built-in Claude prices). It is an estimate, not an invoice.

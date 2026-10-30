@@ -30,9 +30,19 @@ function provider(prefix) {
     model: env(prefix + "_MODEL"),
     key: env(prefix + "_KEY"),
     vision: env(prefix + "_VISION", "false") === "true",
-    jsonMode: env(prefix + "_JSON_MODE", "true") === "true"
+    jsonMode: env(prefix + "_JSON_MODE", "true") === "true",
+    price: priceFor(env(prefix + "_PRICE"), env(prefix + "_MODEL"))
   };
 }
+// USD per million tokens [input, output]. Override with LLM_<NAME>_PRICE=in,out (e.g. 0,0 for a free local model).
+const PRICES = [[/haiku-5-5/, 0.1, 0.5], [/sonnet-5-5|sonnet-5\b/, 2, 10], [/opus-5-5/, 4, 20], [/haiku-4-5/, 1, 5], [/sonnet-4/, 3, 15], [/opus-4|opus-5\b/, 5, 25]];
+function priceFor(override, model) {
+  const o = String(override || "").split(",").map(Number);
+  if (o.length === 2 && o.every(n => Number.isFinite(n) && n >= 0)) return o;
+  const hit = PRICES.find(([re]) => re.test(String(model || "")));
+  return hit ? [hit[1], hit[2]] : null;
+}
+const costOf = (p, u) => p.price && u ? (u.in * (p.price[0] * (/haiku-5-5/.test(p.model) && u.in > 100000 ? 5 : 1)) + u.out * p.price[1] * (/haiku-5-5/.test(p.model) && u.in > 100000 ? 5 : 1)) / 1e6 : null;
 const PRIMARY = provider("LLM_PRIMARY");
 const FALLBACK = provider("LLM_FALLBACK");
 const PAID = provider("LLM_PAID");
@@ -59,7 +69,7 @@ async function callProvider(p, prompt, images, wantJson) {
     });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw Object.assign(new Error(j?.error?.message || "HTTP " + r.status), { status: r.status });
-    return (j.content || []).filter(c => c.type === "text").map(c => c.text).join("");
+    return { text: (j.content || []).filter(c => c.type === "text").map(c => c.text).join(""), usage: j.usage ? { in: (j.usage.input_tokens || 0) + (j.usage.cache_read_input_tokens || 0) + (j.usage.cache_creation_input_tokens || 0), out: j.usage.output_tokens || 0 } : null };
   }
   const content = imgs.length
     ? [{ type: "text", text: prompt }, ...imgs.map(u => ({ type: "image_url", image_url: { url: u } }))]
@@ -77,7 +87,7 @@ async function callProvider(p, prompt, images, wantJson) {
   let { r, j } = await send(wantJson && p.jsonMode);
   if (!r.ok && wantJson && p.jsonMode && r.status === 400) ({ r, j } = await send(false)); // provider without JSON mode
   if (!r.ok) throw Object.assign(new Error(j?.error?.message || j?.error || "HTTP " + r.status), { status: r.status });
-  return j?.choices?.[0]?.message?.content || "";
+  return { text: j?.choices?.[0]?.message?.content || "", usage: j?.usage ? { in: j.usage.prompt_tokens || 0, out: j.usage.completion_tokens || 0 } : null };
 }
 
 function extractJson(text) {
@@ -97,17 +107,19 @@ async function runLlm({ prompt, images = [], json = false, paid = false, tier = 
   const chain = paid ? [PAID] : tier === "quick" ? [QUICK, PRIMARY, FALLBACK] : [PRIMARY, FALLBACK];
   const list = chain.filter(Boolean);
   if (!list.length) throw Object.assign(new Error(paid ? "No paid model is configured (LLM_PAID_URL)." : "No model is configured (LLM_PRIMARY_URL)."), { code: "unavailable" });
-  let lastErr;
+  let lastErr, cost = 0, priced = true;
+  const call = async (p, pr) => { const r = await callProvider(p, pr, images, json); const c = costOf(p, r.usage); if (c == null) priced = false; else { cost += c; addCost(c); } return r.text; };
+  const out = (p, extra) => ({ ...extra, provider: p.name, model: p.model, cost: priced ? cost : null, monthCost: monthCost() });
   for (const p of list) {
     try {
-      let text = await callProvider(p, prompt, images, json);
-      if (!json) return { text, provider: p.name, model: p.model };
+      let text = await call(p, prompt);
+      if (!json) return out(p, { text });
       let parsed = extractJson(text);
       if (parsed === undefined) {
-        text = await callProvider(p, prompt + "\n\nYour previous answer was not valid JSON. Reply with ONLY the JSON object, nothing else.", images, true);
+        text = await call(p, prompt + "\n\nYour previous answer was not valid JSON. Reply with ONLY the JSON object, nothing else.");
         parsed = extractJson(text);
       }
-      if (parsed !== undefined) return { text, json: parsed, provider: p.name, model: p.model };
+      if (parsed !== undefined) return out(p, { text, json: parsed });
       lastErr = new Error(`${p.name} (${p.model}) did not return valid JSON.`);
     } catch (e) {
       lastErr = e;
@@ -151,6 +163,10 @@ function saveDb() {
 }
 const col = name => (db.collections[name] ||= {});
 function setDoc(c, id, data) { col(c)[id] = data; db.rev++; saveDb(); }
+// Running AI cost per month (estimate from token counts), kept outside the page collections.
+const monthKey = () => new Date().toISOString().slice(0, 7);
+function addCost(c) { db.usage ||= {}; const k = monthKey(); db.usage[k] = (db.usage[k] || 0) + c; saveDb(); }
+const monthCost = () => db.usage?.[monthKey()] || 0;
 function delDoc(c, id) { delete col(c)[id]; db.rev++; saveDb(); }
 
 /* ---------------- News from RSS ---------------- */
@@ -364,7 +380,7 @@ const server = http.createServer(async (req, res) => {
     if (p === "/api/config" && req.method === "GET") {
       return send(res, 200, {
         vision: !!(PRIMARY?.vision || FALLBACK?.vision), paidAvailable: !!PAID,
-        primary: PRIMARY && { model: PRIMARY.model }, quick: QUICK && { model: QUICK.model }, fallback: FALLBACK && { model: FALLBACK.model }, paid: PAID && { model: PAID.model },
+        primary: PRIMARY && { model: PRIMARY.model }, quick: QUICK && { model: QUICK.model }, fallback: FALLBACK && { model: FALLBACK.model }, paid: PAID && { model: PAID.model }, monthCost: monthCost(), priced: !!PRIMARY?.price,
         newsTime: NEWS_TIME, tz: TZ
       });
     }
