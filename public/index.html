@@ -47,6 +47,8 @@ nav.tabs button[aria-selected="true"]{background:var(--panel);color:var(--ink);b
 .lang button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
 .refresh{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ink);background:var(--ink);color:var(--panel);border-radius:999px;padding:6px 12px;font:600 12px var(--f-body);cursor:pointer}
 .refresh:hover,.inkbtn:hover{opacity:.85}
+.helpbtn{display:inline-grid;place-items:center;width:30px;height:30px;flex:none;border-radius:999px;border:1.5px solid var(--ink);color:var(--ink);background:var(--panel);font:700 15px/1 var(--f-body);text-decoration:none}
+.helpbtn:hover{background:var(--ink);color:var(--panel)}
 .inkbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ink);background:var(--ink);color:var(--panel);border-radius:999px;padding:6px 12px;font:600 12px var(--f-body);cursor:pointer}
 .inkbtn svg{width:14px;height:14px;flex:none}
 .scrim{position:fixed;inset:0;z-index:20;background:rgba(10,12,18,.45)}
@@ -254,7 +256,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.7.3">v1.7.3</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.7.4">v1.7.4</span></div>
   <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
@@ -263,6 +265,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
   <button type="button" class="inkbtn" id="archiveBtn" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg><span data-i18n="archive">Archív</span></button>
   </div>
   <button type="button" class="refresh tip-r tip-dn" id="refreshBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg><span data-i18n="refresh">Frissítés</span></button>
+  <a class="helpbtn" id="helpBtn" href="help.html" target="_blank" rel="noopener" aria-label="Súgó / Help" title="Súgó / Help">?</a>
   <nav class="tabs" role="tablist">
     <button role="tab" id="tab-post" aria-selected="true" data-view="post" data-i18n="tab_post">Poszt</button>
     <button role="tab" id="tab-komment" aria-selected="false" data-view="komment" data-i18n="tab_comment">Komment</button>
@@ -566,7 +569,7 @@ function applyLang() {
   if (srcImg) renderCrops();
 }
 document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => {
-  lang = b.dataset.lang; try { localStorage.setItem("reax-lang", lang); } catch {}
+  lang = b.dataset.lang; try { localStorage.setItem("reax-lang", lang); } catch {} const hb = document.getElementById("helpBtn"); if (hb) hb.href = "help.html?lang=" + lang;
   applyLang();
 }));
 // Long-press on touch shows the tooltip without triggering the button.
