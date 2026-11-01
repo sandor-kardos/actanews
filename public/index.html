@@ -150,6 +150,9 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 @media (min-width:1500px){.posts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:var(--r);padding:20px}
 .empty b{color:var(--ink)}
+#outEmpty{background:color-mix(in srgb,var(--accent) 6%,var(--bg));border:2px solid var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 12%,transparent);min-height:220px;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:28px 24px;font-size:15px}
+#outEmpty b{font-size:18px}#outEmpty br{display:none}
+#outEmpty b::before{content:"\2193  ";color:var(--accent)}
 /* news */
 .newsgrid{display:grid;gap:12px;grid-template-columns:1fr}
 @media (min-width:760px){.newsgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
