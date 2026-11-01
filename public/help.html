@@ -31,13 +31,14 @@ h1{font:700 clamp(28px,5vw,44px)/1.08 var(--f-head);margin:0;letter-spacing:-.01
 .step{position:relative;display:grid;grid-template-columns:52px minmax(0,1fr);gap:16px;align-items:start}
 .card{background:var(--panel);border-radius:16px;padding:16px 18px;border:1.5px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;align-items:baseline}
 .you .card{border:2px solid var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.ai .card{border:2px solid var(--ink);box-shadow:0 0 0 4px color-mix(in srgb,var(--ink) 8%,transparent)}
 .ico{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;position:relative;z-index:1;margin-top:6px;animation:pulse 8s ease-in-out infinite;animation-delay:var(--d)}
 .ico svg{width:28px;height:28px}
 @keyframes pulse{0%,8%,100%{transform:scale(1);box-shadow:0 0 0 0 transparent}4%{transform:scale(1.12);box-shadow:0 0 0 8px var(--accent-soft)}}
 .you .ico{background:var(--accent);color:var(--on-accent)}
 .ai .ico{background:var(--ink);color:var(--panel)}
-.who{justify-self:end;align-self:start;width:32px;height:32px;border-radius:999px;display:grid;place-items:center}
-.who svg{width:18px;height:18px}
+.who{justify-self:end;align-self:start;display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 12px 5px 9px;font:600 13px var(--f-body);white-space:nowrap}
+.who svg{width:17px;height:17px}
 .you .who{background:var(--accent-soft);color:var(--accent)}.ai .who{background:var(--bg);color:var(--ink)}
 .step h2{font:700 21px/1.2 var(--f-head);margin:0}
 .step h2 .no{color:var(--muted);font-weight:700;margin-right:6px}
@@ -114,12 +115,12 @@ const STEPS = [
 ];
 const T = {
   hu: { title: "Így készül egy poszt", lead: "<b>A gép előkészít, te döntesz.</b> A kék lépéseknél mindig te mondod ki a végső szót.",
-    lg_you: "Te döntesz", lg_ai: "A gép dolgozik", you: "Te", ai: "Gép",
+    lg_you: "Te döntesz", lg_ai: "A gép dolgozik", you: "Ember", ai: "Gép",
     sum: "Öt ponton te döntesz, és semmi nem kerül ki nélküled.", sum_s: "Ez a lényege a HIL-nek.",
     hil: "<b>HIL</b> (human-in-the-loop) = ember a folyamatban: a gép gyors, de a felelős döntést ember hozza.",
     how: "Hogyan tanul?", fb_star: "Csillag: „ilyet többet”", fb_minus: "Mínusz: „ilyet ne”", fb_tag: "Kizárt hashtag: soha többé", back: "Vissza a 4. lépéshez: legközelebb már így írja meg" },
   en: { title: "How a post is made", lead: "<b>The AI prepares, you decide.</b> At the blue steps you always have the final say.",
-    lg_you: "You decide", lg_ai: "The AI works", you: "You", ai: "AI",
+    lg_you: "You decide", lg_ai: "The AI works", you: "Human", ai: "AI",
     sum: "You decide at five points, and nothing goes out without you.", sum_s: "That is what HIL means.",
     hil: "<b>HIL</b> (human-in-the-loop): the AI is fast, but a person makes the decisions that matter.",
     how: "How does it learn?", fb_star: "Star: “more like this”", fb_minus: "Minus: “not this”", fb_tag: "Blocked hashtag: never again", back: "Back into step 4: next time it writes this way" }
@@ -141,7 +142,7 @@ function render() {
       <span class="ico" style="--d:${(i * 8 / n).toFixed(2)}s">${svg(I[s.i])}</span>
       <div class="card">
       <h2><span class="no">${i + 1}.</span>${s[lang][0]}</h2>
-      <span class="who" role="img" aria-label="${t[s.who]}" title="${t[s.who]}">${svg(WHO[s.who])}</span>
+      <span class="who">${svg(WHO[s.who])}${t[s.who]}</span>
       <p>${s[lang][1]}</p>
       ${s.i === "learn" ? `<button type="button" class="loopbtn" aria-expanded="${open}" aria-controls="more">${t.how}${svg('<path d="m6 9 6 6 6-6"/>')}</button>
       <div class="more${open ? " open" : ""}" id="more"><div>
