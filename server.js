@@ -154,6 +154,17 @@ function loadDb() {
       else if (c === "news" && Array.isArray(data.extras) && !col(c)[id].extras) { col(c)[id].extras = data.extras; added++; }
     }
   }
+  // One-time field updates for existing docs ("collection/id@tag": {fields}); each runs once and only merges the given fields.
+  const patchFile = path.join(DEFAULTS_DIR, "patches.json");
+  if (fs.existsSync(patchFile)) {
+    db.patched ||= {};
+    for (const [key, fields] of Object.entries(JSON.parse(fs.readFileSync(patchFile, "utf8")))) {
+      if (db.patched[key]) continue;
+      db.patched[key] = true;
+      const [c, id] = key.split("@")[0].split("/");
+      if (col(c)[id]) { col(c)[id] = { ...col(c)[id], ...fields }; added++; }
+    }
+  }
   if (added || fresh) { db.rev++; saveDb(); }
   console.log(`[db] ${fresh ? "created" : "loaded"} ${DB_FILE}, ${added} new seed item(s) imported`);
 }

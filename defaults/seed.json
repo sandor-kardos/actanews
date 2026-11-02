@@ -35,21 +35,21 @@
    "voice": "Tegező, gyakorlatias, segítőkész. Konkrét tippek, számok és figyelmeztetések (kaució, B96/BE jogosítvány, 7/13 pólusú adapter, O.1/O.2 vontatható tömeg, matrica). Rövid bekezdések, néha lista. Könnyed humor, legfeljebb egy UFO/utánfutó szójáték posztonként."
   },
   "mindhaven": {
-   "audience": "Ambitious professionals and millennials across the UK looking for private-pay online counselling; secondary: people in Edinburgh and Dalkeith wanting in-person sessions.",
-   "cta": "Message me, I reply the same day. mindhaven.uk",
-   "hashtags": "#Counselling #OnlineCounselling #Burnout #MentalHealthUK #EdinburghCounselling #Dalkeith",
+   "audience": "Adults in the UK dealing with anxiety, loss, stress or self-doubt who want private counselling: online across the UK, or in person in Dalkeith near Edinburgh. Also Hungarian speakers living in the UK (sessions in English or Hungarian).",
+   "cta": "Message me for a free 20-minute initial call, I reply the same day. mindhaven.uk",
+   "hashtags": "#Counselling #OnlineCounselling #Anxiety #Grief #EdinburghCounselling #Dalkeith #MentalHealthUK",
    "language": "English (UK spelling)",
    "name": "Mindhaven",
-   "offer": "Erika Martin Counselling, accredited counsellor, works mainly online, office in Dalkeith. £60 per session; book 6 sessions, the 7th is free. Contact by message (email, Messenger or WhatsApp) with same-day reply; no online booking calendar.",
+   "offer": "Erika Martin, MNCPS Accredited psychotherapeutic counsellor, PSA Registered, Advanced Diploma in Psychotherapeutic Counselling (Chrysalis, 2018). Integrative person-centred, also psychodynamic, uses CBT techniques when they suit the client. Works with anxiety and worry, grief and loss, low mood, relationships, self-esteem, stress or burnout, addiction (including family members) and big life changes or illness. £60 per 50-minute session pay as you go, or £300 for 6 sessions paid in advance (saves £60). Bupa accepted. Free 20-minute initial call. Online by Microsoft Teams or phone across the UK, or in person in Dalkeith. In English or Hungarian. No fixed number of sessions.",
    "platforms": [
     "facebook",
     "instagram"
    ],
-   "rules": "ERIKA APPROVES EVERY POST BEFORE PUBLISHING. No testimonials, client stories or anything that could identify a client. Do not present her as a specialist in somatic or nervous-system work. No diagnosis, cure or outcome promises. Score 0 for tragedies, suicides, violence, disasters or crisis news; never use distress as a hook. If a topic touches self-harm or crisis, add 'If you are struggling right now, Samaritans are free on 116 123' instead of a sales CTA.",
+   "rules": "ERIKA APPROVES EVERY POST BEFORE PUBLISHING. No testimonials, client stories or anything that could identify a client. Only claim the approaches and areas listed in the offer: do not present her as a specialist in somatic or nervous-system work, trauma specialist, or anything not listed. No diagnosis, cure or outcome promises ('counselling can't fix you' is her own framing: it is a space to make sense of things). Prices only as stated (£60, or £300 for 6 prepaid); never mention '7th session free'. Score 0 for tragedies, suicides, violence, disasters or crisis news; never use distress as a hook. If a topic touches self-harm or crisis, add 'If you are struggling right now, Samaritans are free on 116 123' instead of a sales CTA.",
    "slug": "mindhaven",
-   "source_note": "Built from the mindhaven repo (articles on burnout, high-functioning burnout, imposter syndrome) and Erika's latest feedback (Oct 2026: £60, 6+1 free, Message Me, plainer look). Brand colours: pine #155D49, evergreen #0D2E24, emerald #34D399, lime cream #F6FFA2; font Plus Jakarta Sans.",
+   "source_note": "Updated 2 Nov 2026 from the mindhaven site repo (latest main: Advanced Diploma, integrative person-centred approach, specialties, Hungarian sessions, counselling myths FAQ, £60 or £300 for 6 prepaid, Bupa, free 20-min call). Brand colours unchanged: pine #155D49, evergreen #0D2E24, emerald #34D399, lime cream #F6FFA2; font Plus Jakarta Sans.",
    "url": "mindhaven.uk",
-   "voice": "Calm, warm, plain and non-clinical. Speaks to 'you'. Short paragraphs that explain the difference between two things people mix up (stress vs burnout, tired vs depleted). Gentle, never alarmist, no hype, not 'premium' or boutique. Closes with a soft line about counselling as a calm, reflective space."
+   "voice": "Calm, warm, plain and non-clinical. Speaks to 'you'. You lead the pace; the tone is accepting and non-judgemental. Short paragraphs that explain the difference between two things people mix up (stress vs burnout, worry vs anxiety) or gently correct a common myth about counselling (you don't need to be in crisis, it isn't just advice, it doesn't have to take years). Never alarmist, no hype, not 'premium' or boutique. Closes with a soft line about counselling as a calm, confidential space."
   },
   "sandorkardos": {
    "audience": "Small local businesses in Edinburgh (shops, takeaways, traders), Edinburgh landlords and agencies looking for a design and build subcontractor; also employers hiring junior or mid-level product designers and developers.",
