@@ -140,6 +140,21 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 .post .top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line)}
 .post .body{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
 #src{max-height:60vh;overflow:auto}
+.algosw{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px}
+.algosw input{position:absolute;opacity:0;width:1px;height:1px}
+.algosw .knob{flex:none;width:40px;height:22px;border-radius:999px;background:var(--line);position:relative;transition:background .2s}
+.algosw .knob::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.algosw input:checked + .knob{background:var(--accent)}
+.algosw input:checked + .knob::after{left:21px}
+.algosw input:focus-visible + .knob{outline:2px solid var(--accent);outline-offset:2px}
+.algo{border:2px solid var(--accent);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.algo h4{margin:0;font-size:14px;display:flex;align-items:center;gap:8px}
+.algo ul{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:14px}
+.algo li{display:flex;gap:8px;align-items:baseline}
+.algo .ok{color:#0E7C5A;font-weight:700}.algo .bad{color:#C0352B;font-weight:700}
+.algo label{display:flex;gap:8px;align-items:baseline;cursor:pointer}
+.algo .xtra{display:grid;gap:6px}
+.algo .xtra .cline{background:var(--bg);border-radius:8px;padding:8px 10px;white-space:pre-wrap}
 .srclinks{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;margin-top:-4px}
 .srclinks a{color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:2px;word-break:break-all}
 .post textarea.cap{min-height:150px;background:var(--panel);font-size:16px;line-height:1.6;overflow:hidden;resize:none}
@@ -256,7 +271,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 </style>
 
 <header class="bar"><div class="in">
-  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.7.5">v1.7.5</span></div>
+  <div class="logo"><i aria-hidden="true"><b style="background:var(--b-asc)"></b><b style="background:var(--b-mindhaven)"></b><b style="background:var(--b-bereljufot)"></b><b style="background:var(--b-sandorkardos)"></b></i><span>ActaNews</span><span class="slogan">Jack it!</span><span class="ver" title="ActaNews v1.8.0">v1.8.0</span></div>
   <div class="tools">
   <div class="lang" role="group" aria-label="Language">
     <button type="button" id="lang-hu" data-lang="hu" aria-pressed="true">HU</button>
@@ -307,6 +322,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
       </label>
       <div class="f"><span class="eyebrow" data-i18n="brands_label">Márkák</span><div class="chips" id="brandChips"></div></div>
       <div class="f"><span class="eyebrow" data-i18n="plat_label">Platformok</span><div class="chips" id="platChips"></div></div>
+      <label class="algosw" for="algoSw"><input type="checkbox" id="algoSw" role="switch"><span class="knob" aria-hidden="true"></span><span><b data-i18n="algo_label">Facebook algo mód</b> <span class="h" data-i18n="algo_hint">A Facebook saját tippjei szerint ír, és ellenőrzőlistát ad.</span></span></label>
       <div class="row">
         <button class="btn primary" id="genBtn" type="submit" data-i18n="gen_btn">Posztok generálása</button>
         <button class="btn" id="clearBtn" type="button" data-i18n="clear_btn">Törlés</button>
@@ -463,6 +479,11 @@ const STR = {
     summary: "Összefoglaló", relevance: "Relevancia", none_fit: "Ehhez a hírhez egyik márka sem illik eléggé. Ez is válasz: ezt most nem érdemes posztolni.",
     approval: "Erika jóváhagyására", chars: "kar.", tags_hint: "Hashtagek (szaggatott = kiegészítő, koppints a bekapcsoláshoz)",
     m_alt: "Alt szöveg", m_img: "Kép", m_time: "Időzítés", m_file: "Fájlnév",
+    algo_label: "Facebook algo mód", algo_hint: "A Facebook saját tippjei szerint ír, és ellenőrzőlistát ad.",
+    algo_h: "Facebook algo ellenőrzés", algo_len: "Szöveg 10–400 karakter", algo_caps: "Nincs csupa nagybetűs szó", algo_links: "Nincs link a szövegben", algo_move: "Link → első komment", algo_tag: "Van hashtag",
+    algo_time: "Posztold 12:00 és 16:00 között: a Facebook szerint így 38%-kal jobban teljesít az oldalad.",
+    algo_fc: "Első komment (link + kérdés), posztolás után írd be", algo_ost: "Szöveg a képre / reelre", algo_cc: "Feliratsorok (CC)", algo_srt: "Felirat (.srt)",
+    algo_manual: "Posztoláskor (pipáld ki)", algo_m_share: "Valódi okot adtál a megosztásra (nem „oszd meg, ha…”)", algo_m_group: "Megosztva egy témába vágó csoportban", algo_m_story: "Megosztva a storyban is", algo_m_sound: "Reelnél van hang vagy zene", algo_m_ratio: "Kép/videó 4:5 vagy 1:1, videó legalább 720p", algo_m_cc: "Feliratok (CC) bekapcsolva", algo_m_tools: "Szöveg, matrica vagy effekt a tartalmon", algo_m_playlist: "Reel hozzáadva lejátszási listához", algo_m_reply: "Az első órában válaszolsz a kommentekre",
     copy_all: "Szöveg + tagek másolása", copy_alt: "Alt másolása", to_image: "Képhez", analyze: "Elemzés", copied: "Kimásolva", copy_manual: "Jelöld ki kézzel", copy: "Másol",
     ana_busy: "Elemzés… (kb. 15-25 mp)", e_empty_text: "Nincs mit elemezni: üres a szöveg.",
     v_jo: "Mehet", v_javitando: "Javítandó", v_gyenge: "Gyenge",
@@ -516,6 +537,11 @@ const STR = {
     summary: "Summary", relevance: "Relevance", none_fit: "None of the brands fits this story well enough. That's an answer too: skip this one.",
     approval: "For Erika's approval", chars: "chars", tags_hint: "Hashtags (dashed = extra, tap to switch on)",
     m_alt: "Alt text", m_img: "Image", m_time: "Timing", m_file: "Filename",
+    algo_label: "Facebook algo mode", algo_hint: "Writes to Facebook's own tips and gives you a checklist.",
+    algo_h: "Facebook algo check", algo_len: "Caption 10–400 characters", algo_caps: "No ALL-CAPS words", algo_links: "No link in the caption", algo_move: "Link → first comment", algo_tag: "Has a hashtag",
+    algo_time: "Post between 12:00 and 16:00: Facebook says your page performs 38% better then.",
+    algo_fc: "First comment (link + question), add it right after posting", algo_ost: "Text for the image / reel", algo_cc: "Subtitle lines (CC)", algo_srt: "Subtitles (.srt)",
+    algo_manual: "When posting (tick off)", algo_m_share: "You gave a real reason to share (not “share if…”)", algo_m_group: "Shared to a relevant group", algo_m_story: "Shared to your story too", algo_m_sound: "Reel has sound or music", algo_m_ratio: "Image/video 4:5 or 1:1, video at least 720p", algo_m_cc: "Closed captions turned on", algo_m_tools: "Text, sticker or effect on the content", algo_m_playlist: "Reel added to a playlist", algo_m_reply: "You reply to comments in the first hour",
     copy_all: "Copy text + tags", copy_alt: "Copy alt", to_image: "To image", analyze: "Analyse", copied: "Copied", copy_manual: "Select it manually", copy: "Copy",
     ana_busy: "Analysing… (about 15-25 s)", e_empty_text: "Nothing to analyse: the text is empty.",
     v_jo: "Good to go", v_javitando: "Needs work", v_gyenge: "Weak",
@@ -642,7 +668,15 @@ const GLOBAL_RULES = `
 - The user's opinion is the spine of every post. If it is empty, choose a neutral angle and say so in "angle_note".
 - Hashtags: core = must-use, specific; extra = related/long-tail/local alternatives the user may tick. No spaces inside tags, no duplicates between core and extra. Hungarian brand: give accent-free versions where people actually use them (e.g. #utanfuto next to #utánfutó).
 - seo_keyword: 2-5 word search phrase in the brand's language, matching what someone would search for this topic (used for image filenames).`;
-function buildPromptCore({ src, opinion, brandIds, platIds, brands, prefs, aiLang, hasShot }) {
+const FB_ALGO_RULES = `
+- Applies to every facebook post (Facebook's own "tips for this post" checklist):
+- caption 10-400 characters (without hashtags). First line is the hook.
+- normal sentence case: no words in ALL CAPS (acronyms are fine).
+- NO links or URLs in the caption at all, not even in the source line (name the outlet only). Put the link in "first_comment".
+- 1-3 hashtags in hashtags_core (at least one), specific to the topic or place.
+- invite sharing and following in the brand's voice, but only with a real reason (useful to someone, worth saving, more like this coming). Never engagement bait: no "share if", "tag a friend who", "like if", "comment YES", "react with". Facebook demotes those.
+- also fill for facebook posts: "first_comment" (the source link if there is one, plus one open question to start the discussion), "onscreen_text" (max 8 words, the hook to put on the image or reel), "cc_lines" (3-5 short subtitle lines in the brand language, as if the caption were read aloud on a reel).`;
+function buildPromptCore({ src, opinion, brandIds, platIds, brands, prefs, aiLang, hasShot, algo }) {
   const pref = id => ({ blocked_tags: [], liked: [], disliked: [], ...((prefs || {})[id] || {}) });
   const profiles = brandIds.map(id => {
     const pr = pref(id);
@@ -662,7 +696,7 @@ TASK
 4) Write each post (caption, hashtags, alt text) in the BRAND's language and voice, whatever language the input or opinion is in.
 
 PLATFORM RULES${PLATFORM_RULES}
-
+${algo ? "\nFACEBOOK ALGO MODE (overrides the facebook rules above and the URL part of the source-line rule)" + FB_ALGO_RULES + "\n" : ""}
 GLOBAL RULES${GLOBAL_RULES}
 
 BRAND PROFILES (JSON)
@@ -675,7 +709,7 @@ USER OPINION
 """${opinion || ""}"""
 
 Return ONLY JSON in this shape:
-{"summary":"one line in ${L}","angle_note":"in ${L}, or empty","brands":[{"id":"brand id","score":0,"reason":"short reason in ${L}","seo_keyword":"phrase in the brand language","card":{"headline":"text for the post image, brand language, max 6 words, no hashtags or emoji","subheading":"one short sentence in the brand language","source_name":"outlet name if reacting to news, else empty","image_prompt":"English prompt for a background image: describe subject, setting, light and style; no text, letters or logos; for asc and mindhaven only abstract or illustrative scenes, never identifiable children, clients or realistic people","slides":[{"headline":"slide 1 hook in the brand language, max 8 words","body":"one short line, or empty"},{"headline":"short label, max 4 words","body":"first key point: 2-3 short sentences, or up to 3 lines each starting with • (lines separated by \\n)"},{"headline":"short label","body":"second key point, same style"},{"headline":"short label","body":"third key point, same style"},{"headline":"takeaway or question, max 10 words","body":"one short line leading to the call to action"}]},"posts":[{"platform":"instagram","caption":"full caption text without hashtags","hashtags_core":["#tag"],"hashtags_extra":["#tag"],"alt_text":"image alt text in the brand language, max 125 chars","image_idea":"what photo or graphic to use, in ${L}","best_time":"suggested posting time, in ${L}"}]}]}
+{"summary":"one line in ${L}","angle_note":"in ${L}, or empty","brands":[{"id":"brand id","score":0,"reason":"short reason in ${L}","seo_keyword":"phrase in the brand language","card":{"headline":"text for the post image, brand language, max 6 words, no hashtags or emoji","subheading":"one short sentence in the brand language","source_name":"outlet name if reacting to news, else empty","image_prompt":"English prompt for a background image: describe subject, setting, light and style; no text, letters or logos; for asc and mindhaven only abstract or illustrative scenes, never identifiable children, clients or realistic people","slides":[{"headline":"slide 1 hook in the brand language, max 8 words","body":"one short line, or empty"},{"headline":"short label, max 4 words","body":"first key point: 2-3 short sentences, or up to 3 lines each starting with • (lines separated by \\n)"},{"headline":"short label","body":"second key point, same style"},{"headline":"short label","body":"third key point, same style"},{"headline":"takeaway or question, max 10 words","body":"one short line leading to the call to action"}]},"posts":[{"platform":"instagram","caption":"full caption text without hashtags","hashtags_core":["#tag"],"hashtags_extra":["#tag"],"alt_text":"image alt text in the brand language, max 125 chars","image_idea":"what photo or graphic to use, in ${L}","best_time":"suggested posting time, in ${L}"${algo ? ',"first_comment":"facebook only, else empty","onscreen_text":"facebook only, else empty","cc_lines":["facebook only"]' : ""}}]}]}
 Include every brand listed in BRAND PROFILES in "brands", with "posts": [] when score < 2.`;
 }
 /*</prompts>*/
@@ -871,9 +905,60 @@ $("#clearBtn").addEventListener("click", () => {
   $("#src").value = ""; $("#opinion").value = ""; shotBlob = null; $("#shotPrev").hidden = true; $("#shotTxt").textContent = t("shot_txt"); shotDrop.classList.remove("has"); setStatus($("#genStatus"), "");
 });
 
+/* ---------- Facebook algo mode (switch remembered per browser) ---------- */
+const algoOn = () => !!$("#algoSw")?.checked;
+try { $("#algoSw").checked = localStorage.getItem("acta-algo") === "1"; } catch {}
+$("#algoSw").addEventListener("change", () => { try { localStorage.setItem("acta-algo", algoOn() ? "1" : "0"); } catch {} });
+const LINK_RE = /https?:\/\/[^\s)]+|www\.[^\s)]+/gi;
+function renderAlgo(p, cap, getTags, onCap) {
+  const box = el("div", { class: "algo" });
+  const list = el("ul");
+  const manual = el("ul");
+  const fc = el("div", { class: "cline" }), ost = el("div", { class: "cline" }), cc = el("div", { class: "cline" });
+  const row = (ok, text, extra) => el("li", {}, el("span", { class: ok ? "ok" : "bad", "aria-label": ok ? "OK" : "!", text: ok ? "✓" : "✗" }), el("span", { text }), extra || null);
+  const draw = () => {
+    const txt = cap.value.trim(), len = txt.length, links = txt.match(LINK_RE) || [];
+    const caps = (txt.match(/\b[A-ZÁÉÍÓÖŐÚÜŰ]{4,}\b/g) || []).length;
+    const tags = getTags().length;
+    let moveBtn = null;
+    if (links.length) {
+      moveBtn = el("button", { type: "button", class: "btn small", text: t("algo_move") });
+      moveBtn.addEventListener("click", () => {
+        const rest = cap.value.replace(LINK_RE, "").replace(/[ \t]+\n/g, "\n").replace(/\(\s*\)/g, "").trim();
+        p.first_comment = [...links, p.first_comment || ""].filter(Boolean).join("\n"); onCap(rest); draw();
+      });
+    }
+    list.replaceChildren(
+      row(len >= 10 && len <= 400, `${t("algo_len")} (${len}/400)`),
+      row(caps === 0, t("algo_caps")),
+      row(!links.length, t("algo_links"), moveBtn),
+      row(tags >= 1, `${t("algo_tag")} (${tags})`));
+    fc.textContent = p.first_comment || "–"; ost.textContent = p.onscreen_text || "–";
+    cc.textContent = (p.cc_lines || []).join("\n") || "–";
+  };
+  cap.addEventListener("input", draw);
+  box._redraw = draw;
+  ["algo_m_share", "algo_m_group", "algo_m_story", "algo_m_sound", "algo_m_ratio", "algo_m_cc", "algo_m_tools", "algo_m_playlist", "algo_m_reply"].forEach(k =>
+    manual.append(el("li", {}, el("label", {}, el("input", { type: "checkbox" }), t(k)))));
+  const srt = () => (p.cc_lines || []).map((l, i) => { const ts = s => `00:00:${String(s).padStart(2, "0")},000`; return `${i + 1}\n${ts(i * 3)} --> ${ts(i * 3 + 3)}\n${l}\n`; }).join("\n");
+  const srtBtn = el("button", { type: "button", class: "btn small dl", text: t("algo_srt") });
+  srtBtn.addEventListener("click", async () => { if (!downloads || !p.cc_lines?.length) return; try { await downloads.save({ filename: "captions.srt", data: new Blob([srt()], { type: "text/plain" }) }); } catch {} });
+  box.append(
+    el("h4", {}, t("algo_h")),
+    list,
+    el("p", { class: "note", style: "margin:0", text: t("algo_time") }),
+    el("div", { class: "xtra" },
+      el("div", { class: "eyebrow", text: t("algo_fc") }), withCopy(fc, () => p.first_comment || ""),
+      el("div", { class: "eyebrow", text: t("algo_ost") }), withCopy(ost, () => p.onscreen_text || ""),
+      el("div", { class: "eyebrow", text: t("algo_cc") }), withCopy(cc, () => (p.cc_lines || []).join("\n")), p.cc_lines?.length ? srtBtn : null),
+    el("div", { class: "eyebrow", text: t("algo_manual") }), manual);
+  setTimeout(draw, 0);
+  return box;
+}
+
 /* ---------- generation ---------- */
 function buildPrompt(src, opinion, brandIds, platIds) {
-  return buildPromptCore({ src, opinion, brandIds, platIds, brands, prefs, aiLang: t("ai_lang"), hasShot: !!shotBlob });
+  return buildPromptCore({ src, opinion, brandIds, platIds, brands, prefs, aiLang: t("ai_lang"), hasShot: !!shotBlob, algo: algoOn() });
 }
 
 $("#postForm").addEventListener("submit", async e => {
@@ -999,7 +1084,9 @@ function renderPost(b, p, i) {
         el("dt", { text: t("m_img") }), el("dd", { text: p.image_idea || "–" }),
         el("dt", { text: t("m_time") }), el("dd", { text: p.best_time || "–" }),
         el("dt", { text: t("m_file") }), el("dd", { class: "mono", text: fname + "-1080x1350.jpg" })),
+      p.platform === "facebook" && (algoOn() || p.first_comment || p.onscreen_text) ? renderAlgo(p, cap, tagsNow, txt => { cap.value = txt; p.caption = txt; cnt.textContent = txt.length + " " + t("chars"); grow(cap); cap.dispatchEvent(new Event("input")); }) : null,
       el("div", { class: "row" }, imgBtn, anaBtn), anaSt, anaBox));
+  tagBox.addEventListener("change", () => card.querySelector(".algo")?._redraw?.());
   return card;
 }
 
